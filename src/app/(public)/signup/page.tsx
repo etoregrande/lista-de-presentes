@@ -3,7 +3,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/server/users";
+import { signUp } from "@/server/auth";
 import { SignUpFormData } from "@/types/auth";
 import { signUpFormSchema } from "@/schemas/auth";
 import Link from "next/link";
@@ -34,7 +34,7 @@ export default function Page() {
                 return;
             }
 
-            router.push('/signIn')
+            router.push('/wishlist')
         } catch (error: any) {
             throw new Error('Erro interno do servidor')
         }

@@ -1,6 +1,9 @@
 import 'dotenv/config'
-import { Database } from '@/types/db';
-import { Kysely, PostgresDialect } from 'kysely';
+import { DB } from '@/types/db';
+import {
+    Kysely,
+    PostgresDialect,
+} from 'kysely';
 import { Pool } from 'pg'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -13,6 +16,6 @@ export const dialect = new PostgresDialect({
     })
 })
 
-export const db = new Kysely<Database>({
-    dialect,
-})
+export const db = new Kysely<DB>({
+    dialect
+});

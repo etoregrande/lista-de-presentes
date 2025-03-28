@@ -1,10 +1,10 @@
-'use server'
+import { auth } from "@/lib/auth";
+import { NextRequest } from "next/server";
 
-import { auth } from "@/lib/auth"
-import { headers } from 'next/headers'
-
-export const getSession = async () => {
-    await auth.api.getSession({
-        headers: await headers(),
+export const getSessionOnServer = async (request: NextRequest) => {
+    const session = await auth.api.getSession({
+        headers: request.headers,
     });
+
+    return session
 }

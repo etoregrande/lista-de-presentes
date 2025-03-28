@@ -1,14 +1,13 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { signInFormData, SignUpFormData } from "@/types/auth";
+import { SignInFormData, SignUpFormData } from "@/types/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 
-export const signUp = async (payload: SignUpFormData) => {
-    const { name, email, password } = payload;
-    // const passwordHash = await bcrypt.hash(password, 10);
+export const signUp = async (formData: SignUpFormData) => {
+    const { name, email, password } = formData;
 
     const response: Response = await auth.api.signUpEmail({
         body: {
@@ -18,13 +17,12 @@ export const signUp = async (payload: SignUpFormData) => {
         },
         asResponse: true,
     });
-    console.log(response)
     return response.json();
 }
 
 
-export const signIn = async (payload: signInFormData) => {
-    const { email, password } = payload;
+export const signIn = async (formData: SignInFormData) => {
+    const { email, password } = formData;
 
     const response: Response = await auth.api.signInEmail({
         body: {
@@ -33,9 +31,9 @@ export const signIn = async (payload: signInFormData) => {
         },
         asResponse: true,
     });
-
     return response.json();
 }
+
 
 export const signOut = async () => {
     await auth.api.signOut({

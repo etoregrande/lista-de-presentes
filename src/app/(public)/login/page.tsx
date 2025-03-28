@@ -3,9 +3,9 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/server/users";
+import { signIn } from "@/server/auth";
 import { signInFormSchema } from "@/schemas/auth";
-import { signInFormData } from "@/types/auth";
+import { SignInFormData } from "@/types/auth";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -19,14 +19,14 @@ export default function Page() {
         handleSubmit,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<signInFormData>(
+    } = useForm<SignInFormData>(
         {
             // defaultValues: { email: "etore@test.com", password: "test1234" },
             resolver: zodResolver(signInFormSchema)
         }
     );
 
-    const handlesignInUser: SubmitHandler<signInFormData> = async (data: signInFormData) => {
+    const handlesignInUser: SubmitHandler<SignInFormData> = async (data: SignInFormData) => {
         try {
             const response = await signIn(data)
 
