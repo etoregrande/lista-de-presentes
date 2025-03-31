@@ -58,18 +58,18 @@ export interface Verification {
 }
 
 export interface WishlistItem {
-    created_at: Generated<Timestamp | null>;
+    created_at: Generated<Timestamp>;
     description: string | null;
     id: Generated<string>;
     image: string | null;
-    is_active: Generated<boolean | null>;
-    is_purchased: Generated<boolean | null>;
+    is_active: Generated<boolean>;
+    is_purchased: Generated<boolean>;
     link: string | null;
     name: string;
     price: number | null;
-    priority: Generated<string | null>;
+    priority: Generated<string>;
     purchased_at: Timestamp | null;
-    user_id: string | null;
+    user_id: string;
 }
 
 export interface DB {

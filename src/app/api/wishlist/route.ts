@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createWishlistItem } from "@/server/wishlistItem";
+import { createWishlistItem, listWishListItems } from "@/server/wishlistItem";
 import { getSessionOnServer } from "@/server/session";
 
 export async function POST(request: NextRequest) {
@@ -20,3 +20,18 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
+
+
+// export async function GET(request: NextRequest) {
+//     const session = await getSessionOnServer(request)
+//     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+//     try {
+//         const wishlistItems = listWishListItems(session.user.id)
+//         return NextResponse.json(wishlistItems);
+
+//     } catch (error) {
+//         console.log(error)
+//         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+//     }
+// }

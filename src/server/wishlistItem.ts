@@ -1,7 +1,7 @@
-"use server"
-
 import { CreateWishlistItemFormData } from "@/types/wishlistItem";
 import { db } from "@/lib/database/db";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 
 export const createWishlistItem = async (formData: CreateWishlistItemFormData, user_id: string) => {
@@ -33,5 +33,37 @@ export const createWishlistItem = async (formData: CreateWishlistItemFormData, u
     } catch (error) {
         console.error("Error creating wishlist item =>", error);
         return null;
+    }
+}
+
+
+export const listWishListItems = async (user_id?: string) => {
+    let userId
+
+    if (!user_id) {
+        const session = await auth.api.getSession({
+            headers: await headers()
+        })
+
+        if (!session) {
+            throw new Error('Unable to get session')
+        }
+
+        userId = session.user.id
+    } else {
+        userId = user_id
+    }
+
+    try {
+        const wishlistItems = await db
+            .selectFrom("wishlist_item")
+            .selectAll()
+            .where('user_id', '=', userId)
+            .execute()
+
+        return wishlistItems;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch Wishlist items.');
     }
 }

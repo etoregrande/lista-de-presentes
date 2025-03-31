@@ -7,7 +7,7 @@ import { signIn } from "@/server/auth";
 import { signInFormSchema } from "@/schemas/auth";
 import { SignInFormData } from "@/types/auth";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
