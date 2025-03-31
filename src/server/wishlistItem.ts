@@ -18,7 +18,7 @@ export const createWishlistItem = async (formData: CreateWishlistItemFormData, u
     }
 
     let imageUrl: string | null = null
-    if (image) {
+    if (image[0]) {
         const imageBuffer = image[0].buffer ? image[0].buffer : Buffer.from(await image[0].arrayBuffer())
 
         const params = {
