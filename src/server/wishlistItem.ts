@@ -19,7 +19,7 @@ export const createWishlistItem = async (formData: CreateWishlistItemFormData, u
 
     let imageUrl: string | null = null
     if (image) {
-        let imageBuffer = image[0].buffer ? image[0].buffer : Buffer.from(await image[0].arrayBuffer())
+        const imageBuffer = image[0].buffer ? image[0].buffer : Buffer.from(await image[0].arrayBuffer())
 
         const params = {
             Bucket: process.env.BUCKET_NAME,
