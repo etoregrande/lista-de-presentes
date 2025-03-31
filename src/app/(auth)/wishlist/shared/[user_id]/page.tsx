@@ -1,15 +1,17 @@
 import { Suspense } from "react";
 import { Wishlist } from "@/components/ui/wishlist/wishlist";
 
-interface SharedWishlistProps {
-    params: { user_id: string };
+interface SharedWishlistParams {
+    params: Promise<{ user_id: string }>;
 }
 
-export default async function SharedWishlist({ params }: SharedWishlistProps) {
+export default async function SharedWishlist({ params }: SharedWishlistParams) {
+    const { user_id } = await params
+
     return (
         <>
             <Suspense fallback="Loading...">
-                <Wishlist user_id={params.user_id} />
+                <Wishlist user_id={user_id} />
             </Suspense>
         </>
     )
