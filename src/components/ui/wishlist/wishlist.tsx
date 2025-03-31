@@ -20,7 +20,7 @@ export async function Wishlist({ user_id }: WishlistProps) {
                 return (
                     <div
                         key={item.id}
-                        className="bg-white flex flex-row h-60 rounded-2xl hover:drop-shadow-xl transition-all"
+                        className="bg-white flex flex-row h-60 rounded-2xl hover:drop-shadow-xl hover:bg- transition-all"
                     >
                         <div className="w-2/5 h-full relative">
                             <Image
@@ -33,7 +33,7 @@ export async function Wishlist({ user_id }: WishlistProps) {
                         </div>
                         <div
                             className="w-3/5 p-4 flex flex-col gap-2">
-                            <h1>{item.name}</h1>
+                            <h2>{item.name}</h2>
                             <p className="break-words">{item.price}</p>
                             <p className="break-words">Prioridade {item.priority}</p>
                             <p className="break-words">{item.description}</p>

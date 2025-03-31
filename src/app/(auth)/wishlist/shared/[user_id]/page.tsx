@@ -10,9 +10,11 @@ export default async function SharedWishlist({ params }: SharedWishlistParams) {
 
     return (
         <>
-            <Suspense fallback="Loading...">
-                <Wishlist user_id={user_id} />
-            </Suspense>
+            <div className="mt-4">
+                <Suspense fallback="Loading...">
+                    <Wishlist user_id={user_id} />
+                </Suspense>
+            </div>
         </>
     )
 }

@@ -41,6 +41,8 @@
     "eslint-config-next": "15.2.3",
     "kysely-codegen": "^0.18.3",
     "kysely-ctl": "^0.12.1",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
