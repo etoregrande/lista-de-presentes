@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 export const wishlistItemSchema = z.object({
     name: z
         .string()
@@ -12,7 +15,12 @@ export const wishlistItemSchema = z.object({
         .coerce.number()
         .nullable(),
     image: z
-        .string()
+        .any()
+        .refine((file) => file[0]?.size <= MAX_FILE_SIZE, `Tamanho máximo aceitado é 5MB`)
+        .refine(
+            (file) => ACCEPTED_IMAGE_TYPES.includes(file[0]?.type),
+            "Imagem deve ser .jpg, .jpeg, .png ou .webp"
+        )
         .nullable(),
     link: z
         .string()

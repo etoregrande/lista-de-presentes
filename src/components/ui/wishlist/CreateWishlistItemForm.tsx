@@ -9,29 +9,37 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { createWishlistItem } from "@/server/wishlistItem";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 
 export function CreateWishlistItemForm() {
+    const router = useRouter()
+    const [userId, setUserId] = useState<string>();
+
+    useEffect(() => {
+        const fetchSession = async () => {
+            const { data: session } = await authClient.getSession();
+            if (!session) {
+                router.push("/login");
+            } else {
+                setUserId(session.user.id);
+            }
+        };
+        fetchSession();
+    }, [router]);
+
     const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<CreateWishlistItemFormData>({
         // defaultValues: { email: "etore@test.com", password: "test1234" },
         resolver: zodResolver(createWishlistItemFormSchema)
     });
 
     const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormData> = async (data: CreateWishlistItemFormData) => {
-        console.log('form submited')
-        const response = await fetch("/api/wishlist", {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: { "Content-Type": "application/json" }
-        });
-
-        if (!response.ok) {
-            console.error("Error creating new item");
-            return;
-        }
-
-        return await response.json()
-    }
+        await createWishlistItem(data, userId!);
+        router.refresh()
+    };
 
     return (
         <form
@@ -80,8 +88,9 @@ export function CreateWishlistItemForm() {
                 <Input
                     {...register("image")}
                     id="image"
+                    type="file"
                 />
-                {errors.image && <div className="text-red-500">{errors.image.message}</div>}
+                {errors.image && <div className="text-red-500">{String(errors.image.message)}</div>}
             </div>
 
             <div className="grid w-full max-w-sm items-center gap-1.5">

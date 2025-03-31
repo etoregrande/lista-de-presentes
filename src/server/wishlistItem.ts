@@ -1,17 +1,45 @@
+'use server'
+
+import 'dotenv/config'
 import { CreateWishlistItemFormData } from "@/types/wishlistItem";
 import { db } from "@/lib/database/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { ObjectCannedACL, PutObjectCommand } from '@aws-sdk/client-s3';
+import { s3 } from '@/lib/database/s3';
+
 
 
 export const createWishlistItem = async (formData: CreateWishlistItemFormData, user_id: string) => {
     const { name, description, price, link, image, priority } = formData;
 
+    if (!process.env.BUCKET_NAME) {
+        throw new Error("Missing required environment variable: BUCKET_NAME");
+    }
+
+    let imageUrl: string | null = null
+    if (image) {
+        let imageBuffer = image[0].buffer ? image[0].buffer : Buffer.from(await image[0].arrayBuffer())
+
+        const params = {
+            Bucket: process.env.BUCKET_NAME,
+            Key: `${Date.now()}-${image[0].name}`,
+            Body: imageBuffer,
+            ContentType: image[0].type
+        };
+
+        const command = new PutObjectCommand(params)
+        const data = await s3.send(command)
+
+        imageUrl = `https://${process.env.BUCKET_NAME}.s3.${process.env.BUCKET_REGION}.amazonaws.com/${params.Key}`;
+    }
+
+
     const newWishlistItemData = {
         name: name ?? null,
         price: price ?? null,
         description: description ?? null,
-        image: image ?? null,
+        image: imageUrl ?? null,
         link: link ?? null,
         priority: priority ?? null,
         user_id: user_id ?? null
