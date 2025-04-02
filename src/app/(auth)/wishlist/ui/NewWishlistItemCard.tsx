@@ -10,17 +10,29 @@ import { authClient } from "@/lib/auth-client"
 import { createWishlistItem } from "@/server/wishlistItem"
 import { WishlistContext } from "../context/WishlistContext"
 import { useGetContext } from "../actions"
-
+import { useEffect } from "react"
 
 
 export const NewWishlistItemCard = () => {
     const formHook = useFormContext<CreateWishlistItemFormDataType>()
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = formHook
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setFocus,
+        formState: { errors, isSubmitting }
+    } = formHook
     const {
         router,
         newItem,
         setNewItem
     } = useGetContext(WishlistContext)
+
+    useEffect(() => {
+        if (newItem) {
+            setFocus("name");
+        }
+    }, [newItem, setFocus]);
 
     const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormDataType> = async (formData: CreateWishlistItemFormDataType) => {
 
@@ -29,9 +41,9 @@ export const NewWishlistItemCard = () => {
             throw new Error('Unable to get user data')
         }
 
-        setNewItem(false)
         await createWishlistItem(formData, session?.user.id);
-
+        setNewItem(false)
+        reset();
         router.refresh()
     };
 
@@ -73,7 +85,6 @@ export const NewWishlistItemCard = () => {
                     {errors.price && <div className="text-red-500">{errors.price.message}</div>}
                     <Button className="md:invisible">Enviar</Button>
                 </form>
-                <Button onClick={() => { console.log(newItem) }}>newItem</Button>
             </div>
         </div>
     )
