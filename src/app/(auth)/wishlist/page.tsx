@@ -6,7 +6,7 @@ import { listWishlistItems } from "@/server/wishlistItem";
 
 
 export default async function Page() {
-    const wishlist = await listWishlistItems()
+    const wishlistItems = await listWishlistItems()
 
     return (
         <>
@@ -16,7 +16,7 @@ export default async function Page() {
                     <CopyWishlistButton />
                 </div>
                 <Suspense fallback="Carregando...">
-                    <Wishlist initialWishlist={wishlist} />
+                    <Wishlist initialWishlist={wishlistItems} />
                 </Suspense>
             </div>
         </>
