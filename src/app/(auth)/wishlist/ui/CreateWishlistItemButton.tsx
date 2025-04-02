@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button/button";
 import { WishlistContext } from "@/app/(auth)/wishlist/context/WishlistContext";
-import { getContext } from "../actions";
+import { useGetContext } from "../actions";
 
 export const CreateWishlistItemButton = () => {
-    const { newItem, setNewItem } = getContext(WishlistContext)
+    const { newItem, setNewItem } = useGetContext(WishlistContext)
 
     const handleNewItem = () => {
         setNewItem(true)

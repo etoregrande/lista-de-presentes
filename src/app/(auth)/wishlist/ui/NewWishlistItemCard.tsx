@@ -9,7 +9,7 @@ import { SubmitHandler, useFormContext } from "react-hook-form"
 import { authClient } from "@/lib/auth-client"
 import { createWishlistItem } from "@/server/wishlistItem"
 import { WishlistContext } from "../context/WishlistContext"
-import { getContext } from "../actions"
+import { useGetContext } from "../actions"
 
 
 
@@ -20,7 +20,7 @@ export const NewWishlistItemCard = () => {
         router,
         newItem,
         setNewItem
-    } = getContext(WishlistContext)
+    } = useGetContext(WishlistContext)
 
     const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormDataType> = async (formData: CreateWishlistItemFormDataType) => {
 

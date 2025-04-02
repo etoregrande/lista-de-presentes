@@ -1,10 +1,10 @@
-import { Context, useContext } from "react"
+import { Context, useContext } from "react";
 
-export const getContext = (context: Context<any | null>) => {
-    const contextParams = useContext(context)
+export function useGetContext<T>(context: Context<T | null>) {
+    const contextParams = useContext(context);
     if (!contextParams) {
-        throw new Error('NewWishlistItemCard must be used within a WishlistContextProvider')
+        throw new Error("Este componente deve ser usado dentro do contexto apropriado");
     }
 
-    return contextParams
+    return contextParams;
 }
