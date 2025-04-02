@@ -11,7 +11,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export interface Account {
+export interface AccountDB {
     accessToken: string | null;
     accessTokenExpiresAt: Timestamp | null;
     accountId: string;
@@ -27,7 +27,7 @@ export interface Account {
     userId: string;
 }
 
-export interface Session {
+export interface SessionDB {
     createdAt: Timestamp;
     expiresAt: Timestamp;
     id: string;
@@ -38,7 +38,7 @@ export interface Session {
     userId: string;
 }
 
-export interface User {
+export interface UserDB {
     createdAt: Timestamp;
     email: string;
     emailVerified: boolean;
@@ -48,7 +48,7 @@ export interface User {
     updatedAt: Timestamp;
 }
 
-export interface Verification {
+export interface VerificationDB {
     createdAt: Timestamp | null;
     expiresAt: Timestamp;
     id: string;
@@ -57,7 +57,7 @@ export interface Verification {
     value: string;
 }
 
-export interface WishlistItem {
+export interface WishlistItemDB {
     created_at: Generated<Timestamp>;
     description: string | null;
     id: Generated<string>;
@@ -73,9 +73,9 @@ export interface WishlistItem {
 }
 
 export interface DB {
-    account: Account;
-    session: Session;
-    user: User;
-    verification: Verification;
-    wishlist_item: WishlistItem;
+    account: AccountDB;
+    session: SessionDB;
+    user: UserDB;
+    verification: VerificationDB;
+    wishlist_item: WishlistItemDB;
 }

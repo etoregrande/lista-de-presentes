@@ -1,16 +1,16 @@
 'use server'
 
 import 'dotenv/config'
-import { CreateWishlistItemFormData } from "@/types/wishlistItem";
+import { type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
 import { db } from "@/lib/database/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { ObjectCannedACL, PutObjectCommand } from '@aws-sdk/client-s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3 } from '@/lib/database/s3';
 
 
 
-export const createWishlistItem = async (formData: CreateWishlistItemFormData, user_id: string) => {
+export const createWishlistItem = async (formData: CreateWishlistItemFormDataType, user_id: string) => {
     const { name, description, price, link, image, priority } = formData;
 
     if (!process.env.BUCKET_NAME) {
@@ -18,7 +18,8 @@ export const createWishlistItem = async (formData: CreateWishlistItemFormData, u
     }
 
     let imageUrl: string | null = null
-    if (image[0]) {
+
+    if (image?.[0]) {
         const imageBuffer = image[0].buffer ? image[0].buffer : Buffer.from(await image[0].arrayBuffer())
 
         const params = {
@@ -65,7 +66,7 @@ export const createWishlistItem = async (formData: CreateWishlistItemFormData, u
 }
 
 
-export const listWishListItems = async (user_id?: string) => {
+export const listWishlistItems = async (user_id?: string) => {
     let userId
 
     if (!user_id) {

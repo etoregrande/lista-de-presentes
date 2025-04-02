@@ -51,3 +51,14 @@ export const createWishlistItemFormSchema = wishlistItemSchema.omit({
     isPurchased: true,
     purchasedAt: true
 });
+
+export const createWishlistItemButtonSchema = wishlistItemSchema.omit({
+    description: true,
+    price: true,
+    image: true,
+    link: true,
+    priority: true,
+    isActive: true,
+    isPurchased: true,
+    purchasedAt: true
+});

@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type CreateWishlistItemFormData } from "@/types/wishlistItem";
+import { type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
 import { createWishlistItemFormSchema } from "@/schemas/wishlistItem";
 import { Button } from "@/components/ui/button/button";
 import { Label } from "@/components/ui/label";
@@ -31,12 +31,8 @@ export function CreateWishlistItemForm() {
         fetchSession();
     }, [router]);
 
-    const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<CreateWishlistItemFormData>({
-        // defaultValues: { email: "etore@test.com", password: "test1234" },
-        resolver: zodResolver(createWishlistItemFormSchema)
-    });
 
-    const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormData> = async (data: CreateWishlistItemFormData) => {
+    const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormDataType> = async (data: CreateWishlistItemFormDataType) => {
         await createWishlistItem(data, userId!);
         router.refresh()
     };

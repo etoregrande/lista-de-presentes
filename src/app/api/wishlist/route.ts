@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createWishlistItem, listWishListItems } from "@/server/wishlistItem";
+import { createWishlistItem, listWishlistItems } from "@/server/wishlistItem";
 import { getSessionOnServer } from "@/server/session";
 
 export async function POST(request: NextRequest) {
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 //     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
 //     try {
-//         const wishlistItems = listWishListItems(session.user.id)
+//         const wishlistItems = listWishlistItems(session.user.id)
 //         return NextResponse.json(wishlistItems);
 
 //     } catch (error) {

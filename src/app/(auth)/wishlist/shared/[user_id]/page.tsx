@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Wishlist } from "@/components/ui/wishlist/wishlist";
+import { Wishlist } from "@/app/(auth)/wishlist/ui/wishlist";
 
 interface SharedWishlistParams {
     params: Promise<{ user_id: string }>;

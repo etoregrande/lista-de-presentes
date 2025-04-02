@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
@@ -27,6 +28,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {process.env.NODE_ENV === "development" && (
+          <div className="flex justify-center bg-red-500 text-white w-full p-2">
+            <p>Development</p>
+          </div>
+        )}
         {children}
       </body>
     </html>
