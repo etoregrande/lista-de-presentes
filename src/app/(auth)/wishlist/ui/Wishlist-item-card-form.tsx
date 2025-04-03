@@ -8,12 +8,12 @@ import { CreateWishlistItemFormDataType } from "@/types/wishlistItem"
 import { SubmitHandler, useFormContext } from "react-hook-form"
 import { authClient } from "@/lib/auth-client"
 import { createWishlistItem } from "@/server/wishlistItem"
-import { WishlistContext } from "../context/WishlistContext"
+import { WishlistContext } from "../context/Wishlist-context"
 import { useGetContext } from "../actions"
 import { useEffect } from "react"
 
 
-export const NewWishlistItemCard = () => {
+export const WishlistItemCardForm = () => {
     const formHook = useFormContext<CreateWishlistItemFormDataType>()
     const {
         register,

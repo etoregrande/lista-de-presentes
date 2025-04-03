@@ -1,6 +1,6 @@
 import { listWishlistItems } from "@/server/wishlistItem";
 import { Suspense } from "react";
-import { SharedWishlist } from "../../ui/SharedWishlist";
+import { SharedWishlist } from "../../ui/Wishlist-shared";
 
 interface SharedWishlistParams {
     params: Promise<{ userId: string }>;

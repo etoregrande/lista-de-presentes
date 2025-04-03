@@ -1,7 +1,7 @@
 'use client'
 
-import { WishlistItemCard } from "./WishlistItemCard";
-import { EmptyWishlist } from "./EmptyWishlist";
+import { WishlistItemCard } from "./Wishlist-item-card";
+import { EmptyWishlist } from "./Wishlist-empty";
 import { WishlistItem } from "@/types/wishlistItem";
 
 interface WishlistProps {
@@ -18,7 +18,7 @@ export function SharedWishlist({ initialWishlist }: WishlistProps) {
                 {initialWishlist
                     .slice()
                     .reverse()
-                    .map((wishlistItem) => <WishlistItemCard key={wishlistItem.id}{...wishlistItem} />
+                    .map((wishlistItem) => <WishlistItemCard key={wishlistItem.id} wishlistItem={wishlistItem} />
                     )}
             </div>
         </>

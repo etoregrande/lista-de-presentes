@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from "@/components/ui/button/button";
-import { WishlistContext } from "@/app/(auth)/wishlist/context/WishlistContext";
+import { WishlistContext } from "@/app/(auth)/wishlist/context/Wishlist-context";
 import { useGetContext } from "../actions";
 
 export const CreateWishlistItemButton = () => {

@@ -1,15 +1,32 @@
 import { WishlistItem } from "@/types/wishlistItem"
 import Image from "next/image"
-import placeholder from '@/../public/assets/image-placeholder.svg'
+import { setImageSrc, useGetContext } from "../actions"
+import { WishlistContext } from "../context/Wishlist-context"
+import { useSearchParams } from "next/navigation"
 
-export const WishlistItemCard = (wishlistItem: WishlistItem) => {
-    const imageSrc =
-        wishlistItem.image && (wishlistItem.image.startsWith("http") || wishlistItem.image.startsWith("/"))
-            ? wishlistItem.image
-            : placeholder;
+interface WishlistItemCardProps {
+    wishlistItem: WishlistItem
+}
+
+export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
+    const { router } = useGetContext(WishlistContext)
+    const searchParams = useSearchParams()
+    const imageSrc = setImageSrc(wishlistItem)
+
+    const handleOpenWishlistItemCardDetails = () => {
+        console.log('Card click')
+        const params = new URLSearchParams(searchParams.toString())
+        if (!wishlistItem.id) {
+            throw new Error('Unable to get wishlist item id')
+        }
+
+        params.set('item', wishlistItem.id)
+        router.push(`wishlist?item=${wishlistItem.id}`)
+    }
 
     return (
         <div
+            onClick={handleOpenWishlistItemCardDetails}
             className="bg-white flex flex-row h-60 rounded-2xl hover:drop-shadow-xl hover:bg- transition-all"
         >
             <div className="w-2/5 h-full relative">

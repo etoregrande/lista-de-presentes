@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { SignOutButton } from "@/components/ui/button/signOutButton";
-import { CopyWishlistButton } from "@/app/(auth)/wishlist/ui/CopyWishlistButton";
+import { CopyWishlistButton } from "@/app/(auth)/wishlist/ui/Copy-wishlist-button";
 import { Wishlist } from "@/app/(auth)/wishlist/ui/Wishlist";
 import { listWishlistItems } from "@/server/wishlistItem";
 
