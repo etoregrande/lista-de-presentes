@@ -38,7 +38,7 @@ export const createWishlistItem = async (formData: CreateWishlistItemFormDataTyp
 
     const newWishlistItemData = {
         name: name ?? null,
-        price: price ?? null,
+        price: price ? price * 100 : null,
         description: description ?? null,
         image: imageUrl ?? null,
         link: link ?? null,

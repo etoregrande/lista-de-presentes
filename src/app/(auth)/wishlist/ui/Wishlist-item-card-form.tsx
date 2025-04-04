@@ -5,12 +5,13 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button/button"
 import { CreateWishlistItemFormDataType } from "@/types/wishlistItem"
-import { SubmitHandler, useFormContext } from "react-hook-form"
+import { Controller, SubmitHandler, useFormContext } from "react-hook-form"
 import { authClient } from "@/lib/auth-client"
 import { createWishlistItem } from "@/server/wishlistItem"
 import { WishlistContext } from "../context/Wishlist-context"
 import { useGetContext } from "../actions"
 import { useEffect } from "react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
 export const WishlistItemCardForm = () => {
@@ -40,7 +41,7 @@ export const WishlistItemCardForm = () => {
         if (!session) {
             throw new Error('Unable to get user data')
         }
-
+        console.log(formData)
         await createWishlistItem(formData, session?.user.id);
         setNewItem(false)
         reset();
@@ -76,13 +77,41 @@ export const WishlistItemCardForm = () => {
                         placeholder="Nome do item"
                     />
                     {errors.name && <div className="text-red-500">{errors.name.message}</div>}
+
                     <Label htmlFor="Nome">Preço</Label>
                     <Input
                         {...register("price")}
                         id="price"
                         type="number"
+                        step="any"
                     />
                     {errors.price && <div className="text-red-500">{errors.price.message}</div>}
+
+                    <div className="grid w-full items-center gap-1.5">
+                        <Label htmlFor="priority">Prioridade</Label>
+                        <Controller
+                            name="priority"
+                            control={formHook.control}
+                            defaultValue="normal"
+                            render={({ field }) => (
+                                <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Selecione a prioridade" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="alta">Alta</SelectItem>
+                                        <SelectItem value="normal">Normal</SelectItem>
+                                        <SelectItem value="baixa">Baixa</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                        {errors.priority && <div className="text-red-500">{errors.priority.message}</div>}
+                    </div>
+
                     <Button className="md:invisible">Enviar</Button>
                 </form>
             </div>
