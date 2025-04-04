@@ -21,7 +21,7 @@ export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
         }
 
         params.set('item', wishlistItem.id)
-        router.push(`wishlist?item=${wishlistItem.id}`, { scroll: false })
+        router.push(`wishlist?item=${wishlistItem.id}`, { scroll: false, shallow: true })
     }
 
     return (

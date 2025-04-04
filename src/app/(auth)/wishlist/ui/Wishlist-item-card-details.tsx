@@ -36,7 +36,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
     return (
 
         <div
-            onClick={() => router.push('/wishlist', { scroll: false })}
+            onClick={() => router.push('/wishlist', { scroll: false, shallow: true })}
             className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.5)]"
         >
             <div
@@ -123,7 +123,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
 
                         <div className="flex gap-3 justify-end">
                             <Button
-                                onClick={() => router.push('/wishlist', { scroll: false })}
+                                onClick={() => router.push('/wishlist', { scroll: false, shallow: true })}
                                 variant={"secondary"}
                             >
                                 Cancelar
