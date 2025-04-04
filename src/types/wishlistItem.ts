@@ -14,7 +14,7 @@ export interface WishlistItem {
     link?: string | null;
     name: string;
     price?: number | null;
-    priority: Priority;
+    priority: string;
     purchased_at?: Date | null;
     user_id?: string;
 }
