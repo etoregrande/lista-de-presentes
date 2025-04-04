@@ -36,15 +36,15 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
     return (
 
         <div
-            onClick={() => router.push('/wishlist', { scroll: false, shallow: true })}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.5)]"
+            onClick={() => router.push('/wishlist', { scroll: false })}
+            className="flex fixed inset-0 z-50 items-center justify-center md:bg-[rgba(0,0,0,0.5)]"
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex flex-col bg-white p-6 rounded-2xl shadow-lg w-full max-w-xl"
+                className="flex flex-col bg-white md:p-6 md:rounded-2xl shadow-lg w-full md:max-w-xl h-full md:h-auto overflow-y-auto"
             >
-                <div className="flex flew-row gap-4">
-                    <div className="w-1/2 relative">
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="md:w-1/2 w-full relative aspect-square md:aspect-auto md:h-auto max-h-80 md:max-h-none">
                         <Image
                             src={imageSrc}
                             alt="Imagem do produto"
@@ -53,7 +53,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
                             priority />
                     </div>
 
-                    <div className="w-1/2 flex flex-col gap-4">
+                    <div className="p-4 md:p-0 md:w-1/2 w-full flex flex-col flex-grow gap-4">
                         <h2 className="">{wishlistItem?.name}</h2>
                         <div className="grid w-full items-center gap-1.5">
                             <Label htmlFor="name">Nome</Label>
@@ -123,7 +123,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
 
                         <div className="flex gap-3 justify-end">
                             <Button
-                                onClick={() => router.push('/wishlist', { scroll: false, shallow: true })}
+                                onClick={() => router.push('/wishlist', { scroll: false })}
                                 variant={"secondary"}
                             >
                                 Cancelar
