@@ -10,10 +10,9 @@ interface WishlistItemCardDetailProps {
 }
 
 export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetailProps) => {
-    if (!wishlistItem) return null
-
     const { router } = useGetContext(WishlistContext)
 
+    if (!wishlistItem) return null
     const imageSrc = setImageSrc(wishlistItem)
 
     return (
