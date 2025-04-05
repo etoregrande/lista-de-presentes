@@ -48,7 +48,7 @@ export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
                     <p className="break-words">Prioridade {wishlistItem.priority}</p>
                 }
                 {wishlistItem.link &&
-                    <p className="break-words">{wishlistItem.link}</p>
+                    <p className="truncate">{wishlistItem.link}</p>
                 }
                 {wishlistItem.description &&
                     <p className="break-words">{wishlistItem.description}</p>

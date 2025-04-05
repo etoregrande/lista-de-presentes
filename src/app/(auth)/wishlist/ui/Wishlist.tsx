@@ -1,6 +1,6 @@
 'use client'
 
-import { CreateWishlistItemFormDataType, Priority, WishlistItem } from "@/types/wishlistItem";
+import { WishlistItemFormDataType, Priority, WishlistItem } from "@/types/wishlistItem";
 import { FormProvider, useForm } from "react-hook-form";
 import { WishlistItemCard } from "./Wishlist-item-card";
 import { WishlistItemCardForm } from "./Wishlist-item-card-form";
@@ -21,21 +21,11 @@ interface WishlistProps {
 
 export function Wishlist({ initialWishlist }: WishlistProps) {
     const searchParams = useSearchParams()
-    const router = useRouter()
     const itemId = searchParams.get("item")
     const isEmpty = initialWishlist.length === 0;
     const openedWishlistItem = initialWishlist.find((wishlistItem) => wishlistItem.id === itemId)
-    const priorityOrder: Record<Priority, number> = {
-        alta: 0,
-        normal: 1,
-        baixa: 2,
-    };
 
-    const sortedWishlist = initialWishlist.slice().sort((a, b) => {
-        return priorityOrder[a.priority as Priority] - priorityOrder[b.priority as Priority];
-    });
-
-    const formHook = useForm<CreateWishlistItemFormDataType>({
+    const formHook = useForm<WishlistItemFormDataType>({
         resolver: zodResolver(createWishlistItemFormSchema),
         defaultValues: {
             name: "",
@@ -43,25 +33,9 @@ export function Wishlist({ initialWishlist }: WishlistProps) {
             price: undefined,
             image: undefined,
             link: "",
-            priority: "normal",
+            priority: "normal"
         }
     });
-
-    useEffect(() => {
-        if (openedWishlistItem) {
-            formHook.reset({
-                name: openedWishlistItem.name || "",
-                description: openedWishlistItem.description || "",
-                price: typeof openedWishlistItem.price === "number" &&
-                    openedWishlistItem.price > 0
-                    ? openedWishlistItem.price / 100
-                    : undefined,
-                image: undefined,
-                link: openedWishlistItem.link || "",
-                priority: openedWishlistItem.priority || "normal",
-            });
-        }
-    }, [openedWishlistItem, formHook]);
 
     useEffect(() => {
         if (itemId) {
@@ -80,13 +54,14 @@ export function Wishlist({ initialWishlist }: WishlistProps) {
         <>
             <WishlistContextProvider>
                 <FormProvider {...formHook}>
-                    {/* Modal component */}
                     <WishlistItemCardDetails wishlistItem={openedWishlistItem} />
                     <CreateWishlistItemButton />
                     <EmptyWishlist isEmpty={isEmpty} />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"  >
                         <WishlistItemCardForm />
                         {initialWishlist
+                            .slice()
+                            .reverse()
                             .map((wishlistItem) =>
                                 <WishlistItemCard
                                     key={wishlistItem.id}

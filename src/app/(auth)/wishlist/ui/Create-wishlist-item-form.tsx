@@ -1,7 +1,7 @@
 // 'use client'
 
 // import { zodResolver } from "@hookform/resolvers/zod";
-// import { type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
+// import { type WishlistItemFormDataType } from "@/types/wishlistItem";
 // import { createWishlistItemFormSchema } from "@/schemas/wishlistItem";
 // import { Button } from "@/components/ui/button/button";
 // import { Label } from "@/components/ui/label";
@@ -32,7 +32,7 @@
 //     }, [router]);
 
 
-//     const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormDataType> = async (data: CreateWishlistItemFormDataType) => {
+//     const handleCreateWishlistItem: SubmitHandler<WishlistItemFormDataType> = async (data: WishlistItemFormDataType) => {
 //         await createWishlistItem(data, userId!);
 //         router.refresh()
 //     };
