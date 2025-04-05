@@ -1,6 +1,6 @@
 'use client'
 
-import { WishlistItemFormDataType, Priority, WishlistItem } from "@/types/wishlistItem";
+import { CreateWishlistItemFormDataType, WishlistItem } from "@/types/wishlistItem";
 import { FormProvider, useForm } from "react-hook-form";
 import { WishlistItemCard } from "./Wishlist-item-card";
 import { WishlistItemCardForm } from "./Wishlist-item-card-form";
@@ -10,7 +10,6 @@ import { createWishlistItemFormSchema } from "@/schemas/wishlistItem";
 import { CreateWishlistItemButton } from "./Create-wishlist-item-button";
 import { EmptyWishlist } from "./Wishlist-empty";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { WishlistItemCardDetails } from "./Wishlist-item-card-details";
 
@@ -25,16 +24,8 @@ export function Wishlist({ initialWishlist }: WishlistProps) {
     const isEmpty = initialWishlist.length === 0;
     const openedWishlistItem = initialWishlist.find((wishlistItem) => wishlistItem.id === itemId)
 
-    const formHook = useForm<WishlistItemFormDataType>({
+    const formHook = useForm<CreateWishlistItemFormDataType>({
         resolver: zodResolver(createWishlistItemFormSchema),
-        defaultValues: {
-            name: "",
-            description: "",
-            price: undefined,
-            image: undefined,
-            link: "",
-            priority: "normal"
-        }
     });
 
     useEffect(() => {
@@ -56,7 +47,6 @@ export function Wishlist({ initialWishlist }: WishlistProps) {
                 <FormProvider {...formHook}>
                     <WishlistItemCardDetails wishlistItem={openedWishlistItem} />
                     <CreateWishlistItemButton />
-                    <EmptyWishlist isEmpty={isEmpty} />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"  >
                         <WishlistItemCardForm />
                         {initialWishlist
@@ -69,6 +59,7 @@ export function Wishlist({ initialWishlist }: WishlistProps) {
                                 />
                             )}
                     </div>
+                    <EmptyWishlist isEmpty={isEmpty} />
                 </FormProvider>
             </WishlistContextProvider>
         </>

@@ -31,7 +31,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
     } = useForm<EditWishlistItemFormDataType>({
         defaultValues: {
             name: wishlistItem?.name,
-            description: wishlistItem?.description,
+            description: wishlistItem?.description || undefined,
             price: wishlistItem?.price,
             link: wishlistItem?.link,
             priority: wishlistItem?.priority,
@@ -43,7 +43,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
         if (wishlistItem) {
             reset({
                 name: wishlistItem.name,
-                description: wishlistItem.description,
+                description: wishlistItem.description || undefined,
                 price: wishlistItem.price,
                 link: wishlistItem.link,
                 priority: wishlistItem.priority,

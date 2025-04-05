@@ -6,7 +6,7 @@ export type EditWishlistItemFormDataType = z.infer<typeof editWishlistItemFormSc
 
 export interface WishlistItem {
     created_at?: Date;
-    description?: string | undefined;
+    description?: string | null;
     id?: string;
     image?: string | null;
     is_active?: boolean;
