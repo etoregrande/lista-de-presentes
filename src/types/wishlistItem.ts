@@ -1,12 +1,12 @@
-import { createWishlistItemButtonSchema, createWishlistItemFormSchema } from "@/schemas/wishlistItem";
+import { createWishlistItemFormSchema, editWishlistItemFormSchema } from "@/schemas/wishlistItem";
 import { z } from "zod";
 
 export type CreateWishlistItemFormDataType = z.infer<typeof createWishlistItemFormSchema>;
-export type CreateWishlistItemButtonType = z.infer<typeof createWishlistItemButtonSchema>;
+export type EditWishlistItemFormDataType = z.infer<typeof editWishlistItemFormSchema>;
 
 export interface WishlistItem {
     created_at?: Date;
-    description?: string | null;
+    description?: string | undefined;
     id?: string;
     image?: string | null;
     is_active?: boolean;

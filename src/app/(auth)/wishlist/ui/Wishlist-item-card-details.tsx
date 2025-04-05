@@ -1,6 +1,6 @@
 'use client'
 
-import { CreateWishlistItemFormDataType, WishlistItem } from "@/types/wishlistItem"
+import { WishlistItem, EditWishlistItemFormDataType } from "@/types/wishlistItem"
 import { setImageSrc, useGetContext } from "../actions"
 import { WishlistContext } from "../context/Wishlist-context"
 import { Input } from "@/components/ui/input"
@@ -9,7 +9,11 @@ import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Controller, useFormContext } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
+import { editWishlistItem } from "@/server/wishlistItem"
+import { authClient } from "@/lib/auth-client"
+import { Toggle } from "@/components/ui/toggle"
+import { useEffect } from "react"
 
 interface WishlistItemCardDetailProps {
     wishlistItem: WishlistItem | undefined
@@ -17,20 +21,60 @@ interface WishlistItemCardDetailProps {
 
 export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetailProps) => {
     const { router } = useGetContext(WishlistContext)
-    const formHook = useFormContext<CreateWishlistItemFormDataType>()
     const {
         register,
         handleSubmit,
         reset,
         setFocus,
+        control,
         formState: { errors, isSubmitting }
-    } = formHook
+    } = useForm<EditWishlistItemFormDataType>({
+        defaultValues: {
+            name: wishlistItem?.name,
+            description: wishlistItem?.description,
+            price: wishlistItem?.price,
+            link: wishlistItem?.link,
+            priority: wishlistItem?.priority,
+            isActive: wishlistItem?.is_active
+        }
+    })
+
+    useEffect(() => {
+        if (wishlistItem) {
+            reset({
+                name: wishlistItem.name,
+                description: wishlistItem.description,
+                price: wishlistItem.price,
+                link: wishlistItem.link,
+                priority: wishlistItem.priority,
+                isActive: wishlistItem.is_active
+            })
+        }
+    }, [wishlistItem, reset])
 
     if (!wishlistItem) return null
     const imageSrc = setImageSrc(wishlistItem)
 
-    const handleEditWishlistItem = async (formData: CreateWishlistItemFormDataType) => {
+    const handleCloseModal = () => {
+        router.push('/wishlist', { scroll: false })
+        reset()
+    }
 
+    const handleEditWishlistItem = async (formData: EditWishlistItemFormDataType) => {
+        console.log('formData', formData)
+        const { data: session } = await authClient.getSession()
+        if (!session) {
+            throw new Error('Unable to get user data')
+        }
+
+        if (!wishlistItem.id) {
+            throw new Error('Unable to get wishlist item id')
+        }
+
+        await editWishlistItem(formData, wishlistItem.id, session.user.id)
+
+        router.refresh()
+        router.push('/wishlist', { scroll: false })
     }
 
     return (
@@ -53,8 +97,27 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
                             priority />
                     </div>
 
-                    <div className="p-4 md:p-0 md:w-1/2 w-full flex flex-col flex-grow gap-4">
+                    <form
+                        onSubmit={handleSubmit(handleEditWishlistItem)}
+                        className="p-4 md:p-0 md:w-1/2 w-full flex flex-col flex-grow gap-4"
+                    >
                         <h2 className="">{wishlistItem?.name}</h2>
+                        <div className="grid w-full items-center gap-1.5">
+                            <Controller
+                                control={control}
+                                name="isActive"
+                                render={({ field }) => (
+                                    <Toggle
+                                        pressed={field.value!}
+                                        onPressedChange={field.onChange}
+                                    >
+                                        {field.value ? "Produto visível" : "Produto invisível"}
+                                    </Toggle>
+                                )}
+                            />
+                            {errors.isActive && <div className="text-red-500">{errors.isActive.message}</div>}
+                        </div>
+
                         <div className="grid w-full items-center gap-1.5">
                             <Label htmlFor="name">Nome</Label>
                             <Input
@@ -102,7 +165,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
                         <div className="grid w-full items-center gap-1.5">
                             <Label htmlFor="priority">Prioridade</Label>
                             <Controller
-                                control={formHook.control}
+                                control={control}
                                 name="priority"
                                 defaultValue="normal"
                                 render={({ field }) => (
@@ -123,14 +186,22 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
 
                         <div className="flex gap-3 justify-end">
                             <Button
-                                onClick={() => router.push('/wishlist', { scroll: false })}
+                                onClick={handleCloseModal}
+                                type="button"
                                 variant={"secondary"}
+                                className="flex-1"
                             >
                                 Cancelar
                             </Button>
-                            <Button>Salvar</Button>
+                            <Button
+                                className="flex-1"
+                                type="submit"
+                                disabled={isSubmitting}
+                            >
+                                Salvar
+                            </Button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div >

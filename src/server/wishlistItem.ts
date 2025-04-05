@@ -1,49 +1,22 @@
 'use server'
 
 import 'dotenv/config'
-import { type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
+import { EditWishlistItemFormDataType, WishlistItem, type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
 import { db } from "@/lib/database/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3 } from '@/lib/database/s3';
 
 
 
-export const createWishlistItem = async (formData: CreateWishlistItemFormDataType, user_id: string) => {
-    const { name, description, price, link, image, priority } = formData;
-
-    if (!process.env.BUCKET_NAME) {
-        throw new Error("Missing required environment variable: BUCKET_NAME");
-    }
-
-    let imageUrl: string | null = null
-
-    if (image?.[0]) {
-        const imageBuffer = image[0].buffer ? image[0].buffer : Buffer.from(await image[0].arrayBuffer())
-
-        const params = {
-            Bucket: process.env.BUCKET_NAME,
-            Key: `${Date.now()}-${image[0].name}`,
-            Body: imageBuffer,
-            ContentType: image[0].type
-        };
-
-        const command = new PutObjectCommand(params)
-        const data = await s3.send(command)
-
-        imageUrl = `https://${process.env.BUCKET_NAME}.s3.${process.env.BUCKET_REGION}.amazonaws.com/${params.Key}`;
-    }
-
+export const createWishlistItem = async (formData: CreateWishlistItemFormDataType, userId: string) => {
+    const { name, link } = formData;
 
     const newWishlistItemData = {
-        name: name ?? null,
-        price: price ? price * 100 : null,
-        description: description ?? null,
-        image: imageUrl ?? null,
-        link: link ?? null,
-        priority: priority ?? null,
-        user_id: user_id ?? null
+        name: name,
+        link: link ?? undefined,
+        user_id: userId ?? null,
     }
 
     try {
@@ -64,7 +37,6 @@ export const createWishlistItem = async (formData: CreateWishlistItemFormDataTyp
         return null;
     }
 }
-
 
 export const listWishlistItems = async (user_id?: string) => {
     let userId
@@ -94,5 +66,82 @@ export const listWishlistItems = async (user_id?: string) => {
     } catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch Wishlist items.');
+    }
+}
+
+export const editWishlistItem = async (
+    formData: EditWishlistItemFormDataType,
+    wishlistItemId: string,
+    userId: string
+) => {
+    const { name, description, price, link, image, priority, isActive } = formData;
+    let imageUrl: string | null = null
+
+    if (image?.[0]) {
+        try {
+            const imageBuffer = image[0].buffer ? image[0].buffer : Buffer.from(await image[0].arrayBuffer())
+
+            const params = {
+                Bucket: process.env.BUCKET_NAME,
+                Key: `${Date.now()}-${image[0].name}`,
+                Body: imageBuffer,
+                ContentType: image[0].type
+            };
+
+            const command = new PutObjectCommand(params)
+            await s3.send(command)
+
+            imageUrl = `https://${process.env.BUCKET_NAME}.s3.${process.env.BUCKET_REGION}.amazonaws.com/${params.Key}`;
+
+            const existingItem = await db
+                .selectFrom("wishlist_item")
+                .select(["image"])
+                .where("id", "=", wishlistItemId)
+                .where("user_id", "=", userId)
+                .executeTakeFirst();
+
+            if (existingItem?.image) {
+                const imageKey = existingItem.image.split('/').pop()
+                const deleteParams = {
+                    Bucket: process.env.BUCKET_NAME,
+                    Key: imageKey
+                };
+                await s3.send(new DeleteObjectCommand(deleteParams));
+            }
+        } catch (error) {
+            throw new Error('Error handling images on S3')
+        }
+    }
+
+    const editedWishlistItemData: WishlistItem = {
+        name: name,
+        price: price ? price * 100 : null,
+        description: description ?? undefined,
+        link: link ?? undefined,
+        priority: priority,
+        is_active: isActive,
+    }
+
+    if (imageUrl) {
+        editedWishlistItemData.image = imageUrl
+    }
+
+    try {
+        const editedWishlistItem = await db
+            .updateTable("wishlist_item")
+            .set(editedWishlistItemData)
+            .where("id", "=", wishlistItemId)
+            .returning(["id", "name", "description", "price", "link", "image", "priority", "user_id", "is_active"])
+            .executeTakeFirst();
+
+        if (!editedWishlistItem) {
+            throw new Error('Error editing wishlist item')
+        }
+
+        return editedWishlistItem;
+
+    } catch (error) {
+        console.error("Error creating wishlist item =>", error);
+        return null;
     }
 }

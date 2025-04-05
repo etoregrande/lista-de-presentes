@@ -35,30 +35,28 @@ export const wishlistItemSchema = z.object({
             message: 'Prioridade deve ser "alta", "normal", or "baixa"',
         })
         .default('normal'),
-    isActive: z
-        .boolean()
-        .nullable(),
     isPurchased: z
         .boolean()
         .nullable(),
     purchasedAt: z
         .date()
         .nullable(),
+    isActive: z
+        .boolean()
 });
+
 
 export const createWishlistItemFormSchema = wishlistItemSchema.omit({
-    isActive: true,
-    isPurchased: true,
-    purchasedAt: true
-});
-
-export const createWishlistItemButtonSchema = wishlistItemSchema.omit({
     description: true,
     price: true,
     image: true,
-    link: true,
     priority: true,
-    isActive: true,
+    isPurchased: true,
+    purchasedAt: true,
+    isActive: true
+});
+
+export const editWishlistItemFormSchema = wishlistItemSchema.omit({
     isPurchased: true,
     purchasedAt: true
-});
+})
