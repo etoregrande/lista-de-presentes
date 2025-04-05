@@ -32,7 +32,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
         defaultValues: {
             name: wishlistItem?.name,
             description: wishlistItem?.description || undefined,
-            price: wishlistItem?.price,
+            price: wishlistItem?.price ? wishlistItem.price / 100 : undefined,
             link: wishlistItem?.link,
             priority: wishlistItem?.priority,
             isActive: wishlistItem?.is_active
