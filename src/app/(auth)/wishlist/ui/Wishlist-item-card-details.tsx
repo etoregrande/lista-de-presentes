@@ -1,8 +1,7 @@
 'use client'
 
 import { WishlistItem, EditWishlistItemFormDataType } from "@/types/wishlistItem"
-import { setImageSrc, useGetContext } from "../actions"
-import { WishlistContext } from "../context/Wishlist-context"
+import { setImageSrc } from "../actions"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button/button"
 import { Label } from "@/components/ui/label"
@@ -16,6 +15,8 @@ import { Toggle } from "@/components/ui/toggle"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { LoaderCircle, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+
 
 interface WishlistItemCardDetailsProps {
     wishlistItem: WishlistItem
@@ -24,8 +25,7 @@ interface WishlistItemCardDetailsProps {
 
 
 export const WishlistItemCardDetails = ({ wishlistItem, setWishlistItem }: WishlistItemCardDetailsProps) => {
-
-    const { router } = useGetContext(WishlistContext)
+    const router = useRouter()
     const {
         register,
         handleSubmit,
@@ -44,6 +44,7 @@ export const WishlistItemCardDetails = ({ wishlistItem, setWishlistItem }: Wishl
     })
     const [isLoading, setIsloading] = useState(false)
 
+
     useEffect(() => {
         if (wishlistItem) {
             reset({
@@ -57,10 +58,12 @@ export const WishlistItemCardDetails = ({ wishlistItem, setWishlistItem }: Wishl
         }
     }, [wishlistItem, reset])
 
+
     const handleCloseModal = () => {
         setWishlistItem(null)
         reset()
     }
+
 
     const handleDeleteWishlistItem = async () => {
         if (!wishlistItem.id) {
@@ -74,6 +77,7 @@ export const WishlistItemCardDetails = ({ wishlistItem, setWishlistItem }: Wishl
         setIsloading(false)
         handleCloseModal()
     }
+
 
     const handleEditWishlistItem = async (formData: EditWishlistItemFormDataType) => {
         const { data: session } = await authClient.getSession()
@@ -91,10 +95,9 @@ export const WishlistItemCardDetails = ({ wishlistItem, setWishlistItem }: Wishl
         handleCloseModal()
     }
 
+
     const imageSrc = setImageSrc(wishlistItem)
-
     return (
-
         <motion.div
             onClick={handleCloseModal}
             className="flex fixed inset-0 z-50 items-center justify-center md:bg-[rgba(0,0,0,0.5)]"

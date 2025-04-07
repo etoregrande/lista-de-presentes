@@ -1,13 +1,9 @@
-import { useGetContext } from "../actions"
-import { WishlistContext } from "../context/Wishlist-context"
-
 type EmptyWishlistProps = {
     isEmpty: boolean
+    newItem?: boolean
 }
 
-export const EmptyWishlist = ({ isEmpty }: EmptyWishlistProps) => {
-    const { newItem } = useGetContext(WishlistContext)
-
+export const EmptyWishlist = ({ isEmpty, newItem }: EmptyWishlistProps) => {
     return (
         isEmpty && !newItem &&
         <div className="flex justify-center min-h-60">

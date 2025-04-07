@@ -8,12 +8,17 @@ import { CreateWishlistItemFormDataType } from "@/types/wishlistItem"
 import { SubmitHandler, useFormContext } from "react-hook-form"
 import { authClient } from "@/lib/auth-client"
 import { createWishlistItem } from "@/server/wishlistItem"
-import { WishlistContext } from "../context/Wishlist-context"
-import { useGetContext } from "../actions"
 import { useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
 
 
-export const WishlistItemCardForm = () => {
+interface WishlistItemCardNewProps {
+    isOpen: boolean
+    setIsOpen: (newItem: boolean) => void
+}
+
+
+export const WishlistItemCardNew = ({ isOpen, setIsOpen }: WishlistItemCardNewProps) => {
     const formHook = useFormContext<CreateWishlistItemFormDataType>()
     const ref = useRef<HTMLDivElement>(null)
     const {
@@ -23,24 +28,20 @@ export const WishlistItemCardForm = () => {
         setFocus,
         formState: { errors, isSubmitting }
     } = formHook
-    const {
-        router,
-        newItem,
-        setNewItem
-    } = useGetContext(WishlistContext)
+    const router = useRouter()
 
     useEffect(() => {
-        if (newItem) {
+        if (isOpen) {
             setFocus("name");
         }
-    }, [newItem, setFocus]);
+    }, [isOpen, setFocus]);
 
     useEffect(() => {
-        if (!newItem) return;
+        if (!isOpen) return;
 
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as Node)) {
-                setNewItem(false);
+                setIsOpen(false);
                 reset();
             }
         };
@@ -50,7 +51,7 @@ export const WishlistItemCardForm = () => {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [newItem, setNewItem, reset]);
+    }, [isOpen, setIsOpen, reset]);
 
     const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormDataType> = async (formData: CreateWishlistItemFormDataType) => {
         const { data: session } = await authClient.getSession()
@@ -60,13 +61,13 @@ export const WishlistItemCardForm = () => {
 
         console.log(formData)
         await createWishlistItem(formData, session?.user.id);
-        setNewItem(false)
+        setIsOpen(false)
         reset();
         router.refresh()
     };
 
     return (
-        newItem &&
+        isOpen &&
         <div
             ref={ref}
             key="newItem"

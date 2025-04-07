@@ -3,16 +3,13 @@
 import { CreateWishlistItemFormDataType, WishlistItem } from "@/types/wishlistItem";
 import { FormProvider, useForm } from "react-hook-form";
 import { WishlistItemCard } from "./Wishlist-item-card";
-import { WishlistItemCardForm } from "./Wishlist-item-card-form";
-import { WishlistContext, WishlistContextProvider } from "../context/Wishlist-context";
+import { WishlistItemCardNew } from "./Wishlist-item-card-new";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createWishlistItemFormSchema } from "@/schemas/wishlistItem";
-import { CreateWishlistItemButton } from "./Create-wishlist-item-button";
 import { EmptyWishlist } from "./Wishlist-empty";
 import { useSearchParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
-import { WishlistItemCardDetails } from "./Wishlist-item-card-details";
-import { AnimatePresence } from "framer-motion"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button/button";
 
 interface WishlistProps {
     userId?: string,
@@ -20,8 +17,7 @@ interface WishlistProps {
 }
 
 export function Wishlist({ initialWishlist }: WishlistProps) {
-    const [openedWishlistItem, setOpenedWishlistItem] = useState<WishlistItem | null>(null)
-
+    const [newItem, setNewItem] = useState(false)
     const searchParams = useSearchParams()
     const itemId = searchParams.get("item")
     const isEmpty = initialWishlist.length === 0;
@@ -42,35 +38,39 @@ export function Wishlist({ initialWishlist }: WishlistProps) {
         };
     }, [itemId]);
 
+    const handleNewItem = () => {
+        setNewItem(true)
+    }
+
     return (
         <>
-            <WishlistContextProvider>
-                <FormProvider {...formHook}>
-                    <AnimatePresence>
-                        {
-                            openedWishlistItem && <WishlistItemCardDetails
-                                wishlistItem={openedWishlistItem}
-                                setWishlistItem={setOpenedWishlistItem}
+            <FormProvider {...formHook}>
+                <Button
+                    onClick={handleNewItem}
+                    disabled={newItem}>
+                    {newItem ? 'Criando...' : '+ Novo Item'}
+                </Button>
+                <div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                >
+                    <WishlistItemCardNew
+                        isOpen={newItem}
+                        setIsOpen={setNewItem}
+                    />
+                    {initialWishlist
+                        .slice()
+                        .reverse()
+                        .map((wishlistItem) =>
+                            <WishlistItemCard
+                                key={wishlistItem.id}
+                                wishlistItem={wishlistItem}
                             />
-                        }
-                    </AnimatePresence>
-                    <CreateWishlistItemButton />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"  >
-                        <WishlistItemCardForm />
-                        {initialWishlist
-                            .slice()
-                            .reverse()
-                            .map((wishlistItem) =>
-                                <WishlistItemCard
-                                    key={wishlistItem.id}
-                                    wishlistItem={wishlistItem}
-                                    setOpenedWishlistItem={setOpenedWishlistItem}
-                                />
-                            )}
-                    </div>
-                    <EmptyWishlist isEmpty={isEmpty} />
-                </FormProvider>
-            </WishlistContextProvider>
+                        )}
+                </div>
+                <EmptyWishlist
+                    isEmpty={isEmpty}
+                    newItem={newItem} />
+            </FormProvider>
         </>
     );
 }
