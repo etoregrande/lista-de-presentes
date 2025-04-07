@@ -4,21 +4,23 @@ import clsx from "clsx"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button/button"
-import { CreateWishlistItemFormDataType } from "@/types/wishlistItem"
+import { CreateWishlistItemFormDataType, WishlistItem } from "@/types/wishlistItem"
 import { SubmitHandler, useFormContext } from "react-hook-form"
 import { authClient } from "@/lib/auth-client"
 import { createWishlistItem } from "@/server/wishlistItem"
-import { useEffect, useRef } from "react"
+import { Dispatch, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 
 interface WishlistItemCardNewProps {
     isOpen: boolean
     setIsOpen: (newItem: boolean) => void
+    setWishlist: Dispatch<React.SetStateAction<WishlistItem[]>>
 }
 
 
-export const WishlistItemCardNew = ({ isOpen, setIsOpen }: WishlistItemCardNewProps) => {
+export const WishlistItemCardNew = ({ isOpen, setIsOpen, setWishlist }: WishlistItemCardNewProps) => {
     const formHook = useFormContext<CreateWishlistItemFormDataType>()
     const ref = useRef<HTMLDivElement>(null)
     const {
@@ -28,7 +30,6 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen }: WishlistItemCardNewPr
         setFocus,
         formState: { errors, isSubmitting }
     } = formHook
-    const router = useRouter()
 
     useEffect(() => {
         if (isOpen) {
@@ -54,16 +55,17 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen }: WishlistItemCardNewPr
     }, [isOpen, setIsOpen, reset]);
 
     const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormDataType> = async (formData: CreateWishlistItemFormDataType) => {
-        const { data: session } = await authClient.getSession()
-        if (!session) {
-            throw new Error('Unable to get user data')
-        }
+        if (isSubmitting) return;
 
-        console.log(formData)
-        await createWishlistItem(formData, session?.user.id);
+        const { data: session } = await authClient.getSession()
+        if (!session) throw new Error('Unable to get user data')
+
+        const newWishlistItem = await createWishlistItem(formData, session?.user.id);
+        setWishlist((prev) => [...prev, newWishlistItem as WishlistItem])
+
         setIsOpen(false)
         reset();
-        router.refresh()
+        toast.success("Item criado com sucesso!")
     };
 
     return (
@@ -107,7 +109,12 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen }: WishlistItemCardNewPr
                         {errors.link && <div className="text-red-500">{errors.link.message}</div>}
                     </div>
 
-                    <Button className="md:invisible">Enviar</Button>
+                    <Button
+                        className="md:invisible"
+                        disabled={isSubmitting}
+                    >
+                        Enviar
+                    </Button>
                 </form>
             </div>
         </div>

@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3 } from '@/lib/database/s3';
+import { sql } from 'kysely';
 
 
 
@@ -26,7 +27,7 @@ export const createWishlistItem = async (
         const newWishlistItem = await db
             .insertInto("wishlist_item")
             .values(newWishlistItemData)
-            .returning(["id", "name", "description", "price", "link", "image", "priority", "user_id"])
+            .returning(["id", "name", "description", "price", "link", "image", "priority", "user_id", "is_active"])
             .executeTakeFirst();
 
         if (!newWishlistItem) {
@@ -63,6 +64,17 @@ export const listWishlistItems = async (user_id?: string) => {
             .selectFrom("wishlist_item")
             .selectAll()
             .where('user_id', '=', userId)
+            .orderBy('is_active', 'asc')
+            .orderBy(
+                sql`
+                CASE 
+                WHEN priority = 'alta' THEN 1
+                WHEN priority = 'normal' THEN 2
+                WHEN priority = 'baixa' THEN 3
+                END
+                `,
+                'desc'
+            )
             .execute()
 
         return wishlistItems;
