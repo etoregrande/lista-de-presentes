@@ -9,16 +9,21 @@ interface WishlistProps {
 }
 
 export function SharedWishlist({ initialWishlist }: WishlistProps) {
-    const isEmpty = initialWishlist.length === 0;
+    const activeWishlist = initialWishlist.filter(item => item.is_active)
+    const isEmpty = activeWishlist.length === 0;
 
     return (
         <>
             <EmptyWishlist isEmpty={isEmpty} />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"  >
-                {initialWishlist
+                {activeWishlist
                     .slice()
                     .reverse()
-                    .map((wishlistItem) => <WishlistItemCard key={wishlistItem.id} wishlistItem={wishlistItem} />
+                    .map((wishlistItem) => <WishlistItemCard
+                        key={wishlistItem.id}
+                        wishlistItem={wishlistItem}
+                        mode="view"
+                    />
                     )}
             </div>
         </>

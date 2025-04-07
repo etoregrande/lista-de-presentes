@@ -21,6 +21,7 @@ export function Wishlist({ initialWishlist }: WishlistProps) {
     const searchParams = useSearchParams()
     const itemId = searchParams.get("item")
     const isEmpty = initialWishlist.length === 0;
+    const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist)
 
     const formHook = useForm<CreateWishlistItemFormDataType>({
         resolver: zodResolver(createWishlistItemFormSchema),
@@ -56,14 +57,17 @@ export function Wishlist({ initialWishlist }: WishlistProps) {
                     <WishlistItemCardNew
                         isOpen={newItem}
                         setIsOpen={setNewItem}
+                        setWishlist={setWishlist}
                     />
-                    {initialWishlist
+                    {wishlist
                         .slice()
                         .reverse()
                         .map((wishlistItem) =>
                             <WishlistItemCard
                                 key={wishlistItem.id}
                                 wishlistItem={wishlistItem}
+                                mode="edit"
+                                setWishlist={setWishlist}
                             />
                         )}
                 </div>

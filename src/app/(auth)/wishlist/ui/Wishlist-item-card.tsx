@@ -2,18 +2,23 @@ import { WishlistItem } from "@/types/wishlistItem"
 import Image from "next/image"
 import { setImageSrc } from "../actions"
 import { AnimatePresence } from "framer-motion"
-import { useState } from "react"
-import { WishlistItemCardDetails } from "./Wishlist-item-card-details"
+import { Dispatch, SetStateAction, useState } from "react"
+import { WishlistItemCardDetail } from "./Wishlist-item-card-detail"
+import { WishlistItemCardView } from "./Wishlist-item-card-view"
+import { Info } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface WishlistItemCardProps {
     wishlistItem: WishlistItem
+    mode: "edit" | "view"
+    setWishlist?: Dispatch<SetStateAction<WishlistItem[]>> | undefined
 }
 
-export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
+export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistItemCardProps) => {
     const [openedWishlistItem, setOpenedWishlistItem] = useState<WishlistItem | null>(null)
     const imageSrc = setImageSrc(wishlistItem)
 
-    const handleOpenWishlistItemCardDetails = () => {
+    const handleOpenWishlistItemCardDetail = () => {
         setOpenedWishlistItem(wishlistItem)
     }
 
@@ -21,15 +26,27 @@ export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
         <>
             <AnimatePresence>
                 {
-                    openedWishlistItem && <WishlistItemCardDetails
+                    openedWishlistItem && mode === "edit" && <WishlistItemCardDetail
                         wishlistItem={openedWishlistItem}
-                        setWishlistItem={setOpenedWishlistItem}
+                        setWishlist={setWishlist}
+                        setOpenedWishlistItem={setOpenedWishlistItem}
+                    />
+                }
+                {
+                    openedWishlistItem && mode === "view" && <WishlistItemCardView
+                        wishlistItem={openedWishlistItem}
+                        setOpenedWishlistItem={setOpenedWishlistItem}
                     />
                 }
             </AnimatePresence>
             <div
-                onClick={handleOpenWishlistItemCardDetails}
-                className="bg-white flex flex-row h-60 rounded-2xl hover:drop-shadow-xl hover:bg- transition-all active:bg-slate-100"
+                onClick={handleOpenWishlistItemCardDetail}
+                className={`
+                    bg-white flex flex-row h-60 rounded-2xl transition-all hover:drop-shadow-xl hover:bg-slate-50
+                    ${wishlistItem.is_active
+                        ? "active:bg-slate-100 cursor-pointer"
+                        : "opacity-50 cursor-pointer"}
+                `}
             >
                 <div className="w-2/5 h-full relative">
                     <Image
@@ -49,17 +66,28 @@ export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
                     {wishlistItem.priority &&
                         <p className="break-words">Prioridade {wishlistItem.priority}</p>
                     }
-                    {wishlistItem.link &&
-                        <p className="truncate">{wishlistItem.link}</p>
-                    }
                     {wishlistItem.description &&
-                        <p className="break-words">{wishlistItem.description}</p>
+                        <p className="truncate">{wishlistItem.description}</p>
                     }
-                    {wishlistItem.is_active &&
-                        <p className="break-words">{wishlistItem.is_active ? 'Ativo' : 'Inativo'}</p>
+                    {!wishlistItem.is_active &&
+                        <div className="flex gap-1 items-center">
+                            <p className="text-red-500">Produto invisível</p>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span>
+                                            <Info className="text-red-500 cursor-pointer" size={20} />
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Este produto não vai aparecer na sua lista compartilhada</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                     }
                 </div>
-            </div>
+            </div >
         </>
     )
 }

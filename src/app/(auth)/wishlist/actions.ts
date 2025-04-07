@@ -3,9 +3,13 @@ import placeholder from '@/../public/assets/image-placeholder.svg'
 
 
 export const setImageSrc = (wishlistItem: WishlistItem) => {
-    const imageSrc = wishlistItem.image && (wishlistItem.image.startsWith("http") || wishlistItem.image.startsWith("/"))
-        ? wishlistItem.image
-        : placeholder;
+    const image = wishlistItem.image;
 
-    return imageSrc
+    const imageSrc =
+        typeof image === "string" &&
+            (image.startsWith("http") || image.startsWith("/"))
+            ? image
+            : placeholder;
+
+    return imageSrc;
 }
