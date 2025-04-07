@@ -26,7 +26,7 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
         <>
             <AnimatePresence>
                 {
-                    openedWishlistItem && mode === "edit" && <WishlistItemCardDetail
+                    openedWishlistItem && mode === "edit" && setWishlist && <WishlistItemCardDetail
                         wishlistItem={openedWishlistItem}
                         setWishlist={setWishlist}
                         setOpenedWishlistItem={setOpenedWishlistItem}
