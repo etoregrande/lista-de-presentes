@@ -1,27 +1,17 @@
 import { WishlistItem } from "@/types/wishlistItem"
 import Image from "next/image"
-import { setImageSrc, useGetContext } from "../actions"
-import { WishlistContext } from "../context/Wishlist-context"
-import { useSearchParams } from "next/navigation"
+import { setImageSrc } from "../actions"
 
 interface WishlistItemCardProps {
     wishlistItem: WishlistItem
+    setOpenedWishlistItem: (wishlistItem: WishlistItem) => void
 }
 
-export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
-    const { router } = useGetContext(WishlistContext)
-    const searchParams = useSearchParams()
+export const WishlistItemCard = ({ wishlistItem, setOpenedWishlistItem }: WishlistItemCardProps) => {
     const imageSrc = setImageSrc(wishlistItem)
 
     const handleOpenWishlistItemCardDetails = () => {
-        console.log('Card click')
-        const params = new URLSearchParams(searchParams.toString())
-        if (!wishlistItem.id) {
-            throw new Error('Unable to get wishlist item id')
-        }
-
-        params.set('item', wishlistItem.id)
-        router.push(`wishlist?item=${wishlistItem.id}`, { scroll: false })
+        setOpenedWishlistItem(wishlistItem)
     }
 
     return (

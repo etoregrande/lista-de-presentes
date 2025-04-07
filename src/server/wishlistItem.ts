@@ -10,7 +10,10 @@ import { s3 } from '@/lib/database/s3';
 
 
 
-export const createWishlistItem = async (formData: CreateWishlistItemFormDataType, userId: string) => {
+export const createWishlistItem = async (
+    formData: CreateWishlistItemFormDataType,
+    userId: string
+) => {
     const { name, link } = formData;
 
     const newWishlistItemData = {
@@ -142,6 +145,34 @@ export const editWishlistItem = async (
 
     } catch (error) {
         console.error("Error creating wishlist item =>", error);
+        return null;
+    }
+}
+
+export const deleteWishlistItem = async (
+    wishlistItemId: string
+) => {
+    try {
+        const deletedWishlistItem = await db
+            .deleteFrom("wishlist_item")
+            .where("id", "=", wishlistItemId)
+            .returning(["image"])
+            .executeTakeFirst();
+
+        if (!deletedWishlistItem) {
+            throw new Error('Error deleting wishlist item')
+        }
+        if (deletedWishlistItem.image) {
+            const imageKey = deletedWishlistItem.image.split('/').pop()
+            const deleteParams = {
+                Bucket: process.env.BUCKET_NAME,
+                Key: imageKey
+            };
+            await s3.send(new DeleteObjectCommand(deleteParams));
+        }
+        return
+    } catch (error) {
+        console.error("Error deleting wishlist item =>", error);
         return null;
     }
 }

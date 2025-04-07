@@ -1,3 +1,4 @@
+import { WishlistItem } from "@/types/wishlistItem";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
 import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";

@@ -10,22 +10,26 @@ import Image from "next/image"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Controller, useForm } from "react-hook-form"
-import { editWishlistItem } from "@/server/wishlistItem"
+import { deleteWishlistItem, editWishlistItem } from "@/server/wishlistItem"
 import { authClient } from "@/lib/auth-client"
 import { Toggle } from "@/components/ui/toggle"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
+import { LoaderCircle, Trash2 } from "lucide-react"
 
-interface WishlistItemCardDetailProps {
-    wishlistItem: WishlistItem | undefined
+interface WishlistItemCardDetailsProps {
+    wishlistItem: WishlistItem
+    setWishlistItem: (wishlistItem: WishlistItem | null) => void
 }
 
-export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetailProps) => {
+
+export const WishlistItemCardDetails = ({ wishlistItem, setWishlistItem }: WishlistItemCardDetailsProps) => {
+
     const { router } = useGetContext(WishlistContext)
     const {
         register,
         handleSubmit,
         reset,
-        setFocus,
         control,
         formState: { errors, isSubmitting }
     } = useForm<EditWishlistItemFormDataType>({
@@ -38,6 +42,7 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
             isActive: wishlistItem?.is_active
         }
     })
+    const [isLoading, setIsloading] = useState(false)
 
     useEffect(() => {
         if (wishlistItem) {
@@ -52,16 +57,25 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
         }
     }, [wishlistItem, reset])
 
-    if (!wishlistItem) return null
-    const imageSrc = setImageSrc(wishlistItem)
-
     const handleCloseModal = () => {
-        router.push('/wishlist', { scroll: false })
+        setWishlistItem(null)
         reset()
     }
 
+    const handleDeleteWishlistItem = async () => {
+        if (!wishlistItem.id) {
+            throw new Error('Unable to get wishlist item id')
+        }
+        setIsloading(true)
+
+        await deleteWishlistItem(wishlistItem.id)
+
+        router.refresh()
+        setIsloading(false)
+        handleCloseModal()
+    }
+
     const handleEditWishlistItem = async (formData: EditWishlistItemFormDataType) => {
-        console.log('formData', formData)
         const { data: session } = await authClient.getSession()
         if (!session) {
             throw new Error('Unable to get user data')
@@ -74,18 +88,28 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
         await editWishlistItem(formData, wishlistItem.id, session.user.id)
 
         router.refresh()
-        router.push('/wishlist', { scroll: false })
+        handleCloseModal()
     }
+
+    const imageSrc = setImageSrc(wishlistItem)
 
     return (
 
-        <div
-            onClick={() => router.push('/wishlist', { scroll: false })}
+        <motion.div
+            onClick={handleCloseModal}
             className="flex fixed inset-0 z-50 items-center justify-center md:bg-[rgba(0,0,0,0.5)]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
         >
-            <div
+            <motion.div
                 onClick={(e) => e.stopPropagation()}
                 className="flex flex-col bg-white md:p-6 md:rounded-2xl shadow-lg w-full md:max-w-xl h-full md:h-auto overflow-y-auto"
+                initial={{ scale: 0.6 }}
+                animate={{ scale: 1 }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                transition={{ duration: 0.1 }}
             >
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="md:w-1/2 w-full relative aspect-square md:aspect-auto md:h-auto max-h-80 md:max-h-none">
@@ -101,7 +125,21 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
                         onSubmit={handleSubmit(handleEditWishlistItem)}
                         className="p-4 md:p-0 md:w-1/2 w-full flex flex-col flex-grow gap-4"
                     >
-                        <h2 className="">{wishlistItem?.name}</h2>
+                        <div className="flex flew-row justify-between items-center">
+                            <h2>{wishlistItem?.name}</h2>
+                            <Button
+                                className="h-10"
+                                variant="destructive"
+                                type="button"
+                                onClick={handleDeleteWishlistItem}
+                            >
+                                {isLoading ?
+                                    <LoaderCircle className="animate-spin" />
+                                    :
+                                    <Trash2 />
+                                }
+                            </Button>
+                        </div>
                         <div className="grid w-full items-center gap-1.5">
                             <Controller
                                 control={control}
@@ -198,12 +236,17 @@ export const WishlistItemCardDetails = ({ wishlistItem }: WishlistItemCardDetail
                                 type="submit"
                                 disabled={isSubmitting}
                             >
-                                Salvar
+                                {
+                                    isSubmitting ?
+                                        <LoaderCircle className="animate-spin" />
+                                        :
+                                        "Salvar"
+                                }
                             </Button>
                         </div>
                     </form>
                 </div>
-            </div>
-        </div >
+            </motion.div>
+        </motion.div >
     )
 }
