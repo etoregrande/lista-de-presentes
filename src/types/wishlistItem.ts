@@ -20,3 +20,12 @@ export interface WishlistItem {
 }
 
 export type Priority = "alta" | "normal" | "baixa";
+export type UpdatableWishlistFields = Pick<WishlistItem,
+    "is_active" |
+    "is_purchased" |
+    "priority" |
+    "price" |
+    "description" |
+    "link" |
+    "image"
+>

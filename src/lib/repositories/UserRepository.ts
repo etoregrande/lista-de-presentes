@@ -1,11 +1,11 @@
-//Not in use right now. Future updates will implement repositories
+import { db } from '@/lib/database/db';
 
-// import { db } from '@/lib/db';
-// import { User, NewUser, UserUpdate } from '@/lib/types';
+export async function getUser(userId?: string, email?: string) {
+    if (!userId && !email) throw new Error('You must provide a userId or email')
 
-// export async function findUserByEmail(email: string) {
-//     return await db.selectFrom('user')
-//         .where('email', '=', email)
-//         .selectAll()
-//         .executeTakeFirst()
-// }
+    const query = db.selectFrom('user')
+    if (userId) query.where('id', '=', userId)
+    if (email) query.where('email', '=', email)
+
+    return await query.selectAll().executeTakeFirst();
+}
