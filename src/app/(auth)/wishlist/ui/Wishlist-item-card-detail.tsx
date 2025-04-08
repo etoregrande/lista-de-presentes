@@ -101,13 +101,13 @@ export const WishlistItemCardDetail = ({ wishlistItem, setOpenedWishlistItem, se
     const imageSrc = setImageSrc(wishlistItem)
     return (
         <Modal handleCloseModal={handleCloseModal}>
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-4 mb-80 md:mb-0">
                 <div className="md:w-1/2 w-full relative aspect-square md:aspect-auto md:h-auto max-h-80 md:max-h-none">
                     <Image
                         src={imageSrc}
                         alt="Imagem do produto"
                         fill
-                        className="object-cover rounded-lg"
+                        className="object-cover md:rounded-lg"
                         priority />
                 </div>
 

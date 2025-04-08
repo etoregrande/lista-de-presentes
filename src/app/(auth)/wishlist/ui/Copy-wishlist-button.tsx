@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from "@/components/ui/button/button"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import clsx from "clsx"
@@ -14,9 +14,14 @@ interface CopyWishlistButtonProps {
 
 export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
     const [copied, setCopied] = useState(false);
-    const sharedUrl = `${window.location.origin}/wishlist/shared/${userId}`
+    const [sharedUrl, setSharedUrl] = useState("")
+
+    useEffect(() => {
+        setSharedUrl(`${window.location.origin}/wishlist/shared/${userId}`)
+    }, [userId])
 
     const handleCopyWishlist = async () => {
+        const sharedUrl = `${window.location.origin}/wishlist/shared/${userId}`
         navigator.clipboard.writeText(sharedUrl)
 
         setCopied(true);
@@ -31,7 +36,7 @@ export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
                 <Label htmlFor="url">Lista compartilhada</Label>
                 <Input
                     name="url"
-                    defaultValue={`${window.location.origin}/wishlist/shared/${userId}`}
+                    defaultValue={sharedUrl}
                     disabled={copied}
                     readOnly
                     className={clsx(
