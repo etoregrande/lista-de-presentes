@@ -54,7 +54,7 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
                         alt="Imagem do produto"
-                        className="object-cover rounded-l-2xl md:rounded-none"
+                        className="object-cover rounded-l-2xl"
                         priority />
                 </div>
                 <div

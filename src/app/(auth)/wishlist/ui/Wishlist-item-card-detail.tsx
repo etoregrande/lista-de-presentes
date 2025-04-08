@@ -107,7 +107,7 @@ export const WishlistItemCardDetail = ({ wishlistItem, setOpenedWishlistItem, se
                         src={imageSrc}
                         alt="Imagem do produto"
                         fill
-                        className="object-cover rounded-lg"
+                        className="object-cover md:rounded-lg"
                         priority />
                 </div>
 
