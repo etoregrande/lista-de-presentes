@@ -28,7 +28,11 @@ export const wishlistItemSchema = z.object({
         .optional(),
     link: z
         .string()
-        .nullable(),
+        .nullable()
+        .transform((val) => {
+            if (!val) return val
+            return val.startsWith('http://') || val.startsWith('https://') ? val : `https://${val}`
+        }),
     priority: z
         .string()
         .refine(value => ['alta', 'normal', 'baixa'].includes(value), {
