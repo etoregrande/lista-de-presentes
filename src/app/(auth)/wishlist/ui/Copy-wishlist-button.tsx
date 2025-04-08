@@ -18,7 +18,7 @@ export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
 
     useEffect(() => {
         setSharedUrl(`${window.location.origin}/wishlist/shared/${userId}`)
-    })
+    }, [userId])
 
     const handleCopyWishlist = async () => {
         const sharedUrl = `${window.location.origin}/wishlist/shared/${userId}`
