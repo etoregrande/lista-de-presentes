@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-violet-100`}
       >
         {process.env.NODE_ENV === "development" && (
           <div className="flex justify-center bg-red-500 text-white w-full p-2">
