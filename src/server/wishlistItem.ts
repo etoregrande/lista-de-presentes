@@ -1,15 +1,13 @@
 'use server'
 
 import 'dotenv/config'
-import { EditWishlistItemFormDataType, UpdatableWishlistFields, WishlistItem, type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
+import { EditWishlistItemFormDataType, WishlistItem, type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
 import { db } from "@/lib/database/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3 } from '@/lib/database/s3';
 import { sql } from 'kysely';
-import { detectConflictingPaths } from 'next/dist/build/utils';
-
 
 
 export const createWishlistItem = async (
@@ -90,6 +88,11 @@ export const editWishlistItem = async (
     userId: string
 ) => {
     const { name, description, price, link, image, priority, isActive } = formData;
+
+    const sanitizedLink = link && !link.startsWith('http://') && !link.startsWith('https://')
+        ? `https://${link}`
+        : link;
+
     let imageUrl: string | null = null
 
     if (image?.[0]) {
@@ -132,7 +135,7 @@ export const editWishlistItem = async (
         name: name,
         price: price ? price * 100 : null,
         description: description ?? undefined,
-        link: link ?? undefined,
+        link: sanitizedLink ?? undefined,
         priority: priority,
         is_active: isActive,
     }
