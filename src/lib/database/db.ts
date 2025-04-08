@@ -6,12 +6,10 @@ import {
 } from 'kysely';
 import { Pool } from 'pg'
 
-const databaseUrl = process.env.DATABASE_URL
-
 // Exported only to connect to better-auth
 export const dialect = new PostgresDialect({
     pool: new Pool({
-        connectionString: databaseUrl,
+        connectionString: process.env.DATABASE_URL,
         max: 10,
     })
 })

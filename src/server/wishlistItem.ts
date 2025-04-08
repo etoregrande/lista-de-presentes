@@ -15,11 +15,10 @@ export const createWishlistItem = async (
     formData: CreateWishlistItemFormDataType,
     userId: string
 ) => {
-    const { name, link } = formData;
+    const { name } = formData;
 
     const newWishlistItemData = {
         name: name,
-        link: link ?? undefined,
         user_id: userId ?? null,
     }
 
