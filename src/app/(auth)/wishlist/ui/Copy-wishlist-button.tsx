@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from "@/components/ui/button/button"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import clsx from "clsx"
@@ -33,6 +33,7 @@ export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
                     name="url"
                     defaultValue={`${window.location.origin}/wishlist/shared/${userId}`}
                     disabled={copied}
+                    readOnly
                     className={clsx(
                         "max-w-60",
                         copied && 'border-green-500 text-green-500'
