@@ -14,9 +14,9 @@ interface CopyWishlistButtonProps {
 
 export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
     const [copied, setCopied] = useState(false);
-    const sharedUrl = `${window.location.origin}/wishlist/shared/${userId}`
 
     const handleCopyWishlist = async () => {
+        const sharedUrl = `${window.location.origin}/wishlist/shared/${userId}`
         navigator.clipboard.writeText(sharedUrl)
 
         setCopied(true);
