@@ -1,13 +1,14 @@
 'use server'
 
 import 'dotenv/config'
-import { EditWishlistItemFormDataType, WishlistItem, type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
+import { EditWishlistItemFormDataType, UpdatableWishlistFields, WishlistItem, type CreateWishlistItemFormDataType } from "@/types/wishlistItem";
 import { db } from "@/lib/database/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3 } from '@/lib/database/s3';
 import { sql } from 'kysely';
+import { detectConflictingPaths } from 'next/dist/build/utils';
 
 
 
@@ -185,5 +186,46 @@ export const deleteWishlistItem = async (
     } catch (error) {
         console.error("Error deleting wishlist item =>", error);
         return null;
+    }
+}
+
+export const purchaseWishlistItem = async (
+    wishlistItem: WishlistItem,
+    isPurchased: boolean
+) => {
+    if (!wishlistItem.id) throw new Error("Wishlist item ID is required");
+
+    const purchasedAt = wishlistItem.purchased_at
+        ? new Date(wishlistItem.purchased_at)
+        : null;
+
+    try {
+        let query = db
+            .updateTable('wishlist_item')
+            .set({
+                is_purchased: isPurchased,
+                purchased_at: isPurchased ? new Date() : null
+            },
+            )
+            .where("id", "=", wishlistItem.id)
+
+        if (purchasedAt === null) {
+            query = query.where("purchased_at", "is", null);
+        } else {
+            query = query.where("purchased_at", "=", purchasedAt);
+        }
+
+        console.log(query.compile().sql, query.compile().parameters);
+
+        const updatedWishlistItem = await query
+            .returningAll()
+            .executeTakeFirst();
+
+        if (!updatedWishlistItem) throw new Error("Error updating wishlist item: possible conflict or item not found.");
+
+        return updatedWishlistItem
+
+    } catch (error) {
+        console.error("Error patching wishlist item =>", error)
     }
 }

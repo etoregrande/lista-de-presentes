@@ -26,7 +26,12 @@ interface WishlistItemCardDetailProps {
 }
 
 
-export const WishlistItemCardDetail = ({ wishlistItem, setOpenedWishlistItem, setWishlist }: WishlistItemCardDetailProps) => {
+export const WishlistItemCardDetail = ({
+    wishlistItem,
+    setOpenedWishlistItem,
+    setWishlist
+}: WishlistItemCardDetailProps
+) => {
     const router = useRouter()
     const {
         register,

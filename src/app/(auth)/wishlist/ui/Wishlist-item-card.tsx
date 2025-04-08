@@ -7,11 +7,12 @@ import { WishlistItemCardDetail } from "./Wishlist-item-card-detail"
 import { WishlistItemCardView } from "./Wishlist-item-card-view"
 import { Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import clsx from "clsx"
 
 interface WishlistItemCardProps {
     wishlistItem: WishlistItem
     mode: "edit" | "view"
-    setWishlist?: Dispatch<SetStateAction<WishlistItem[]>> | undefined
+    setWishlist: Dispatch<SetStateAction<WishlistItem[]>>
 }
 
 export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistItemCardProps) => {
@@ -35,18 +36,18 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
                 {
                     openedWishlistItem && mode === "view" && <WishlistItemCardView
                         wishlistItem={openedWishlistItem}
+                        setWishlist={setWishlist}
                         setOpenedWishlistItem={setOpenedWishlistItem}
                     />
                 }
             </AnimatePresence>
             <div
                 onClick={handleOpenWishlistItemCardDetail}
-                className={`
-                    bg-white flex flex-row h-60 rounded-2xl transition-all hover:drop-shadow-xl hover:bg-slate-50
-                    ${wishlistItem.is_active
-                        ? "active:bg-slate-100 cursor-pointer"
-                        : "opacity-50 cursor-pointer"}
-                `}
+                className={clsx(
+                    "bg-white flex flex-row h-60 rounded-2xl transition-all hover:drop-shadow-xl hover:bg-slate-50",
+                    !wishlistItem.is_active && "opacity-50 cursor-pointer",
+                    mode === "view" && wishlistItem.is_purchased && "opacity-50 cursor-pointer",
+                )}
             >
                 <div className="w-2/5 h-full relative">
                     <Image

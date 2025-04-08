@@ -18,10 +18,10 @@ interface WishlistProps {
 
 export function Wishlist({ initialWishlist }: WishlistProps) {
     const [newItem, setNewItem] = useState(false)
+    const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist)
     const searchParams = useSearchParams()
     const itemId = searchParams.get("item")
-    const isEmpty = initialWishlist.length === 0;
-    const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist)
+    const isEmpty = wishlist.length === 0;
 
     const formHook = useForm<CreateWishlistItemFormDataType>({
         resolver: zodResolver(createWishlistItemFormSchema),
