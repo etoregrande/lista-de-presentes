@@ -42,10 +42,11 @@ export default function Page() {
     }
 
     return (
-        <>
+        <div className="flex flex-col space-y-4 justify-center px-4 h-screen max-w-sm mx-auto">
+            <h1 className="text-center">Fazer login</h1>
             <form
                 onSubmit={handleSubmit(handlesignInUser)}
-                className='flex flex-col space-y-4 justify-center px-4 h-screen max-w-sm mx-auto'
+                className='flex flex-col gap-4 bg-white p-8 shadow-2xl rounded-sm'
             >
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="email">Email</Label>
@@ -78,6 +79,6 @@ export default function Page() {
                     Não tem uma conta?
                 </Link>
             </form>
-        </>
+        </div>
     )
 }
