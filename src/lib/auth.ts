@@ -3,7 +3,10 @@ import { dialect } from "@/lib/database/db";
 import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
-    database: dialect,
+    database: {
+        dialect,
+        type: "postgres"
+    },
     plugins: [nextCookies()],
     session: {
         cookieCache: {
