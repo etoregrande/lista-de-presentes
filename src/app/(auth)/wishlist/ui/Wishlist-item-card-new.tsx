@@ -9,7 +9,7 @@ import { SubmitHandler, useFormContext } from "react-hook-form"
 import { authClient } from "@/lib/auth-client"
 import { createWishlistItem } from "@/server/wishlistItem"
 import { Dispatch, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 
@@ -58,7 +58,7 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen, setWishlist }: Wishlist
         if (isSubmitting) return;
 
         const { data: session } = await authClient.getSession()
-        if (!session) throw new Error('Unable to get user data')
+        if (!session) redirect('/login')
 
         const newWishlistItem = await createWishlistItem(formData, session?.user.id);
         setWishlist((prev) => [...prev, newWishlistItem as WishlistItem])
@@ -87,36 +87,26 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen, setWishlist }: Wishlist
                     className="object-cover rounded-l-2xl"
                     priority />
             </div>
-            <div
-                className="w-3/5 p-4 flex flex-col gap-2">
-                <form
-                    onSubmit={handleSubmit(handleCreateWishlistItem)}
-                    className="flex flex-col gap-4">
-                    <h2 className="">Novo item</h2>
-                    <div className="grid w-full items-center gap-1.5">
-                        <Label htmlFor="name">Nome</Label>
-                        <Input
-                            {...register("name")}
-                            placeholder="" />
-                        {errors.name && <div className="text-red-500 truncate">{errors.name.message}</div>}
-                    </div>
+            <form
+                className="w-3/5 p-4 flex flex-col gap-2 justify-between"
+                onSubmit={handleSubmit(handleCreateWishlistItem)}
+            >
+                <h2 className="">Novo item</h2>
+                <div className="grid w-full items-center gap-1.5">
+                    <Label htmlFor="name">Nome</Label>
+                    <Input
+                        {...register("name")}
+                        placeholder="" />
+                    {errors.name && <div className="text-red-500 truncate">{errors.name.message}</div>}
+                </div>
 
-                    <div className="grid w-full items-center gap-1.5">
-                        <Label htmlFor="link">Link do produto</Label>
-                        <Input
-                            {...register("link")}
-                            placeholder="" />
-                        {errors.link && <div className="text-red-500">{errors.link.message}</div>}
-                    </div>
-
-                    <Button
-                        className="md:invisible"
-                        disabled={isSubmitting}
-                    >
-                        Enviar
-                    </Button>
-                </form>
-            </div>
+                <Button
+                    className="md:invisible"
+                    disabled={isSubmitting}
+                >
+                    Enviar
+                </Button>
+            </form>
         </div>
     )
 }

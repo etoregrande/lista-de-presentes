@@ -14,7 +14,7 @@ import { authClient } from "@/lib/auth-client"
 import { Toggle } from "@/components/ui/toggle"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { LoaderCircle, Trash2 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
 import Modal from "@/components/ui/modal"
 import { toast } from "sonner"
 
@@ -82,21 +82,14 @@ export const WishlistItemCardDetail = ({ wishlistItem, setOpenedWishlistItem, se
 
     const handleEditWishlistItem = async (formData: EditWishlistItemFormDataType) => {
         const { data: session } = await authClient.getSession()
-        if (!session) throw new Error('Unable to get user data')
+        if (!session) redirect('/login')
         if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
 
         const updatedItem = await editWishlistItem(formData, wishlistItem.id, session.user.id)
 
         setWishlist((prev) =>
             prev.map((item) =>
-                item.id === wishlistItem.id
-                    ? {
-                        ...item,
-                        ...formData,
-                        price: formData.price ? Math.round(formData.price * 100) : null, // adapta o preço
-                        is_active: formData.isActive ?? item.is_active,
-                    }
-                    : item
+                item.id === wishlistItem.id ? updatedItem as WishlistItem : item
             )
         )
 

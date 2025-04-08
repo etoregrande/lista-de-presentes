@@ -53,7 +53,8 @@ export const createWishlistItemFormSchema = wishlistItemSchema.omit({
     priority: true,
     isPurchased: true,
     purchasedAt: true,
-    isActive: true
+    isActive: true,
+    link: true
 });
 
 export const editWishlistItemFormSchema = wishlistItemSchema.omit({
