@@ -1,35 +1,50 @@
 'use client'
 
-import { authClient } from "@/lib/auth-client"
-import { usePathname } from 'next/navigation'
 import { Button } from "@/components/ui/button/button"
 import { useState } from "react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import clsx from "clsx"
+import { Copy } from "lucide-react"
+import { toast } from "sonner"
 
+interface CopyWishlistButtonProps {
+    userId: string
+}
 
-export const CopyWishlistButton = () => {
+export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
     const [copied, setCopied] = useState(false);
+    const sharedUrl = `${window.location.origin}/wishlist/shared/${userId}`
 
     const handleCopyWishlist = async () => {
-        const { data: session } = await authClient.getSession()
-        if (!session) {
-            console.error('Could not get user Session')
-            return
-        }
-
-        const userId = session.user.id
-        navigator.clipboard.writeText(`${window.location.origin}/wishlist/shared/${userId}`)
+        navigator.clipboard.writeText(sharedUrl)
 
         setCopied(true);
+        toast.success('Link copiado!')
         setTimeout(() => setCopied(false), 2000);
     }
 
 
     return (
-        <Button
-            onClick={handleCopyWishlist}
-            disabled={copied}
-        >
-            {copied ? 'Link copiado!' : 'Copiar link da lista'}
-        </Button>
+        <div className="flex gap-2 items-end">
+            <div className="grid w-full items-center gap-1.5">
+                <Label htmlFor="url">Lista compartilhada</Label>
+                <Input
+                    name="url"
+                    defaultValue={`${window.location.origin}/wishlist/shared/${userId}`}
+                    disabled={copied}
+                    className={clsx(
+                        "max-w-60",
+                        copied && 'border-green-500 text-green-500'
+                    )}
+                />
+            </div>
+            <Button
+                onClick={handleCopyWishlist}
+                disabled={copied}
+            >
+                <Copy />
+            </Button>
+        </div>
     )
 }
