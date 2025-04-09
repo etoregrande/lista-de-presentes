@@ -17,12 +17,12 @@ export const wishlistItemSchema = z.object({
     image: z
         .any()
         .refine(
-            (file) => !file || (file.length === 0 || file[0]?.size <= MAX_FILE_SIZE),
-            `Tamanho máximo aceitado é 5MB`
+            (files) => files.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files.item(0)!.type),
+            { message: "Imagem deve ser .jpg, .jpeg, .png ou .webp" }
         )
         .refine(
-            (file) => !file || (file.length === 0 || ACCEPTED_IMAGE_TYPES.includes(file[0]?.type)),
-            "Imagem deve ser .jpg, .jpeg, .png ou .webp"
+            (files) => files.length === 0 || files.item(0)!.size <= MAX_FILE_SIZE,
+            { message: "Tamanho máximo aceitado é 5MB" }
         )
         .nullable()
         .optional(),

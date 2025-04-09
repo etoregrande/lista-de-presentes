@@ -18,3 +18,5 @@ export const signUpFormSchema = z.object({
 });
 
 export const signInFormSchema = signUpFormSchema.omit({ name: true });
+export const forgotPasswordFormSchema = signUpFormSchema.omit({ name: true, password: true });
+export const resetPasswordFormSchema = signUpFormSchema.omit({ name: true, email: true });

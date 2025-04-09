@@ -97,7 +97,7 @@ export const editWishlistItem = async (
 
     if (image?.[0]) {
         try {
-            const imageBuffer = image[0].buffer ? image[0].buffer : Buffer.from(await image[0].arrayBuffer())
+            const imageBuffer = Buffer.from(await image[0].arrayBuffer());
 
             const params = {
                 Bucket: process.env.BUCKET_NAME,
@@ -217,8 +217,6 @@ export const purchaseWishlistItem = async (
         } else {
             query = query.where("purchased_at", "=", purchasedAt);
         }
-
-        console.log(query.compile().sql, query.compile().parameters);
 
         const updatedWishlistItem = await query
             .returningAll()

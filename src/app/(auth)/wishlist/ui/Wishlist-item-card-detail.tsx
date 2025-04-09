@@ -17,6 +17,8 @@ import { LoaderCircle, Trash2 } from "lucide-react"
 import { redirect, useRouter } from "next/navigation"
 import Modal from "@/components/ui/modal"
 import { toast } from "sonner"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { editWishlistItemFormSchema } from "@/schemas/wishlistItem"
 
 
 interface WishlistItemCardDetailProps {
@@ -32,14 +34,16 @@ export const WishlistItemCardDetail = ({
     setWishlist
 }: WishlistItemCardDetailProps
 ) => {
-    const router = useRouter()
     const {
         register,
         handleSubmit,
         reset,
+        watch,
         control,
         formState: { errors, isSubmitting }
     } = useForm<EditWishlistItemFormDataType>({
+        resolver: zodResolver(editWishlistItemFormSchema),
+        mode: "onChange",
         defaultValues: {
             name: wishlistItem?.name,
             description: wishlistItem?.description || undefined,
@@ -50,7 +54,8 @@ export const WishlistItemCardDetail = ({
         }
     })
     const [isLoading, setIsloading] = useState(false)
-
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const watchedImage = watch("image")?.[0]
 
     useEffect(() => {
         if (wishlistItem) {
@@ -64,6 +69,26 @@ export const WishlistItemCardDetail = ({
             })
         }
     }, [wishlistItem, reset])
+
+    useEffect(() => {
+        const maxFileSize = 5 * 1024 * 1024;
+        const imageTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+        console.log(watchedImage?.type)
+        if (
+            !watchedImage ||
+            !imageTypes.includes(watchedImage.type) ||
+            watchedImage.size > maxFileSize
+        ) {
+            setPreviewUrl(null)
+            return
+        }
+
+        const objectUrl = URL.createObjectURL(watchedImage)
+        setPreviewUrl(objectUrl)
+
+        return () => URL.revokeObjectURL(objectUrl)
+    }, [watchedImage])
 
 
     const handleCloseModal = () => {
@@ -94,7 +119,11 @@ export const WishlistItemCardDetail = ({
 
         setWishlist((prev) =>
             prev.map((item) =>
-                item.id === wishlistItem.id ? updatedItem as WishlistItem : item
+                item.id === wishlistItem.id ?
+                    {
+                        ...updatedItem as WishlistItem
+                    }
+                    : item
             )
         )
 
@@ -109,7 +138,7 @@ export const WishlistItemCardDetail = ({
             <div className="flex flex-col md:flex-row gap-4 mb-80 md:mb-0">
                 <div className="md:w-1/2 w-full relative aspect-square md:aspect-auto md:h-auto max-h-80 md:max-h-none">
                     <Image
-                        src={imageSrc}
+                        src={previewUrl || imageSrc}
                         alt="Imagem do produto"
                         fill
                         className="object-cover md:rounded-lg"
@@ -191,6 +220,7 @@ export const WishlistItemCardDetail = ({
                             {...register("image")}
                             id="image"
                             type="file"
+                            accept="image/jpeg,image/png,image/webp"
                         />
                         {errors.image && <div className="text-red-500">{String(errors.image.message)}</div>}
                     </div>
