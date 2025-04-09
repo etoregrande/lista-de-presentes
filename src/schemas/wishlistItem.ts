@@ -15,7 +15,7 @@ export const wishlistItemSchema = z.object({
         .coerce.number()
         .nullable(),
     image: z
-        .instanceof(FileList)
+        .any()
         .refine(
             (files) => files.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files.item(0)!.type),
             { message: "Imagem deve ser .jpg, .jpeg, .png ou .webp" }
