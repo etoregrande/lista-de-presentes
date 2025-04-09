@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { betterAuth } from "better-auth";
 import { dialect } from "@/lib/database/db";
 import { nextCookies } from "better-auth/next-js";
+import { sendEmail } from './email';
 
 export const auth = betterAuth({
     database: {
@@ -17,6 +18,13 @@ export const auth = betterAuth({
     },
     emailAndPassword: {
         enabled: true,
+        sendResetPassword: async ({ user, url, token }, request) => {
+            await sendEmail({
+                to: user.email,
+                subject: "Esqueci minha senha",
+                url,
+            });
+        },
         autoSignIn: true, //defaults to true
     },
 })
