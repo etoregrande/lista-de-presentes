@@ -7,7 +7,7 @@ export const setImageSrc = (wishlistItem: WishlistItem) => {
 
     const imageSrc =
         typeof image === "string" &&
-            (image.startsWith("http") || image.startsWith("/"))
+            (image.startsWith("http") || image.startsWith("blob:") || image.startsWith("/"))
             ? image
             : placeholder;
 
