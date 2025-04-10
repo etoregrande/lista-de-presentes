@@ -32,7 +32,7 @@ export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
 
     return (
         <div className="flex gap-2 items-end">
-            <div className="grid w-full items-center gap-1.5">
+            <div className="grid items-center gap-1.5">
                 <Label htmlFor="url">Lista compartilhada</Label>
                 <Input
                     name="url"
@@ -48,6 +48,7 @@ export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
             <Button
                 onClick={handleCopyWishlist}
                 disabled={copied}
+                size="icon"
             >
                 <Copy />
             </Button>

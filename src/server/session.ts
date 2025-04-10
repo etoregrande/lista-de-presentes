@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 export const getSessionOnServer = async () => {
@@ -9,6 +10,7 @@ export const getSessionOnServer = async () => {
         headers: await headers(),
     });
 
+    if (!session) redirect('/login')
     return session
 }
 
