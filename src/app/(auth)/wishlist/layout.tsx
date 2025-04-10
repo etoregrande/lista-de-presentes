@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button/button";
+import { SignOutButton } from "@/components/ui/button/signOutButton";
+
 export default function WishlistLayout({
   children,
 }: Readonly<{
@@ -5,10 +8,18 @@ export default function WishlistLayout({
 }>) {
 
   return (
-    <div className="bg-white min-h-screen">
-      <div className="sm:max-w-7xl mx-auto px-4 flex flex-col gap-4">
-        {children}
-      </div>
-    </div>
+    <>
+      <nav className="bg-slate-700 h-14 w-full fixed top-0">
+        <div className="sm:max-w-5xl mx-auto h-full flex items-center justify-between">
+          <Button>Minha lista</Button>
+          <SignOutButton>Sair</SignOutButton>
+        </div>
+      </nav>
+      <main className="bg-white min-h-screen mt-14">
+        <div className="sm:max-w-5xl mx-auto flex flex-col gap-4">
+          {children}
+        </div>
+      </main>
+    </>
   );
 }

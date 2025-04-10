@@ -12,8 +12,8 @@ export const auth = betterAuth({
     plugins: [nextCookies()],
     session: {
         cookieCache: {
-            enabled: true,
-            maxAge: 5 * 60 // Cache duration in seconds
+            enabled: false,
+            // maxAge: 5 * 60 // Cache duration in seconds
         }
     },
     emailAndPassword: {
@@ -28,3 +28,5 @@ export const auth = betterAuth({
         autoSignIn: true, //defaults to true
     },
 })
+
+export type Session = typeof auth.$Infer.Session
