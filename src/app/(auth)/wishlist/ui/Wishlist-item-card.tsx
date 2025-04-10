@@ -44,29 +44,33 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
             <div
                 onClick={handleOpenWishlistItemCardDetail}
                 className={clsx(
-                    "bg-white flex flex-row h-60 rounded-2xl transition-all hover:drop-shadow-xl hover:bg-slate-50",
+                    "bg-white flex flex-col rounded-2xl transition-all border-2 sm:border-transparent hover:border-slate-200",
                     !wishlistItem.is_active && "opacity-50 cursor-pointer",
                     mode === "view" && wishlistItem.is_purchased && "opacity-50 cursor-pointer",
                 )}
             >
-                <div className="w-2/5 h-full relative">
+                <div className="h-full aspect-square relative m-2">
                     <Image
                         src={imageSrc}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
                         alt="Imagem do produto"
-                        className="object-cover rounded-l-2xl"
+                        className="object-cover rounded-lg"
                         priority />
                 </div>
                 <div
-                    className="w-3/5 p-4 flex flex-col gap-2">
-                    <h2>{wishlistItem.name}</h2>
-                    {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
-                        <p className="break-words">{`R$ ${wishlistItem.price / 100}`}</p>
-                    }
-                    {wishlistItem.priority &&
-                        <p className="break-words">Prioridade {wishlistItem.priority}</p>
-                    }
+                    className="flex flex-col gap-2 px-4 pb-4">
+                    <div className="flex justify-between items-center gap-2">
+                        <h2 className="truncate min-w-0 flex-shrink font-">{wishlistItem.name}</h2>
+                        {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
+                            <p className="text-lg font-black text-burntorange-700 whitespace-nowrap flex-shrink-0">
+                                {new Intl.NumberFormat("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                }).format(wishlistItem.price / 100)}
+                            </p>
+                        }
+                    </div>
                     {wishlistItem.description &&
                         <p className="truncate">{wishlistItem.description}</p>
                     }

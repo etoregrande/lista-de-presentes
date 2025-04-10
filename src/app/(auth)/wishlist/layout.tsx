@@ -5,7 +5,7 @@ export default function WishlistLayout({
 }>) {
 
   return (
-    <div className="bg-violet-100 min-h-screen">
+    <div className="bg-white min-h-screen">
       <div className="sm:max-w-7xl mx-auto px-4 flex flex-col gap-4">
         {children}
       </div>
