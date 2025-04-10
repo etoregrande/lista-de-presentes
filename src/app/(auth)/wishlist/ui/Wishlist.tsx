@@ -7,7 +7,6 @@ import { WishlistItemCardNew } from "./Wishlist-item-card-new";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createWishlistItemFormSchema } from "@/schemas/wishlistItem";
 import { EmptyWishlist } from "./Wishlist-empty";
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button/button";
 import { Plus } from "lucide-react";
@@ -50,42 +49,51 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
     return (
         <>
             <FormProvider {...formHook}>
-                <Button
-                    onClick={handleNewItem}
-                    disabled={newItem}
-                    size="lg"
-                >
-                    {newItem ?
-                        'Criando...'
-                        :
-                        (<><Plus />Adicionar item</>)
-                    }
-                </Button>
-
-                <CopyWishlistButton userId={session.user.id} />
-                <div
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-                >
-                    <WishlistItemCardNew
-                        isOpen={newItem}
-                        setIsOpen={setNewItem}
-                        setWishlist={setWishlist}
-                    />
-                    {wishlist
-                        .slice()
-                        .reverse()
-                        .map((wishlistItem) =>
-                            <WishlistItemCard
-                                key={wishlistItem.id}
-                                wishlistItem={wishlistItem}
-                                mode="edit"
-                                setWishlist={setWishlist}
-                            />
-                        )}
+                <div className="flex justify-between items-end">
+                    <CopyWishlistButton userId={session.user.id} />
+                    <Button
+                        onClick={handleNewItem}
+                        disabled={newItem}
+                        size="lg"
+                    >
+                        {newItem ?
+                            'Criando...'
+                            :
+                            (<><Plus />Adicionar item</>)
+                        }
+                    </Button>
                 </div>
-                <EmptyWishlist
-                    isEmpty={isEmpty}
-                    newItem={newItem} />
+                <div className="bg-slate-100 rounded-3xl p-4">
+                    <h2 className="block text-2xl font-bold px-4 pt-2 pb-4">Sua lista de presentes
+                        <span className="block text-base font-semibold text-slate-500">
+                            Aqui ficam todos os seus presentes cadastrados
+                        </span>
+                    </h2>
+                    <EmptyWishlist
+                        isEmpty={isEmpty}
+                        newItem={newItem}
+                    />
+                    <div
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2"
+                    >
+                        <WishlistItemCardNew
+                            isOpen={newItem}
+                            setIsOpen={setNewItem}
+                            setWishlist={setWishlist}
+                        />
+                        {wishlist
+                            .slice()
+                            .reverse()
+                            .map((wishlistItem) =>
+                                <WishlistItemCard
+                                    key={wishlistItem.id}
+                                    wishlistItem={wishlistItem}
+                                    mode="edit"
+                                    setWishlist={setWishlist}
+                                />
+                            )}
+                    </div>
+                </div>
             </FormProvider >
         </>
     );
