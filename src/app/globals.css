@@ -112,6 +112,44 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-peachyellow-50: oklch(0.97 0.015 87.5);
+  --color-peachyellow-100: oklch(0.945 0.03 87.2);
+  --color-peachyellow-200: oklch(0.91 0.0807 86.89);
+  --color-peachyellow-300: oklch(0.84 0.13 86.5);
+  --color-peachyellow-400: oklch(0.735 0.21 86.2);
+  --color-peachyellow-500: oklch(0.675 0.25 85.8);
+  --color-peachyellow-600: oklch(0.61 0.255 85.4);
+  --color-peachyellow-700: oklch(0.545 0.225 85.0);
+  --color-peachyellow-800: oklch(0.475 0.19 84.6);
+  --color-peachyellow-900: oklch(0.42 0.155 84.2);
+  --color-peachyellow-950: oklch(0.295 0.11 83.8);
+
+  --color-burntorange-50: oklch(0.97 0.012 47.8);
+  --color-burntorange-100: oklch(0.945 0.028 47.9);
+  --color-burntorange-200: oklch(0.89 0.065 48.0);
+  --color-burntorange-300: oklch(0.82 0.105 48.0);
+  --color-burntorange-400: oklch(0.73 0.14 48.0);
+  --color-burntorange-500: oklch(0.65 0.15 48.05);
+  --color-burntorange-600: oklch(0.59 0.135 48.05);
+  --color-burntorange-700: oklch(0.55 0.1189 48.06);
+  --color-burntorange-800: oklch(0.47 0.096 48.1);
+  --color-burntorange-900: oklch(0.39 0.075 48.1);
+  --color-burntorange-950: oklch(0.285 0.052 48.2);
+
+  --color-mint-50: oklch(0.97 0.015 173.2);
+  --color-mint-100: oklch(0.945 0.03 173.0);
+  --color-mint-200: oklch(0.89 0.065 172.8);
+  --color-mint-300: oklch(0.82 0.105 172.7);
+  --color-mint-400: oklch(0.75 0.13 172.6);
+  --color-mint-500: oklch(0.71 0.1329 172.53);
+  --color-mint-600: oklch(0.65 0.128 172.4);
+  --color-mint-700: oklch(0.575 0.112 172.2);
+  --color-mint-800: oklch(0.495 0.095 172.1);
+  --color-mint-900: oklch(0.42 0.075 172.0);
+  --color-mint-950: oklch(0.305 0.055 171.8);
+
+  --color-black: oklch(0.3 0.0151 203.21);
 }
 
 /* 
@@ -133,8 +171,33 @@
     }
 
     a {
-      color: var(--color-blue-600);
       text-decoration-line: underline;
+    }
+
+    p {
+      color: var(--color-black)
+    }
+  }
+
+  @layer components {
+    .text-paragraph {
+      @apply text-base leading-relaxed text-foreground;
+    }
+
+    .text-subtle {
+      @apply text-sm leading-snug text-muted-foreground;
+    }
+
+    .text-caption {
+      @apply text-xs text-muted-foreground;
+    }
+
+    .text-highlight {
+      @apply text-base font-semibold text-primary;
+    }
+
+    .text-error {
+      @apply text-sm text-destructive;
     }
   }
 

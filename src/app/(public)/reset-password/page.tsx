@@ -1,4 +1,4 @@
-import { ResetPasswordForm } from "./ui/Reset-password-form";
+import { ResetPasswordForm } from "./Reset-password-form";
 
 
 
