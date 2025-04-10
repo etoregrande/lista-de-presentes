@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${nunitoSans.variable} ${nunitoSans.variable} antialiased bg-peachyellow-300`}
+        className={`${nunitoSans.variable} antialiased bg-peachyellow-300`}
       >
         {process.env.NODE_ENV === "development" && (
           <div className="flex justify-center bg-red-500 text-white w-full p-2">
