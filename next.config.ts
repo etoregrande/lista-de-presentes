@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '5mb',
     },
   },
+  redirects: async () => {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'header', key: 'host', value: 'www.presenteio.app' }],
+        destination: 'https://presenteio.app/:path*',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
