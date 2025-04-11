@@ -179,6 +179,10 @@
   .text-error {
     @apply text-sm text-destructive;
   }
+
+  .border {
+    border-color: var(--color-border);
+  }
 }
 
 body {

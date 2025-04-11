@@ -39,7 +39,7 @@ export const WishlistItemCard = ({ wishlistItem, mode, setNewItem, setWishlist }
 
     useEffect(() => {
         if (mode === "new") setFocus("name");
-    }, [setFocus]);
+    }, [mode, setFocus]);
 
     useEffect(() => {
         if (mode != "new") return;
@@ -59,7 +59,7 @@ export const WishlistItemCard = ({ wishlistItem, mode, setNewItem, setWishlist }
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [mode, setWishlist, reset]);
+    }, [mode, setWishlist, setNewItem, reset]);
 
     const handleOpenWishlistItemCardDetail = () => {
         setOpenedWishlistItem(wishlistItem)
