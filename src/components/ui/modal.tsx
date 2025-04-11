@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 interface ModalProps {
     children: React.ReactNode;
     handleCloseModal: () => void;
-    preventBackdropClose: boolean;
+    preventBackdropClose?: boolean;
 }
 
 export default function Modal({
