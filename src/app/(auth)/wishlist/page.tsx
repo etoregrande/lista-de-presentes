@@ -1,5 +1,5 @@
 import React from "react";
-import { Wishlist } from "@/app/(auth)/wishlist/ui/Wishlist";
+import { Wishlist } from "./ui/Wishlist";
 import { listWishlistItems } from "@/server/wishlistItem";
 import { getSessionOnServer } from "@/server/session";
 import { Session } from "@/lib/auth";

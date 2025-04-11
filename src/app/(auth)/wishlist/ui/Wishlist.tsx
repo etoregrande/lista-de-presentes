@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button/button";
 import { Plus } from "lucide-react";
 import { Session } from "@/lib/auth";
-import { CopyWishlistButton } from "./Copy-wishlist-button";
+import { WishlistCopyButton } from "./Wishlist-copy-button";
 import { motion, AnimatePresence } from "framer-motion"
 
 interface WishlistProps {
@@ -46,7 +46,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
         <>
             <FormProvider {...formHook}>
                 <div className="flex justify-end items-end gap-2 px-4 lg:px-0 pb-2">
-                    <CopyWishlistButton userId={session.user.id} />
+                    <WishlistCopyButton userId={session.user.id} />
                     <Button
                         type="button"
                         onClick={handleNewItem}

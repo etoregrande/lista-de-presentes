@@ -15,10 +15,10 @@ import { Toggle } from "@/components/ui/toggle"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { LoaderCircle, Trash2 } from "lucide-react"
 import { redirect } from "next/navigation"
-import Modal from "@/components/ui/modal"
 import { toast } from "sonner"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { editWishlistItemFormSchema } from "@/schemas/wishlistItem"
+import { Switch } from "@/components/ui/switch"
 
 
 interface WishlistItemCardDetailProps {
@@ -74,7 +74,6 @@ export const WishlistItemCardDetail = ({
         const maxFileSize = 5 * 1024 * 1024;
         const imageTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
-        console.log(watchedImage?.type)
         if (
             !watchedImage ||
             !imageTypes.includes(watchedImage.type) ||
@@ -131,30 +130,56 @@ export const WishlistItemCardDetail = ({
         toast.success("Item editado com sucesso!")
     }
 
-
     const imageSrc = setImageSrc(wishlistItem)
+
     return (
-        <Modal handleCloseModal={handleCloseModal} preventBackdropClose>
+        <>
             <div className="flex flex-col md:flex-row gap-4 mb-80 md:mb-0">
-                <div className="md:w-1/2 w-full relative aspect-square md:aspect-auto md:h-auto max-h-80 md:max-h-none">
-                    <Image
-                        src={previewUrl || imageSrc}
-                        alt="Imagem do produto"
-                        fill
-                        className="object-cover md:rounded-lg"
-                        priority />
+                <div className="md:w-1/2 w-full relative aspect-square md:aspect-auto md:h-auto max-h-80 md:max-h-none group">
+                    <Label htmlFor="image" className="cursor-pointer block w-full h-full relative">
+                        <Image
+                            src={previewUrl || imageSrc}
+                            alt="Imagem do produto"
+                            fill
+                            className="object-cover md:rounded-lg"
+                            priority
+                        />
+                        <div className="absolute inset-0 text-center p-12 transition-[background-color] bg-black/40 hover:bg-black/60 flex items-center justify-center text-white text-sm md:text-base font-medium md:rounded-lg">
+                            Clique para alterar a imagem
+                        </div>
+                    </Label>
                 </div>
+
 
                 <form
                     onSubmit={handleSubmit(handleEditWishlistItem)}
                     className="p-4 md:p-0 md:w-1/2 w-full flex flex-col flex-grow gap-4"
                 >
                     <div className="flex flew-row justify-between items-center">
-                        <h2>{wishlistItem?.name}</h2>
+                        <Controller
+                            control={control}
+                            name="isActive"
+                            render={({ field }) => (
+                                <div className="flex items-center space-x-2">
+                                    <Switch
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                        id="isActive"
+                                    />
+                                    <Label htmlFor="isActive">
+                                        {watch("isActive") ?
+                                            "Produto visível"
+                                            :
+                                            "Produto invisível"}
+                                    </Label>
+                                </div>
+                            )}
+                        />
+
                         <Button
-                            className="h-10"
-                            variant="destructive"
+                            variant="secondary"
                             type="button"
+                            size="icon"
                             onClick={handleDeleteWishlistItem}
                         >
                             {isLoading ?
@@ -164,24 +189,12 @@ export const WishlistItemCardDetail = ({
                             }
                         </Button>
                     </div>
-                    <div className="grid w-full items-center gap-1.5">
-                        <Controller
-                            control={control}
-                            name="isActive"
-                            render={({ field }) => (
-                                <Toggle
-                                    pressed={field.value!}
-                                    onPressedChange={field.onChange}
-                                >
-                                    {field.value ? "Produto visível" : "Produto invisível"}
-                                </Toggle>
-                            )}
-                        />
-                        {errors.isActive && <div className="text-red-500">{errors.isActive.message}</div>}
-                    </div>
 
                     <div className="grid w-full items-center gap-1.5">
-                        <Label htmlFor="name">Nome</Label>
+                        <Label htmlFor="name" className="flex items-center justify-between gap-1">
+                            Nome
+                            <span className="text-muted-foreground text-xs">obrigatório</span>
+                        </Label>
                         <Input
                             {...register("name")}
                             placeholder="" />
@@ -214,7 +227,7 @@ export const WishlistItemCardDetail = ({
                         {errors.link && <div className="text-red-500">{errors.link.message}</div>}
                     </div>
 
-                    <div className="grid w-full items-center gap-1.5">
+                    <div className="grid w-full items-center gap-1.5 hidden">
                         <Label htmlFor="image">Imagem do produto</Label>
                         <Input
                             {...register("image")}
@@ -247,16 +260,7 @@ export const WishlistItemCardDetail = ({
                         {errors.priority && <div className="text-red-500">{errors.priority.message}</div>}
                     </div>
 
-                    <div className="flex gap-3 justify-end">
-                        <Button
-                            onClick={handleCloseModal}
-                            type="button"
-                            variant={"secondary"}
-                            className="flex-1"
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
+                    {/* <Button
                             className="flex-1"
                             type="submit"
                             disabled={isSubmitting}
@@ -267,10 +271,10 @@ export const WishlistItemCardDetail = ({
                                     :
                                     "Salvar"
                             }
-                        </Button>
-                    </div>
+                        </Button> */}
+
                 </form>
             </div>
-        </Modal>
+        </>
     )
 }
