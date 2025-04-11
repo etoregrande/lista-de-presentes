@@ -1,15 +1,15 @@
 'use client'
 
-import { EmptyWishlist } from "./Wishlist-empty";
+import { EmptyWishlist } from "./Wishlist-shared-empty";
 import { WishlistItem } from "@/types/wishlistItem";
 import { useState } from "react";
 import { WishlistSharedItemCard } from "./Wishlist-shared-item-card";
 
-interface WishlistProps {
+interface WishlistSharedProps {
     initialWishlist: WishlistItem[]
 }
 
-export function SharedWishlist({ initialWishlist }: WishlistProps) {
+export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
     const activeWishlist = initialWishlist.filter(item => item.is_active)
     const [wishlist, setWishlist] = useState<WishlistItem[]>(activeWishlist)
     const isEmpty = wishlist.length === 0;

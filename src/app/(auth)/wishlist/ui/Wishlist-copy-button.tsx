@@ -8,11 +8,11 @@ import { Copy } from "lucide-react"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
-interface CopyWishlistButtonProps {
+interface WishlistCopyButtonProps {
     userId: string
 }
 
-export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
+export const WishlistCopyButton = ({ userId }: WishlistCopyButtonProps) => {
     const [copied, setCopied] = useState(false);
     const [sharedUrl, setSharedUrl] = useState("")
 

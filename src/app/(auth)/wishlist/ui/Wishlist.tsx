@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button/button";
 import { Plus } from "lucide-react";
 import { Session } from "@/lib/auth";
-import { CopyWishlistButton } from "./Copy-wishlist-button";
+import { WishlistCopyButton } from "./Wishlist-copy-button";
 import { motion, AnimatePresence } from "framer-motion"
 
 interface WishlistProps {
@@ -45,8 +45,8 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
     return (
         <>
             <FormProvider {...formHook}>
-                <div className="flex justify-between items-end px-4 lg:px-0">
-                    <CopyWishlistButton userId={session.user.id} />
+                <div className="flex justify-end items-end gap-2 px-4 lg:px-0 pb-2">
+                    <WishlistCopyButton userId={session.user.id} />
                     <Button
                         type="button"
                         onClick={handleNewItem}
@@ -59,8 +59,8 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
                         }
                     </Button>
                 </div>
-                <div className="bg-slate-100 rounded-3xl p-4 mx-4 lg:mx-0 md:p-8 mb-40">
-                    <h2 className="block text-2xl font-bold pb-8 pt-4 md:pt-0">Sua lista de presentes
+                <div className="bg-slate-100 rounded-3xl p-4 mx-4 lg:mx-0 md:p-8">
+                    <h2 className="block text-2xl font-bold pb-8 md:pt-0">Sua lista de presentes
                         <span className="block text-base font-normal text-slate-500">
                             Aqui ficam todos os seus presentes cadastrados
                         </span>
@@ -71,7 +71,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
                     />
                     <motion.div
                         layout
-                        className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+                        className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
                     >
                         <AnimatePresence initial={false}>
                             {wishlist

@@ -1,6 +1,6 @@
 import { listWishlistItems } from "@/server/wishlistItem";
 import { Suspense } from "react";
-import { SharedWishlist } from "../../ui/Wishlist-shared";
+import { WishlistShared } from "./ui/Wishlist-shared";
 import { getUserById } from "@/lib/repositories/UserRepository";
 
 interface SharedWishlistParams {
@@ -19,7 +19,7 @@ export default async function SharedWishlistPage({ params }: SharedWishlistParam
             <div className="mt-10">
                 <h1 className="mb-10">Lista de presentes de {wishlistOwner.name}</h1>
                 <Suspense fallback="Loading...">
-                    <SharedWishlist initialWishlist={wishlistItems} />
+                    <WishlistShared initialWishlist={wishlistItems} />
                 </Suspense>
             </div>
         </>

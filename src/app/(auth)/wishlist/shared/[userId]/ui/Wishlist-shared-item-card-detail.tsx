@@ -1,7 +1,7 @@
 'use client'
 
 import { WishlistItem } from "@/types/wishlistItem"
-import { setImageSrc } from "../actions"
+import { setImageSrc } from "../../../actions"
 import { Button } from "@/components/ui/button/button"
 import Image from "next/image"
 import Modal from "@/components/ui/modal"
@@ -11,17 +11,17 @@ import { Dispatch, SetStateAction } from "react"
 import { useRouter } from "next/navigation"
 
 
-interface WishlistItemCardViewProps {
+interface WishlistSharedItemDetailProps {
     wishlistItem: WishlistItem
     setOpenedWishlistItem: (wishlistItem: WishlistItem | null) => void
     setWishlist: Dispatch<SetStateAction<WishlistItem[]>>
 }
 
-export const WishlistItemCardView = ({
+export const WishlistSharedItemCardDetail = ({
     wishlistItem,
     setOpenedWishlistItem,
     setWishlist
-}: WishlistItemCardViewProps) => {
+}: WishlistSharedItemDetailProps) => {
     const router = useRouter()
 
     const handleCloseModal = () => {

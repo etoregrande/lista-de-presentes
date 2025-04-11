@@ -1,5 +1,5 @@
 import React from "react";
-import { Wishlist } from "@/app/(auth)/wishlist/ui/Wishlist";
+import { Wishlist } from "./ui/Wishlist";
 import { listWishlistItems } from "@/server/wishlistItem";
 import { getSessionOnServer } from "@/server/session";
 import { Session } from "@/lib/auth";
@@ -16,7 +16,7 @@ export default async function Page() {
 
     return (
         <>
-            <div className="flex justify-between items-center pt-16 pb-12 px-4 lg:px-0">
+            <div className="flex justify-between items-center py-16 px-4 lg:px-0">
                 <div className="w-full overflow-hidden">
                     <h1 className="truncate text-3xl md:text-4xl font-bold text-slate-900">
                         <span className="truncate block text-base md:text-lg font-normal text-slate-500">

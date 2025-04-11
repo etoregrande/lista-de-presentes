@@ -3,7 +3,7 @@ import Image from "next/image"
 import { WishlistItem } from "@/types/wishlistItem"
 import { setImageSrc } from "../actions"
 import { AnimatePresence } from "framer-motion"
-import { WishlistItemCardView } from "./Wishlist-item-card-view"
+import { WishlistSharedItemCardDetail } from "./Wishlist-shared-item-card-detail"
 import { Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import clsx from "clsx"
@@ -28,7 +28,7 @@ export const WishlistSharedItemCard = ({ wishlistItem, setWishlist }: WishlistSh
             <AnimatePresence>
 
                 {
-                    openedWishlistItem && <WishlistItemCardView
+                    openedWishlistItem && <WishlistSharedItemCardDetail
                         wishlistItem={openedWishlistItem}
                         setWishlist={setWishlist}
                         setOpenedWishlistItem={setOpenedWishlistItem}
