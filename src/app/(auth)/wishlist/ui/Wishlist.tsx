@@ -59,8 +59,8 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
                         }
                     </Button>
                 </div>
-                <div className="bg-slate-100 rounded-3xl p-4 mb-40">
-                    <h2 className="block text-2xl font-bold px-4 pt-2 pb-4">Sua lista de presentes
+                <div className="bg-slate-100 rounded-3xl p-4 mx-4 md:p-8 mb-40">
+                    <h2 className="block text-2xl font-bold pb-8 pt-4 md:pt-0">Sua lista de presentes
                         <span className="block text-base font-normal text-slate-500">
                             Aqui ficam todos os seus presentes cadastrados
                         </span>
