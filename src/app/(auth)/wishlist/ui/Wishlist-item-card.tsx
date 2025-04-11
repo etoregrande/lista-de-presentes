@@ -8,6 +8,7 @@ import { WishlistItemCardView } from "./Wishlist-item-card-view"
 import { Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import clsx from "clsx"
+import { motion } from "framer-motion"
 
 interface WishlistItemCardProps {
     wishlistItem: WishlistItem
@@ -25,6 +26,7 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
 
     return (
         <>
+
             <AnimatePresence>
                 {
                     openedWishlistItem && mode === "edit" && setWishlist && <WishlistItemCardDetail
@@ -41,29 +43,38 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
                     />
                 }
             </AnimatePresence>
-            <div
+
+            <motion.div
                 onClick={handleOpenWishlistItemCardDetail}
+                layout="position"
+                exit={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 className={clsx(
-                    "bg-white flex flex-col rounded-2xl transition-all border-2 sm:border-transparent hover:border-slate-200",
+                    "group transition-[padding] duration-200 ease-in-out hover:bg-slate-50 flex flex-col rounded-xl",
                     !wishlistItem.is_active && "opacity-50 cursor-pointer",
                     mode === "view" && wishlistItem.is_purchased && "opacity-50 cursor-pointer",
                 )}
+                whileHover={{ y: -2 }}
+                whileTap={{ y: 1 }}
             >
-                <div className="h-full aspect-square relative m-2">
+                <div className="h-full aspect-square relative overflow-hidden rounded-lg">
                     <Image
                         src={imageSrc}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
                         alt="Imagem do produto"
-                        className="object-cover rounded-lg"
-                        priority />
+                        className="object-cover transition-transform duration-200 ease-in-out group-hover:scale-102"
+                        priority
+                    />
                 </div>
-                <div
-                    className="flex flex-col gap-2 px-4 pb-4">
-                    <div className="flex justify-between items-center gap-2">
-                        <h2 className="truncate min-w-0 flex-shrink font-">{wishlistItem.name}</h2>
+
+                <div className="flex flex-row justify-between lg:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
+                    <div className="flex flex-col">
+                        <p className="truncate font-bold tracking-tight">{wishlistItem.name}</p>
                         {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
-                            <p className="text-lg font-black text-burntorange-700 whitespace-nowrap flex-shrink-0">
+                            <p className="text-sm text-slate-500 whitespace-nowrap flex-shrink-0">
                                 {new Intl.NumberFormat("pt-BR", {
                                     style: "currency",
                                     currency: "BRL",
@@ -71,28 +82,27 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
                             </p>
                         }
                     </div>
-                    {wishlistItem.description &&
-                        <p className="truncate">{wishlistItem.description}</p>
-                    }
-                    {!wishlistItem.is_active &&
-                        <div className="flex gap-1 items-center">
-                            <p className="text-red-500">Produto invisível</p>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <span>
+
+                    <div>
+                        {!wishlistItem.is_active &&
+                            <div className="flex gap-1 items-center">
+                                <p className="text-red-500">Invisível</p>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
                                             <Info className="text-red-500 cursor-pointer" size={20} />
-                                        </span>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>Este produto não vai aparecer na sua lista compartilhada</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        </div>
-                    }
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Este produto não vai aparecer na sua lista compartilhada</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </div >
+            </motion.div>
         </>
     )
 }
+

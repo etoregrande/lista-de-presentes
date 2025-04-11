@@ -30,12 +30,30 @@ export default function Modal({
             exit: { scale: 0.6, opacity: 0 },
         };
 
+    //Deal with layout jumping when scrollbar is removed
     useLayoutEffect(() => {
-        const originalStyle = window.getComputedStyle(document.body).overflow;
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+        const originalBodyOverflow = document.body.style.overflow;
+        const originalBodyPaddingRight = document.body.style.paddingRight;
+
+        const nav = document.querySelector("nav");
+        const originalNavPaddingRight = nav?.style.paddingRight ?? "";
+
         document.body.style.overflow = "hidden";
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+        if (nav) {
+            nav.style.paddingRight = `${scrollbarWidth}px`;
+        }
 
         return () => {
-            document.body.style.overflow = originalStyle;
+            document.body.style.overflow = originalBodyOverflow;
+            document.body.style.paddingRight = originalBodyPaddingRight;
+
+            if (nav) {
+                nav.style.paddingRight = originalNavPaddingRight;
+            }
         };
     }, []);
 

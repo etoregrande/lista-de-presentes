@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button/button";
 import { Plus } from "lucide-react";
 import { Session } from "@/lib/auth";
 import { CopyWishlistButton } from "./Copy-wishlist-button";
+import { motion, AnimatePresence } from "framer-motion"
 
 interface WishlistProps {
     userId?: string,
@@ -20,41 +21,37 @@ interface WishlistProps {
 }
 
 export function Wishlist({ initialWishlist, session }: WishlistProps) {
-    const [newItem, setNewItem] = useState(false)
-    const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist)
-    const isEmpty = wishlist.length === 0;
-    // const searchParams = useSearchParams()
-    // const itemId = searchParams.get("item")
-
     const formHook = useForm<CreateWishlistItemFormDataType>({
         resolver: zodResolver(createWishlistItemFormSchema),
     });
-
-    // useEffect(() => {
-    //     if (itemId) {
-    //         document.body.classList.add("overflow-hidden");
-    //     } else {
-    //         document.body.classList.remove("overflow-hidden");
-    //     }
-
-    //     return () => {
-    //         document.body.classList.remove("overflow-hidden");
-    //     };
-    // }, [itemId]);
+    const [newItem, setNewItem] = useState(false)
+    const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist)
+    const isEmpty = wishlist.length === 0;
 
     const handleNewItem = () => {
         setNewItem(true)
+        setWishlist((prev) => [
+            ...prev,
+            {
+                id: "new",
+                name: "",
+                is_active: true,
+                is_purchased: false,
+                user_id: session.user.id,
+                priority: "normal"
+            },
+        ])
     }
 
     return (
         <>
             <FormProvider {...formHook}>
-                <div className="flex justify-between items-end">
+                <div className="flex justify-between items-end px-4 lg:px-0">
                     <CopyWishlistButton userId={session.user.id} />
                     <Button
+                        type="button"
                         onClick={handleNewItem}
                         disabled={newItem}
-                        size="lg"
                     >
                         {newItem ?
                             'Criando...'
@@ -63,9 +60,9 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
                         }
                     </Button>
                 </div>
-                <div className="bg-slate-100 rounded-3xl p-4">
+                <div className="bg-slate-100 rounded-3xl p-4 mb-40">
                     <h2 className="block text-2xl font-bold px-4 pt-2 pb-4">Sua lista de presentes
-                        <span className="block text-base font-semibold text-slate-500">
+                        <span className="block text-base font-normal text-slate-500">
                             Aqui ficam todos os seus presentes cadastrados
                         </span>
                     </h2>
@@ -73,26 +70,34 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
                         isEmpty={isEmpty}
                         newItem={newItem}
                     />
-                    <div
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2"
+                    <motion.div
+                        layout
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
                     >
-                        <WishlistItemCardNew
-                            isOpen={newItem}
-                            setIsOpen={setNewItem}
-                            setWishlist={setWishlist}
-                        />
-                        {wishlist
-                            .slice()
-                            .reverse()
-                            .map((wishlistItem) =>
-                                <WishlistItemCard
-                                    key={wishlistItem.id}
-                                    wishlistItem={wishlistItem}
-                                    mode="edit"
-                                    setWishlist={setWishlist}
-                                />
-                            )}
-                    </div>
+                        <AnimatePresence initial={false}>
+                            {wishlist
+                                .slice()
+                                .reverse()
+                                .map((item) =>
+                                    item.id === "new" ? (
+                                        <WishlistItemCardNew
+                                            key="new"
+                                            newItem={newItem}
+                                            setNewItem={setNewItem}
+                                            setWishlist={setWishlist}
+                                        />
+                                    ) : (
+                                        <WishlistItemCard
+                                            key={item.id}
+                                            wishlistItem={item}
+                                            setWishlist={setWishlist}
+                                            mode="edit"
+                                        />
+                                    )
+                                )
+                            }
+                        </AnimatePresence>
+                    </motion.div>
                 </div>
             </FormProvider >
         </>
