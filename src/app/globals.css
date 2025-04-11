@@ -157,57 +157,33 @@
 
 /* 
 ---break--- */
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+@layer base {}
 
-    h1 {
-      font-size: var(--text-2xl);
-    }
-
-    h2 {
-      font-size: var(--text-xl);
-    }
-
-    h3 {
-      font-size: var(--text-lg);
-    }
-
-    a {
-      text-decoration-line: underline;
-    }
-
-    p {
-      color: var(--color-black)
-    }
+@layer components {
+  .text-paragraph {
+    @apply text-base leading-relaxed text-foreground;
   }
 
-  @layer components {
-    .text-paragraph {
-      @apply text-base leading-relaxed text-foreground;
-    }
-
-    .text-subtle {
-      @apply text-sm leading-snug text-muted-foreground;
-    }
-
-    .text-caption {
-      @apply text-xs text-muted-foreground;
-    }
-
-    .text-highlight {
-      @apply text-base font-semibold text-primary;
-    }
-
-    .text-error {
-      @apply text-sm text-destructive;
-    }
+  .text-subtle {
+    @apply text-sm leading-snug text-muted-foreground;
   }
 
-  body {
-    @apply bg-background text-foreground font-sans;
-    height: 100vh;
+  .text-caption {
+    @apply text-xs text-muted-foreground;
   }
+
+  .text-highlight {
+    @apply text-base font-semibold text-primary;
+  }
+
+  .text-error {
+    @apply text-sm text-destructive;
+  }
+}
+
+body {
+  @apply bg-background text-foreground font-sans;
+  height: 100vh;
 }
 
 @layer utilities {

@@ -9,18 +9,19 @@ import { SubmitHandler, useFormContext } from "react-hook-form"
 import { authClient } from "@/lib/auth-client"
 import { createWishlistItem } from "@/server/wishlistItem"
 import { Dispatch, useEffect, useRef } from "react"
-import { redirect, useRouter } from "next/navigation"
+import { redirect } from "next/navigation"
 import { toast } from "sonner"
+import { motion } from "framer-motion"
 
 
 interface WishlistItemCardNewProps {
-    isOpen: boolean
-    setIsOpen: (newItem: boolean) => void
+    newItem: boolean
+    setNewItem: (newItem: boolean) => void
     setWishlist: Dispatch<React.SetStateAction<WishlistItem[]>>
 }
 
 
-export const WishlistItemCardNew = ({ isOpen, setIsOpen, setWishlist }: WishlistItemCardNewProps) => {
+export const WishlistItemCardNew = ({ newItem, setNewItem, setWishlist }: WishlistItemCardNewProps) => {
     const formHook = useFormContext<CreateWishlistItemFormDataType>()
     const ref = useRef<HTMLDivElement>(null)
     const {
@@ -32,17 +33,16 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen, setWishlist }: Wishlist
     } = formHook
 
     useEffect(() => {
-        if (isOpen) {
-            setFocus("name");
-        }
-    }, [isOpen, setFocus]);
+        setFocus("name");
+    }, [setFocus]);
 
     useEffect(() => {
-        if (!isOpen) return;
+        if (!newItem) return;
 
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as Node)) {
-                setIsOpen(false);
+                setWishlist((prev) => prev.filter((item) => item.id !== "new"))
+                setNewItem(false);
                 reset();
             }
         };
@@ -52,7 +52,7 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen, setWishlist }: Wishlist
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [isOpen, setIsOpen, reset]);
+    }, [newItem, setNewItem, setWishlist, reset]);
 
     const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormDataType> = async (formData: CreateWishlistItemFormDataType) => {
         if (isSubmitting) return;
@@ -61,24 +61,32 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen, setWishlist }: Wishlist
         if (!session) redirect('/login')
 
         const newWishlistItem = await createWishlistItem(formData, session?.user.id);
-        setWishlist((prev) => [...prev, newWishlistItem as WishlistItem])
+        setWishlist((prev) =>
+            prev.map((item) => item.id === "new" ? newWishlistItem as WishlistItem : item)
+        );
+        setNewItem(false)
 
-        setIsOpen(false)
         reset();
         toast.success("Item criado com sucesso!")
     };
 
     return (
-        isOpen &&
-        <div
+        <motion.div
             ref={ref}
             key="newItem"
-            className={clsx(
-                "flex flex-row h-60 rounded-2xl drop-shadow-lg border-4 border-slate-400",
-                isSubmitting ? "bg-gray-200" : "bg-white"
-            )}
+            layout="position"
+            initial={{ opacity: 0, scale: 0.9 }
+            }
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.1 }}
+            className={
+                clsx(
+                    "group transition-all duration-200 ease-in-out bg-slate-50 flex flex-col rounded-xl",
+                    isSubmitting ?? "bg-gray-200"
+                )}
         >
-            <div className="w-2/5 h-full relative">
+            <div className="flex-shrink h-full relative">
                 <Image
                     src={placeholder}
                     fill
@@ -88,25 +96,25 @@ export const WishlistItemCardNew = ({ isOpen, setIsOpen, setWishlist }: Wishlist
                     priority />
             </div>
             <form
-                className="w-3/5 p-4 flex flex-col gap-2 justify-between"
+                className="flex flex-col py-4 px-2 transition-all duration-200 ease-in-out"
                 onSubmit={handleSubmit(handleCreateWishlistItem)}
             >
-                <h2 className="">Novo item</h2>
                 <div className="grid w-full items-center gap-1.5">
-                    <Label htmlFor="name">Nome</Label>
+                    <Label htmlFor="name">Nome do item</Label>
                     <Input
                         {...register("name")}
-                        placeholder="" />
-                    {errors.name && <div className="text-red-500 truncate">{errors.name.message}</div>}
+                        placeholder=""
+                    />
+                    {errors.name && <div className="text-red-500 text-sm truncate">{errors.name.message}</div>}
                 </div>
 
                 <Button
-                    className="md:invisible"
+                    className="md:hidden"
                     disabled={isSubmitting}
                 >
                     Enviar
                 </Button>
             </form>
-        </div>
+        </motion.div >
     )
 }
