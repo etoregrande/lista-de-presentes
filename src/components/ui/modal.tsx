@@ -3,13 +3,19 @@
 import { useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 
+interface ModalProps {
+    children: React.ReactNode;
+    handleCloseModal: () => void;
+    preventBackdropClose: boolean;
+}
+
 export default function Modal({
     children,
     handleCloseModal,
-}: {
-    children: React.ReactNode;
-    handleCloseModal: () => void;
-}) {
+    preventBackdropClose
+}
+    : ModalProps
+) {
     const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
 
     const backdropVariants = {
@@ -59,7 +65,7 @@ export default function Modal({
 
     return (
         <motion.div
-            onClick={handleCloseModal}
+            onClick={preventBackdropClose ? undefined : handleCloseModal}
             className="flex fixed inset-0 z-50 items-end md:items-center justify-center bg-black/50"
             variants={backdropVariants}
             initial="initial"
