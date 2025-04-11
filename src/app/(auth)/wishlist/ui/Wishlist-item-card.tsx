@@ -1,32 +1,90 @@
-import { WishlistItem } from "@/types/wishlistItem"
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import Image from "next/image"
+import { CreateWishlistItemFormDataType, WishlistItem } from "@/types/wishlistItem"
 import { setImageSrc } from "../actions"
 import { AnimatePresence } from "framer-motion"
-import { Dispatch, SetStateAction, useState } from "react"
 import { WishlistItemCardDetail } from "./Wishlist-item-card-detail"
 import { WishlistItemCardView } from "./Wishlist-item-card-view"
 import { Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import clsx from "clsx"
 import { motion } from "framer-motion"
+import { SubmitHandler, useFormContext } from "react-hook-form"
+import { redirect } from "next/navigation"
+import { authClient } from "@/lib/auth-client"
+import { createWishlistItem } from "@/server/wishlistItem"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button/button"
+import { Input } from "@/components/ui/input"
 
 interface WishlistItemCardProps {
     wishlistItem: WishlistItem
-    mode: "edit" | "view"
+    mode: "edit" | "view" | "new"
+    setNewItem?: Dispatch<SetStateAction<boolean>>
     setWishlist: Dispatch<SetStateAction<WishlistItem[]>>
 }
 
-export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistItemCardProps) => {
+export const WishlistItemCard = ({ wishlistItem, mode, setNewItem, setWishlist }: WishlistItemCardProps) => {
     const [openedWishlistItem, setOpenedWishlistItem] = useState<WishlistItem | null>(null)
     const imageSrc = setImageSrc(wishlistItem)
+    const ref = useRef<HTMLDivElement>(null)
+
+    const formHook = useFormContext<CreateWishlistItemFormDataType>()
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setFocus,
+        formState: { errors, isSubmitting }
+    } = formHook
+
+    useEffect(() => {
+        if (mode === "new") setFocus("name");
+    }, [setFocus]);
+
+    useEffect(() => {
+        if (mode != "new") return;
+
+        const handleClickOutside = (event: MouseEvent) => {
+            if (!setNewItem) return
+
+            if (ref.current && !ref.current.contains(event.target as Node)) {
+                setWishlist((prev) => prev.filter((item) => item.id !== "new"))
+                reset();
+                setNewItem(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [mode, setWishlist, reset]);
 
     const handleOpenWishlistItemCardDetail = () => {
         setOpenedWishlistItem(wishlistItem)
     }
 
+    const handleCreateWishlistItem: SubmitHandler<CreateWishlistItemFormDataType> = async (formData: CreateWishlistItemFormDataType) => {
+        if (isSubmitting) return;
+        if (!setNewItem) return
+
+        const { data: session } = await authClient.getSession()
+        if (!session) redirect('/login')
+
+        const newWishlistItem = await createWishlistItem(formData, session?.user.id);
+        setWishlist((prev) =>
+            prev.map((item) => item.id === "new" ? newWishlistItem as WishlistItem : item)
+        );
+        setNewItem(false);
+
+        reset();
+        toast.success("Item criado com sucesso!")
+    };
+
     return (
         <>
-
             <AnimatePresence>
                 {
                     openedWishlistItem && mode === "edit" && setWishlist && <WishlistItemCardDetail
@@ -45,21 +103,22 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
             </AnimatePresence>
 
             <motion.div
+                ref={ref}
                 onClick={handleOpenWishlistItemCardDetail}
-                layout="position"
-                exit={{ opacity: 0, scale: 0.95 }}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
+                layout={mode !== "new" ? "position" : false}
+                initial={{ scale: 0.85 }}
+                animate={{ scale: 1 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                whileHover={mode !== "new" ? { y: -2 } : undefined}
+                whileTap={mode !== "new" ? { y: 1 } : undefined}
                 className={clsx(
-                    "group transition-[padding] duration-200 ease-in-out hover:bg-slate-50 flex flex-col rounded-xl",
+                    "group transition-[padding] duration-200 ease-in-out hover:bg-slate-50 flex flex-row gap-4 md:gap-0 md:flex-col rounded-xl",
                     !wishlistItem.is_active && "opacity-50 cursor-pointer",
                     mode === "view" && wishlistItem.is_purchased && "opacity-50 cursor-pointer",
+                    mode === "new" && "bg-slate-50"
                 )}
-                whileHover={{ y: -2 }}
-                whileTap={{ y: 1 }}
             >
-                <div className="h-full aspect-square relative overflow-hidden rounded-lg">
+                <div className="h-full aspect-square relative overflow-hidden rounded-lg min-h-20 min-w-20">
                     <Image
                         src={imageSrc}
                         fill
@@ -70,37 +129,60 @@ export const WishlistItemCard = ({ wishlistItem, mode, setWishlist }: WishlistIt
                     />
                 </div>
 
-                <div className="flex flex-row gap-2 justify-between lg:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
-                    <div className="flex flex-col min-w-0">
-                        <p className="truncate font-bold tracking-tight">{wishlistItem.name}</p>
-                        {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
-                            <p className="text-sm text-slate-500 whitespace-nowrap flex-shrink-0">
-                                {new Intl.NumberFormat("pt-BR", {
-                                    style: "currency",
-                                    currency: "BRL",
-                                }).format(wishlistItem.price / 100)}
-                            </p>
-                        }
-                    </div>
+                {mode === "edit" &&
+                    <div className="flex flex-row w-full gap-2 justify-between items-center md:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
+                        <div className="flex flex-col min-w-0">
+                            <p className="truncate font-bold tracking-tight">{wishlistItem.name}</p>
+                            {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
+                                <p className="text-sm text-slate-500 whitespace-nowrap flex-shrink-0">
+                                    {new Intl.NumberFormat("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                    }).format(wishlistItem.price / 100)}
+                                </p>
+                            }
+                        </div>
 
-                    <div>
-                        {!wishlistItem.is_active &&
-                            <div className="flex gap-1 items-center">
-                                <p className="text-red-500">Invisível</p>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Info className="text-red-500 cursor-pointer" size={20} />
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Este produto não vai aparecer na sua lista compartilhada</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                        }
+                        <div>
+                            {!wishlistItem.is_active &&
+                                <div className="flex gap-1 items-center">
+                                    <p className="text-red-500">Invisível</p>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Info className="text-red-500 cursor-pointer" size={20} />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Este produto não vai aparecer na sua lista compartilhada</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </div>
+                            }
+                        </div>
                     </div>
-                </div>
+                }
+                {mode === "new" &&
+                    <form
+                        className="flex flex-col py-4 px-4 transition-all duration-200 ease-in-out"
+                        onSubmit={handleSubmit(handleCreateWishlistItem)}
+                    >
+                        <div className="grid w-full items-center gap-1.5">
+                            <Input
+                                {...register("name")}
+                                placeholder="Nome do item"
+                            />
+                            {errors.name && <div className="text-red-500 text-sm truncate">{errors.name.message}</div>}
+                        </div>
+
+                        <Button
+                            className="md:hidden"
+                            disabled={isSubmitting}
+                        >
+                            Enviar
+                        </Button>
+                    </form>
+                }
             </motion.div>
         </>
     )

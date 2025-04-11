@@ -1,9 +1,9 @@
 'use client'
 
-import { WishlistItemCard } from "./Wishlist-item-card";
 import { EmptyWishlist } from "./Wishlist-empty";
 import { WishlistItem } from "@/types/wishlistItem";
 import { useState } from "react";
+import { WishlistSharedItemCard } from "./Wishlist-shared-item-card";
 
 interface WishlistProps {
     initialWishlist: WishlistItem[]
@@ -27,11 +27,10 @@ export function SharedWishlist({ initialWishlist }: WishlistProps) {
                         {notPurchasedWishlist
                             .slice()
                             .reverse()
-                            .map((wishlistItem) => <WishlistItemCard
+                            .map((wishlistItem) => <WishlistSharedItemCard
                                 key={wishlistItem.id}
                                 wishlistItem={wishlistItem}
                                 setWishlist={setWishlist}
-                                mode="view"
                             />
                             )}
                     </div>
@@ -49,11 +48,10 @@ export function SharedWishlist({ initialWishlist }: WishlistProps) {
                         {purchasedWishlist
                             .slice()
                             .reverse()
-                            .map((wishlistItem) => <WishlistItemCard
+                            .map((wishlistItem) => <WishlistSharedItemCard
                                 key={wishlistItem.id}
                                 wishlistItem={wishlistItem}
                                 setWishlist={setWishlist}
-                                mode="view"
                             />
                             )}
                     </div>

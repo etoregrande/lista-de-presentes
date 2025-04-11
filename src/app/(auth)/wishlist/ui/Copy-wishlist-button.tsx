@@ -36,6 +36,7 @@ export const CopyWishlistButton = ({ userId }: CopyWishlistButtonProps) => {
                 <Label htmlFor="url">Lista compartilhada</Label>
                 <Input
                     name="url"
+                    placeholder="Carregando..."
                     defaultValue={sharedUrl}
                     disabled={copied}
                     readOnly
