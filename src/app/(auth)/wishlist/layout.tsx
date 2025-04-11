@@ -15,7 +15,7 @@ export default function WishlistLayout({
           <SignOutButton>Sair</SignOutButton>
         </div>
       </nav>
-      <main className="bg-white min-h-screen mt-14">
+      <main className="bg-white min-h-screen mt-16 md:mt-14">
         <div className="sm:max-w-5xl mx-auto flex flex-col gap-4">
           {children}
         </div>

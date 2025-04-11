@@ -5,7 +5,7 @@ import { setImageSrc } from "../actions"
 import { AnimatePresence } from "framer-motion"
 import { WishlistItemCardDetail } from "./Wishlist-item-card-detail"
 import { WishlistItemCardView } from "./Wishlist-item-card-view"
-import { Info } from "lucide-react"
+import { Info, LoaderCircle } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import clsx from "clsx"
 import { motion } from "framer-motion"
@@ -130,7 +130,7 @@ export const WishlistItemCard = ({ wishlistItem, mode, setNewItem, setWishlist }
                 </div>
 
                 {mode === "edit" &&
-                    <div className="flex flex-row w-full gap-2 justify-between items-center md:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
+                    <div className="overflow-hidden flex flex-row w-full gap-10 justify-between items-center md:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
                         <div className="flex flex-col min-w-0">
                             <p className="truncate font-bold tracking-tight">{wishlistItem.name}</p>
                             {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
@@ -162,9 +162,10 @@ export const WishlistItemCard = ({ wishlistItem, mode, setNewItem, setWishlist }
                         </div>
                     </div>
                 }
+
                 {mode === "new" &&
                     <form
-                        className="flex flex-col py-4 px-4 transition-all duration-200 ease-in-out"
+                        className="flex flex-row justify-between w-full gap-2 items-center py-4 md:pl-4 pr-4 transition-all duration-200 ease-in-out"
                         onSubmit={handleSubmit(handleCreateWishlistItem)}
                     >
                         <div className="grid w-full items-center gap-1.5">
@@ -179,7 +180,11 @@ export const WishlistItemCard = ({ wishlistItem, mode, setNewItem, setWishlist }
                             className="md:hidden"
                             disabled={isSubmitting}
                         >
-                            Enviar
+                            {isSubmitting ?
+                                <LoaderCircle className="animate-spin" />
+                                :
+                                "Criar"
+                            }
                         </Button>
                     </form>
                 }
