@@ -65,7 +65,7 @@ export default function Modal({
 
     return (
         <motion.div
-            onClick={!preventBackdropClose ? handleCloseModal : undefined}
+            onClick={preventBackdropClose ? undefined : handleCloseModal}
             className="flex fixed inset-0 z-50 items-end md:items-center justify-center bg-black/50"
             variants={backdropVariants}
             initial="initial"
