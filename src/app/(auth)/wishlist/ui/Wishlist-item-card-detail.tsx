@@ -134,7 +134,7 @@ export const WishlistItemCardDetail = ({
 
     const imageSrc = setImageSrc(wishlistItem)
     return (
-        <Modal handleCloseModal={handleCloseModal}>
+        <Modal handleCloseModal={handleCloseModal} preventBackdropClose>
             <div className="flex flex-col md:flex-row gap-4 mb-80 md:mb-0">
                 <div className="md:w-1/2 w-full relative aspect-square md:aspect-auto md:h-auto max-h-80 md:max-h-none">
                     <Image
