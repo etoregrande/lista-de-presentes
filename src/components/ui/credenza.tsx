@@ -90,12 +90,18 @@ const CredenzaClose = ({ className, children, ...props }: CredenzaProps) => {
 
 const CredenzaContent = ({ className, children, ...props }: CredenzaProps) => {
   const { isMobile } = useCredenzaContext()
-  const CredenzaContent = isMobile ? DrawerContent : DialogContent
+  const BaseContent = isMobile ? DrawerContent : DialogContent
 
   return (
-    <CredenzaContent className={className} {...props}>
+    <BaseContent
+      className={cn(
+        isMobile && "max-h-[100dvh] flex flex-col border-[var(--border)]",
+        className
+      )}
+      {...props}
+    >
       {children}
-    </CredenzaContent>
+    </BaseContent>
   )
 }
 
@@ -138,7 +144,13 @@ const CredenzaTitle = ({ className, children, ...props }: CredenzaProps) => {
 
 const CredenzaBody = ({ className, children, ...props }: CredenzaProps) => {
   return (
-    <div className={cn("px-4 md:px-0", className)} {...props}>
+    <div
+      className={cn(
+        "flex-1 overflow-auto px-4 md:px-0",
+        className
+      )}
+      {...props}
+    >
       {children}
     </div>
   )
