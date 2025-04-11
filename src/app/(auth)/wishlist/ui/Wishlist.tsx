@@ -3,7 +3,6 @@
 import { CreateWishlistItemFormDataType, WishlistItem } from "@/types/wishlistItem";
 import { FormProvider, useForm } from "react-hook-form";
 import { WishlistItemCard } from "./Wishlist-item-card";
-import { WishlistItemCardNew } from "./Wishlist-item-card-new";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createWishlistItemFormSchema } from "@/schemas/wishlistItem";
 import { EmptyWishlist } from "./Wishlist-empty";
@@ -72,28 +71,24 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
                     />
                     <motion.div
                         layout
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+                        className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
                     >
                         <AnimatePresence initial={false}>
                             {wishlist
                                 .slice()
                                 .reverse()
                                 .map((item) =>
-                                    item.id === "new" ? (
-                                        <WishlistItemCardNew
-                                            key="new"
-                                            newItem={newItem}
-                                            setNewItem={setNewItem}
-                                            setWishlist={setWishlist}
-                                        />
-                                    ) : (
-                                        <WishlistItemCard
-                                            key={item.id}
-                                            wishlistItem={item}
-                                            setWishlist={setWishlist}
-                                            mode="edit"
-                                        />
-                                    )
+                                    <WishlistItemCard
+                                        key={item.id}
+                                        wishlistItem={item}
+                                        setNewItem={setNewItem}
+                                        setWishlist={setWishlist}
+                                        mode={item.id === "new" ?
+                                            "new"
+                                            :
+                                            "edit"
+                                        }
+                                    />
                                 )
                             }
                         </AnimatePresence>
