@@ -130,7 +130,7 @@ export const WishlistItemCard = ({ wishlistItem, mode, setNewItem, setWishlist }
                 </div>
 
                 {mode === "edit" &&
-                    <div className="flex flex-row w-full gap-2 justify-between items-center md:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
+                    <div className="overflow-hidden flex flex-row w-full gap-10 justify-between items-center md:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
                         <div className="flex flex-col min-w-0">
                             <p className="truncate font-bold tracking-tight">{wishlistItem.name}</p>
                             {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
