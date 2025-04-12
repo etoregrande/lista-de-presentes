@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Controller, useForm } from "react-hook-form"
 import { deleteWishlistItem, editWishlistItem } from "@/server/wishlistItem"
 import { authClient } from "@/lib/auth-client"
-import { Toggle } from "@/components/ui/toggle"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { LoaderCircle, Trash2 } from "lucide-react"
 import { redirect } from "next/navigation"
@@ -19,19 +18,21 @@ import { toast } from "sonner"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { editWishlistItemFormSchema } from "@/schemas/wishlistItem"
 import { Switch } from "@/components/ui/switch"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
 
 
 interface WishlistItemCardDetailProps {
     wishlistItem: WishlistItem
     setOpenedWishlistItem: (wishlistItem: WishlistItem | null) => void
     setWishlist: Dispatch<SetStateAction<WishlistItem[]>>
+    setOpenItem: Dispatch<SetStateAction<boolean>>
 }
 
 
 export const WishlistItemCardDetail = ({
     wishlistItem,
-    setOpenedWishlistItem,
-    setWishlist
+    setWishlist,
+    setOpenItem
 }: WishlistItemCardDetailProps
 ) => {
     const {
@@ -90,12 +91,6 @@ export const WishlistItemCardDetail = ({
     }, [watchedImage])
 
 
-    const handleCloseModal = () => {
-        setOpenedWishlistItem(null)
-        reset()
-    }
-
-
     const handleDeleteWishlistItem = async () => {
         if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
         setWishlist((prev) => prev.filter((item) => item.id !== wishlistItem.id));
@@ -104,7 +99,7 @@ export const WishlistItemCardDetail = ({
         await deleteWishlistItem(wishlistItem.id)
 
         setIsloading(false)
-        handleCloseModal()
+        setOpenItem(false)
         toast.success("Item deletado com sucesso!")
     }
 
@@ -126,7 +121,7 @@ export const WishlistItemCardDetail = ({
             )
         )
 
-        handleCloseModal()
+        setOpenItem(false)
         toast.success("Item editado com sucesso!")
     }
 
@@ -134,26 +129,35 @@ export const WishlistItemCardDetail = ({
 
     return (
         <>
-            <div className="flex flex-col md:flex-row gap-4 mb-80 md:mb-0">
-                <div className="md:w-1/2 w-full relative aspect-square md:aspect-auto md:h-auto max-h-80 md:max-h-none group">
+            <div className="flex flex-col gap-4 md:mb-0 px-4 overflow-y-auto max-h-[calc(100vh-6rem)]">
+                <AspectRatio ratio={16 / 9}>
                     <Label htmlFor="image" className="cursor-pointer block w-full h-full relative">
                         <Image
                             src={previewUrl || imageSrc}
                             alt="Imagem do produto"
                             fill
-                            className="object-cover md:rounded-lg"
+                            className="object-cover rounded-sm"
                             priority
                         />
-                        <div className="absolute inset-0 text-center p-12 transition-[background-color] bg-black/40 hover:bg-black/60 flex items-center justify-center text-white text-sm md:text-base font-medium md:rounded-lg">
-                            Clique para alterar a imagem
+                        <div className="
+                            absolute inset-0 text-center p-12
+                            bg-black/40
+                            flex items-center justify-center
+                            text-white text-sm font-medium
+                            md:text-base md:rounded-sm
+                            transition-[background-color,color]
+                            lg:bg-transparent lg:text-transparent
+                          lg:hover:bg-black/60 lg:hover:text-white"
+                        >
+                            Alterar a imagem
                         </div>
                     </Label>
-                </div>
+                </AspectRatio>
 
 
                 <form
                     onSubmit={handleSubmit(handleEditWishlistItem)}
-                    className="p-4 md:p-0 md:w-1/2 w-full flex flex-col flex-grow gap-4"
+                    className="p-4 md:p-0 w-full flex flex-col flex-grow gap-4"
                 >
                     <div className="flex flew-row justify-between items-center">
                         <Controller
@@ -214,6 +218,7 @@ export const WishlistItemCardDetail = ({
                         <Input
                             {...register("price")}
                             type="number"
+                            inputMode="decimal"
                             step="any"
                             placeholder="" />
                         {errors.price && <div className="text-red-500">{errors.price.message}</div>}
@@ -223,6 +228,7 @@ export const WishlistItemCardDetail = ({
                         <Label htmlFor="link">Link do produto</Label>
                         <Input
                             {...register("link")}
+                            inputMode="url"
                             placeholder="" />
                         {errors.link && <div className="text-red-500">{errors.link.message}</div>}
                     </div>
@@ -260,21 +266,21 @@ export const WishlistItemCardDetail = ({
                         {errors.priority && <div className="text-red-500">{errors.priority.message}</div>}
                     </div>
 
-                    {/* <Button
-                            className="flex-1"
-                            type="submit"
-                            disabled={isSubmitting}
-                        >
-                            {
-                                isSubmitting ?
-                                    <LoaderCircle className="animate-spin" />
-                                    :
-                                    "Salvar"
-                            }
-                        </Button> */}
+                    <Button
+                        className="flex-1"
+                        type="submit"
+                        disabled={isSubmitting}
+                    >
+                        {
+                            isSubmitting ?
+                                <LoaderCircle className="animate-spin" />
+                                :
+                                "Salvar"
+                        }
+                    </Button>
 
                 </form>
-            </div>
+            </div >
         </>
     )
 }
