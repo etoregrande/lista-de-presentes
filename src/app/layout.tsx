@@ -1,7 +1,7 @@
 import 'dotenv/config'
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
-import "@/app/globals.css";
 import { Toaster } from 'sonner';
 
 const nunitoSans = Nunito_Sans({

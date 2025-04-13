@@ -4,7 +4,9 @@ import { ReactNode } from "react";
 
 export function SignOutButton({ children }: { children: ReactNode }) {
     return (
-        <Button onClick={signOut}>
+        <Button
+            onClick={signOut}
+        >
             {children}
         </Button>
     )

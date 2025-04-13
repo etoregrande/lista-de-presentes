@@ -45,26 +45,38 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
     return (
         <>
             <FormProvider {...formHook}>
-                <div className="flex justify-end items-end gap-2 px-4 lg:px-0 pb-2">
-                    <WishlistCopyButton userId={session.user.id} />
-                    <Button
-                        type="button"
-                        onClick={handleNewItem}
-                        disabled={newItem}
-                    >
-                        {newItem ?
-                            'Criando...'
-                            :
-                            (<><Plus />Adicionar item</>)
-                        }
-                    </Button>
-                </div>
-                <div className="bg-slate-100 rounded-3xl p-4 mx-4 lg:mx-0 md:p-8">
-                    <h2 className="block text-2xl font-bold pb-8 md:pt-0">Sua lista de presentes
-                        <span className="block text-base font-normal text-slate-500">
-                            Aqui ficam todos os seus presentes cadastrados
-                        </span>
-                    </h2>
+                <div className="mx-4 lg:mx-0">
+                    <div className="flex justify-between pb-4">
+                        <h2 className="block font-bold md:pt-0">Sua lista de presentes
+                            <span className="truncate block text-sm font-normal text-slate-500">
+                                Todos os seus presentes cadastrados
+                            </span>
+                        </h2>
+                        <div className="flex gap-2">
+                            <WishlistCopyButton userId={session.user.id} />
+                            <Button
+                                type="button"
+                                onClick={handleNewItem}
+                                disabled={newItem}
+                                className="hidden md:flex"
+                            >
+                                {newItem ?
+                                    'Criando...'
+                                    :
+                                    (<><Plus />Adicionar item</>)
+                                }
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={handleNewItem}
+                                disabled={newItem}
+                                size="icon"
+                                className="md:hidden"
+                            >
+                                <Plus />
+                            </Button>
+                        </div>
+                    </div>
                     <EmptyWishlist
                         isEmpty={isEmpty}
                         newItem={newItem}

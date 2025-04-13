@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button/button";
-import { SignOutButton } from "@/components/ui/button/signOutButton";
+import './styles.css';
+import Navbar from "@/components/ui/navbar/navbar";
 
-export default function WishlistLayout({
+export default async function WishlistLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -9,17 +9,13 @@ export default function WishlistLayout({
 
   return (
     <>
-      <nav className="bg-slate-100 h-16 md:h-14 w-full fixed top-0 z-50">
-        <div className="sm:max-w-5xl mx-auto h-full flex items-center justify-end px-4 lg:px-0">
-          {/* <Button>Minha lista</Button> */}
-          <SignOutButton>Sair</SignOutButton>
-        </div>
-      </nav>
-      <main className="bg-white min-h-screen mt-16 md:mt-14 pb-40">
-        <div className="max-w-5xl m-auto">
+      <Navbar />
+      <main className="mt-16 md:mt-14 pb-40">
+        <div className="layout-container">
           {children}
         </div>
       </main>
     </>
   );
 }
+

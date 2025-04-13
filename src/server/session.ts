@@ -1,16 +1,14 @@
 'use server'
 
-import { auth } from "@/lib/auth";
+import { auth, Session } from "@/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
-export const getSessionOnServer = async () => {
+export const getSessionOnServer = async (): Promise<Session | null> => {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
 
-    if (!session) redirect('/login')
     return session
 }
 
