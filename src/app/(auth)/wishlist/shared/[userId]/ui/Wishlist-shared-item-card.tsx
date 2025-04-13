@@ -50,9 +50,9 @@ export const WishlistSharedItemCard = ({ wishlistItem, setWishlist }: WishlistSh
                 />
             </div>
 
-            <div className="flex flex-row w-full gap-2 justify-between items-center md:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
-                <div className="flex flex-col min-w-0">
-                    <p className="truncate font-bold tracking-tight">{wishlistItem.name}</p>
+            <div className="flex flex-row w-auto overflow-hidden gap-2 justify-between items-center md:min-h-15 py-2 group-hover:px-2 transition-all duration-200 ease-in-out">
+                <div className="flex flex-col min-w-0 flex-1">
+                    <p className="truncate font-bold tracking-tight overflow-hidden">{wishlistItem.name}</p>
                     {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
                         <p className="text-sm text-slate-500 whitespace-nowrap flex-shrink-0">
                             {new Intl.NumberFormat("pt-BR", {
