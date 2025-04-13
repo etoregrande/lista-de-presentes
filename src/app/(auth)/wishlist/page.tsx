@@ -12,11 +12,8 @@ export default async function Page() {
 
     if (!session) redirect('/login')
 
-    const avatarImage = session.user.image ?? ''
-
-
     return (
-        <div className="pt-8 pb-16 lg:pb-0">
+        <div className="pt-8 pb-16 px-4 md:px-8 lg:px-0 lg:pb-0">
             <Wishlist initialWishlist={wishlistItems} session={session} />
         </div>
     )

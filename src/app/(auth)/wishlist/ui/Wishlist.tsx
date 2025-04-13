@@ -45,67 +45,65 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
     return (
         <>
             <FormProvider {...formHook}>
-                <div className="mx-4 lg:mx-0">
-                    <div className="flex justify-between pb-4">
-                        <h2 className="block font-bold md:pt-0">Sua lista de presentes
-                            <span className="truncate block text-sm font-normal text-slate-500">
-                                Todos os seus presentes cadastrados
-                            </span>
-                        </h2>
-                        <div className="flex gap-2">
-                            <WishlistCopyButton userId={session.user.id} />
-                            <Button
-                                type="button"
-                                onClick={handleNewItem}
-                                disabled={newItem}
-                                className="hidden md:flex"
-                            >
-                                {newItem ?
-                                    'Criando...'
-                                    :
-                                    (<><Plus />Adicionar item</>)
-                                }
-                            </Button>
-                            <Button
-                                type="button"
-                                onClick={handleNewItem}
-                                disabled={newItem}
-                                size="icon"
-                                className="md:hidden"
-                            >
-                                <Plus />
-                            </Button>
-                        </div>
-                    </div>
-                    <EmptyWishlist
-                        isEmpty={isEmpty}
-                        newItem={newItem}
-                    />
-                    <motion.div
-                        layout
-                        className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                    >
-                        <AnimatePresence initial={false}>
-                            {wishlist
-                                .slice()
-                                .reverse()
-                                .map((item) =>
-                                    <WishlistItemCard
-                                        key={item.id}
-                                        wishlistItem={item}
-                                        setNewItem={setNewItem}
-                                        setWishlist={setWishlist}
-                                        mode={item.id === "new" ?
-                                            "new"
-                                            :
-                                            "edit"
-                                        }
-                                    />
-                                )
+                <div className="flex justify-between pb-4">
+                    <h2 className="block font-bold md:pt-0">Sua lista de presentes
+                        <span className="truncate block text-sm font-normal text-slate-500">
+                            Todos os seus presentes cadastrados
+                        </span>
+                    </h2>
+                    <div className="flex gap-2">
+                        <WishlistCopyButton userId={session.user.id} />
+                        <Button
+                            type="button"
+                            onClick={handleNewItem}
+                            disabled={newItem}
+                            className="hidden md:flex"
+                        >
+                            {newItem ?
+                                'Criando...'
+                                :
+                                (<><Plus />Adicionar item</>)
                             }
-                        </AnimatePresence>
-                    </motion.div>
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={handleNewItem}
+                            disabled={newItem}
+                            size="icon"
+                            className="md:hidden"
+                        >
+                            <Plus />
+                        </Button>
+                    </div>
                 </div>
+                <EmptyWishlist
+                    isEmpty={isEmpty}
+                    newItem={newItem}
+                />
+                <motion.div
+                    layout
+                    className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                >
+                    <AnimatePresence initial={false}>
+                        {wishlist
+                            .slice()
+                            .reverse()
+                            .map((item) =>
+                                <WishlistItemCard
+                                    key={item.id}
+                                    wishlistItem={item}
+                                    setNewItem={setNewItem}
+                                    setWishlist={setWishlist}
+                                    mode={item.id === "new" ?
+                                        "new"
+                                        :
+                                        "edit"
+                                    }
+                                />
+                            )
+                        }
+                    </AnimatePresence>
+                </motion.div>
             </FormProvider >
         </>
     );
