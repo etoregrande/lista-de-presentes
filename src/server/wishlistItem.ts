@@ -101,7 +101,7 @@ export const editWishlistItem = async (
 
             const params = {
                 Bucket: process.env.BUCKET_NAME,
-                Key: `${Date.now()}-${image[0].name}`,
+                Key: `wishlist-images/${userId}/${Date.now()}`,
                 Body: imageBuffer,
                 ContentType: image[0].type
             };
@@ -119,7 +119,7 @@ export const editWishlistItem = async (
                 .executeTakeFirst();
 
             if (existingItem?.image) {
-                const imageKey = existingItem.image.split('/').pop()
+                const imageKey = new URL(existingItem.image).pathname.slice(1)
                 const deleteParams = {
                     Bucket: process.env.BUCKET_NAME,
                     Key: imageKey
@@ -178,7 +178,7 @@ export const deleteWishlistItem = async (
             throw new Error('Error deleting wishlist item')
         }
         if (deletedWishlistItem.image) {
-            const imageKey = deletedWishlistItem.image.split('/').pop()
+            const imageKey = new URL(deletedWishlistItem.image).pathname.slice(1)
             const deleteParams = {
                 Bucket: process.env.BUCKET_NAME,
                 Key: imageKey

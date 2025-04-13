@@ -10,7 +10,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
     url
 }) => (
     <div>
-        <h1>Olá, {firstName}!</h1>
+        <h1>Olá,</h1>
         <p>Você pediu para redefinir sua senha.</p>
         <p>
             Clique no link abaixo para continuar:
