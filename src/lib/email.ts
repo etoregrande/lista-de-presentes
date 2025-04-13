@@ -10,7 +10,7 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, subject, url }: SendEmailParams) {
-    const firstName = to.split('@')[0]; // ou use um nome real se tiver
+    const firstName = to.split('@')[0];
 
     const { error } = await resend.emails.send({
         from: 'Presenteio <noreply@presenteio.app>',
@@ -18,7 +18,7 @@ export async function sendEmail({ to, subject, url }: SendEmailParams) {
         subject,
         react: EmailTemplate({
             firstName,
-            url, // adicionamos para o link de reset
+            url,
         }) as React.ReactElement,
     });
 
