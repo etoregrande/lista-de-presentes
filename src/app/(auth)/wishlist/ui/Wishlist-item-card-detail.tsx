@@ -136,7 +136,7 @@ export const WishlistItemCardDetail = ({
                             src={previewUrl || imageSrc}
                             alt="Imagem do produto"
                             fill
-                            className="object-cover rounded-sm"
+                            className="object-cover rounded-md"
                             priority
                         />
                         <div className="
@@ -144,7 +144,7 @@ export const WishlistItemCardDetail = ({
                             bg-black/40
                             flex items-center justify-center
                             text-white text-sm font-medium
-                            md:text-base md:rounded-sm
+                            md:text-base rounded-md
                             transition-[background-color,color]
                             lg:bg-transparent lg:text-transparent
                           lg:hover:bg-black/60 lg:hover:text-white"
@@ -154,7 +154,7 @@ export const WishlistItemCardDetail = ({
                     </Label>
                 </AspectRatio>
 
-
+                <h3 className="font-bold">{wishlistItem.name}</h3>
                 <form
                     onSubmit={handleSubmit(handleEditWishlistItem)}
                     className="p-4 md:p-0 w-full flex flex-col flex-grow gap-4"

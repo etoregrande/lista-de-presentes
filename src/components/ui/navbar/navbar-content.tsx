@@ -43,7 +43,7 @@ export default function NavbarContent({ session }: Props) {
         }`}
     >
       <nav className="bg-slate-100 h-16 md:h-14 w-full pt-[env(safe-area-inset-top)] border">
-        <div className="layout-container h-full flex items-center justify-between px-4 lg:px-0">
+        <div className="layout-container h-full flex items-center justify-between px-4 md:px-8 lg:px-0">
           <div className="flex gap-2 items-center">
             <Gift className="text-slate-500" />
             <p>Presenteio</p>
@@ -58,7 +58,7 @@ export default function NavbarContent({ session }: Props) {
                   {session?.user &&
                     <Avatar className="w-10 h-10">
                       <AvatarImage src={avatarImage} />
-                      <AvatarFallback className="font-bold">{setAvatarFallbackString(session.user.name)}</AvatarFallback>
+                      <AvatarFallback className="font-bold bg-slate-200">{setAvatarFallbackString(session.user.name)}</AvatarFallback>
                     </Avatar>
                   }
                 </div>
