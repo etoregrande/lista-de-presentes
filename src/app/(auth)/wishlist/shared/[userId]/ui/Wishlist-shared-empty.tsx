@@ -1,7 +1,7 @@
 import { PackageOpen } from "lucide-react"
 
 type EmptyWishlistProps = {
-    isEmpty: boolean
+    isEmpty?: boolean
     newItem?: boolean
 }
 
@@ -10,7 +10,7 @@ export const EmptyWishlist = ({ isEmpty, newItem }: EmptyWishlistProps) => {
         isEmpty && !newItem &&
         <div className="flex flex-col justify-center items-center gap-2 min-h-60 border-1 border-slate-200 rounded-xl">
             <PackageOpen className="text-slate-300" />
-            <p className="text-slate-500 break-words">A lista de desejos está vazia</p>
+            <p className="text-[var(--muted-foreground)] break-words text-center p-4">A lista de desejos está vazia</p>
         </div>
     )
 }
