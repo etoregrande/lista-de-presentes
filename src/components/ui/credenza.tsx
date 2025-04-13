@@ -59,7 +59,7 @@ const Credenza = ({ children, ...props }: RootCredenzaProps) => {
 
   return (
     <CredenzaContext.Provider value={{ isMobile }}>
-      <Credenza {...props} {...(isMobile && { autoFocus: true })}>
+      <Credenza {...props} {...(isMobile && { autoFocus: false })}>
         {children}
       </Credenza>
     </CredenzaContext.Provider>

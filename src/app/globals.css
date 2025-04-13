@@ -157,7 +157,7 @@
 
 /* 
 ---break--- */
-@layer base {}
+
 
 @layer components {
   .text-paragraph {
@@ -183,9 +183,13 @@
   .border {
     border-color: var(--color-border);
   }
+
+  .layout-container {
+    @apply sm:max-w-4xl mx-auto
+  }
 }
 
+
 body {
-  @apply bg-background text-foreground font-sans;
-  height: 100vh;
+  @apply bg-background text-foreground font-sans w-full;
 }

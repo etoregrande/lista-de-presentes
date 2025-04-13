@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button/button"
 import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import clsx from "clsx"
-import { Copy } from "lucide-react"
+import { Copy, Share } from "lucide-react"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Credenza, CredenzaBody, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "@/components/ui/credenza"
@@ -34,8 +34,15 @@ export const WishlistCopyButton = ({ userId }: WishlistCopyButtonProps) => {
     return (
         <>
             <Credenza>
-                <CredenzaTrigger asChild>
-                    <Button variant="secondary">Compartilhar</Button>
+                <CredenzaTrigger asChild className="hidden md:flex">
+                    <Button variant="secondary">
+                        <Share />Compartilhar
+                    </Button>
+                </CredenzaTrigger>
+                <CredenzaTrigger asChild className="md:hidden">
+                    <Button variant="secondary" size="icon">
+                        <Share />
+                    </Button>
                 </CredenzaTrigger>
                 <CredenzaContent>
                     <CredenzaHeader>

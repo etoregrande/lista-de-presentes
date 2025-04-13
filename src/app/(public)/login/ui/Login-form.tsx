@@ -56,8 +56,8 @@ export const LoginForm = ({ setForgotPassword }: LoginFormProps) => {
                     id="email"
                     type="email"
                 />
-                {errors.email && <div className="text-red-500">{errors.email.message}</div>}
             </div>
+            {errors.email && <div className="text-red-500">{errors.email.message}</div>}
             <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="password">Senha</Label>
                 <Input
@@ -67,6 +67,7 @@ export const LoginForm = ({ setForgotPassword }: LoginFormProps) => {
 
                 />
                 {errors.password && <div className="text-red-500">{errors.password.message}</div>}
+                {errors.root && <div className="text-red-500">{errors.root.message}</div>}
             </div>
             <Button disabled={isSubmitting}>
                 {isSubmitting ?
@@ -75,7 +76,6 @@ export const LoginForm = ({ setForgotPassword }: LoginFormProps) => {
                     'Entrar'
                 }
             </Button>
-            {errors.root && <div className="text-red-500">{errors.root.message}</div>}
             <Button
                 onClick={() => setForgotPassword(true)}
                 type="button"
