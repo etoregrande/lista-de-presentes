@@ -19,6 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { editWishlistItemFormSchema } from "@/schemas/wishlistItem"
 import { Switch } from "@/components/ui/switch"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { NumericFormat } from 'react-number-format'
+import { getDisplayPrice } from "@/lib/utils"
 
 
 interface WishlistItemCardDetailProps {
@@ -48,7 +50,7 @@ export const WishlistItemCardDetail = ({
         defaultValues: {
             name: wishlistItem?.name,
             description: wishlistItem?.description || undefined,
-            price: wishlistItem?.price ? wishlistItem.price / 100 : undefined,
+            price: wishlistItem?.price || null,
             link: wishlistItem?.link,
             priority: wishlistItem?.priority,
             isActive: wishlistItem?.is_active
@@ -63,7 +65,7 @@ export const WishlistItemCardDetail = ({
             reset({
                 name: wishlistItem.name,
                 description: wishlistItem.description || undefined,
-                price: wishlistItem.price ? wishlistItem.price / 100 : undefined,
+                price: wishlistItem.price || null,
                 link: wishlistItem.link,
                 priority: wishlistItem.priority,
                 isActive: wishlistItem.is_active
@@ -105,6 +107,8 @@ export const WishlistItemCardDetail = ({
 
 
     const handleEditWishlistItem = async (formData: EditWishlistItemFormDataType) => {
+        console.log(formData)
+
         const { data: session } = await authClient.getSession()
         if (!session) redirect('/login')
         if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
@@ -154,7 +158,15 @@ export const WishlistItemCardDetail = ({
                     </Label>
                 </AspectRatio>
 
-                <h3 className="font-bold">{wishlistItem.name}</h3>
+                <div>
+                    <h3 className="font-bold">{wishlistItem.name}</h3>
+                    {wishlistItem.price && wishlistItem.price > 0 ?
+                        <p className="text-[var(--muted-foreground)] text-sm break-words">{getDisplayPrice(wishlistItem.price)}</p>
+                        :
+                        <p className="text-[var(--muted-foreground)] text-sm break-words">Produto sem preço</p>
+                    }
+                </div>
+
                 <form
                     onSubmit={handleSubmit(handleEditWishlistItem)}
                     className="w-full flex flex-col flex-grow gap-4"
@@ -215,12 +227,25 @@ export const WishlistItemCardDetail = ({
 
                     <div className="grid w-full items-center gap-1.5">
                         <Label htmlFor="price">Preço</Label>
-                        <Input
-                            {...register("price")}
-                            type="number"
-                            inputMode="decimal"
-                            step="any"
-                            placeholder="" />
+                        <Controller
+                            name="price"
+                            control={control}
+                            render={({ field }) => (
+                                <NumericFormat
+                                    thousandSeparator="."
+                                    decimalSeparator=","
+                                    decimalScale={2}
+                                    prefix="R$ "
+                                    allowNegative={false}
+                                    value={field.value ? field.value / 100 : ''}
+                                    onValueChange={(values) => {
+                                        const { floatValue } = values;
+                                        field.onChange(floatValue !== undefined ? floatValue * 100 : null);
+                                    }}
+                                    customInput={Input}
+                                />
+                            )}
+                        />
                         {errors.price && <div className="text-red-500">{errors.price.message}</div>}
                     </div>
 

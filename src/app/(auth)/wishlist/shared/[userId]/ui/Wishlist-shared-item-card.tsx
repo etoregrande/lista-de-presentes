@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import clsx from "clsx"
 import { motion } from "framer-motion"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { getDisplayPrice } from "@/lib/utils"
 
 interface WishlistSharedItemCardProps {
     wishlistItem: WishlistItem
@@ -55,10 +56,7 @@ export const WishlistSharedItemCard = ({ wishlistItem, setWishlist }: WishlistSh
                     <p className="truncate font-bold tracking-tight overflow-hidden">{wishlistItem.name}</p>
                     {typeof wishlistItem.price === "number" && wishlistItem.price > 0 &&
                         <p className="text-sm text-slate-500 whitespace-nowrap flex-shrink-0">
-                            {new Intl.NumberFormat("pt-BR", {
-                                style: "currency",
-                                currency: "BRL",
-                            }).format(wishlistItem.price / 100)}
+                            {getDisplayPrice(wishlistItem.price)}
                         </p>
                     }
                 </div>

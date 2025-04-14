@@ -15,6 +15,20 @@ export const getDisplayName = (fullName: string) => {
   return lastName ? `${firstName} ${lastName}` : firstName
 }
 
+export const getDisplayPrice = (priceInCents: number) => {
+  if (!Number.isInteger(priceInCents)) {
+    throw new Error("The price must be an integer.");
+  }
+
+  const displayPrice = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  })
+    .format(priceInCents / 100)
+
+  return displayPrice
+}
+
 export const setAvatarFallbackString = (name: string) => {
   if (!name) return 'NO'
 
@@ -34,3 +48,8 @@ export const setAvatarFallbackString = (name: string) => {
 
   return `${nameFirstLetter}${nameSecondLetter}`
 }
+
+export const capitalizeFirstLetter = (string: string) => {
+  if (!string) return string;
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};

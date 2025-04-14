@@ -7,12 +7,16 @@ export const wishlistItemSchema = z.object({
     name: z
         .string()
         .min(1, "Nome é obrigatório")
-    ,
+        .transform(name =>
+            name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
+        ),
     description: z
         .string()
         .optional(),
     price: z
-        .coerce.number()
+        .number()
+        .int()
+        .min(0, "O preço não pode ser negativo")
         .nullable(),
     image: z
         .any()
