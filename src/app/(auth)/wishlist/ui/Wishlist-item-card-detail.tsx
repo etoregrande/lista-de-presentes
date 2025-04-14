@@ -157,7 +157,7 @@ export const WishlistItemCardDetail = ({
                 <h3 className="font-bold">{wishlistItem.name}</h3>
                 <form
                     onSubmit={handleSubmit(handleEditWishlistItem)}
-                    className="p-4 md:p-0 w-full flex flex-col flex-grow gap-4"
+                    className="w-full flex flex-col flex-grow gap-4"
                 >
                     <div className="flex flew-row justify-between items-center">
                         <Controller
