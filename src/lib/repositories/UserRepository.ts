@@ -1,25 +1,27 @@
-'use server'
+"use server";
 
-import { db } from '@/lib/database/db';
+import { db } from "@/lib/database/db";
 
 export async function getUserById(userId?: string) {
-    if (!userId) throw new Error('You must provide a userId')
+  if (!userId) throw new Error("You must provide a userId");
 
-    const user = db.selectFrom('user')
-        .where("id", "=", userId)
-        .selectAll()
-        .executeTakeFirst();
+  const user = db
+    .selectFrom("user")
+    .where("id", "=", userId)
+    .selectAll()
+    .executeTakeFirst();
 
-    return user
+  return user;
 }
 
 export async function getUserByEmail(email?: string) {
-    if (!email) throw new Error('You must provide a email')
+  if (!email) throw new Error("You must provide a email");
 
-    const user = db.selectFrom('user')
-        .where("email", "=", email)
-        .selectAll()
-        .executeTakeFirst();
+  const user = db
+    .selectFrom("user")
+    .where("email", "=", email)
+    .selectAll()
+    .executeTakeFirst();
 
-    return user
+  return user;
 }

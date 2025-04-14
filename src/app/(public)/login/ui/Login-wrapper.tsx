@@ -9,7 +9,7 @@ export function LoginWrapper() {
     const [forgotPassword, setForgotPassword] = useState<boolean>(false)
 
     return (
-        <div className="flex flex-col space-y-4 justify-center px-4 h-screen max-w-sm mx-auto">
+        <div className="mx-auto flex h-screen max-w-sm flex-col justify-center space-y-4 px-4">
             <motion.div
                 layout
                 className="flex flex-col items-center space-y-4"
@@ -30,8 +30,10 @@ export function LoginWrapper() {
 
                 <motion.div
                     layout
-                    className='flex flex-col gap-4 sm:min-w-80 bg-white p-8 shadow-2xl rounded-sm'
-                    transition={{ layout: { duration: 0.3, ease: 'easeInOut' } }}
+                    className="flex flex-col gap-4 rounded-sm bg-white p-8 shadow-2xl sm:min-w-80"
+                    transition={{
+                        layout: { duration: 0.3, ease: 'easeInOut' },
+                    }}
                 >
                     <AnimatePresence mode="wait" initial={false}>
                         <motion.div
@@ -42,9 +44,13 @@ export function LoginWrapper() {
                             transition={{ duration: 0.2 }}
                         >
                             {forgotPassword ? (
-                                <ForgotPasswordForm setForgotPassword={setForgotPassword} />
+                                <ForgotPasswordForm
+                                    setForgotPassword={setForgotPassword}
+                                />
                             ) : (
-                                <LoginForm setForgotPassword={setForgotPassword} />
+                                <LoginForm
+                                    setForgotPassword={setForgotPassword}
+                                />
                             )}
                         </motion.div>
                     </AnimatePresence>
