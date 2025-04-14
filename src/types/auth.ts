@@ -1,4 +1,9 @@
-import { forgotPasswordFormSchema, resetPasswordFormSchema, signInFormSchema, signUpFormSchema } from "@/schemas/auth";
+import {
+  forgotPasswordFormSchema,
+  resetPasswordFormSchema,
+  signInFormSchema,
+  signUpFormSchema,
+} from "@/schemas/auth";
 import { z } from "zod";
 
 export type SignUpFormData = z.infer<typeof signUpFormSchema>;

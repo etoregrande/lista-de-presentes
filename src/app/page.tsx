@@ -1,33 +1,27 @@
-'use client'
-
-import { Button } from "@/components/ui/button/button";
-import { useRouter } from "next/navigation";
+import { Button } from '@/components/ui/button/button'
+import { LogIn } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Home() {
-  const router = useRouter();
-
   return (
-    <div className="flex flex-col space-y-4 justify-center px-4 h-screen max-w-sm mx-auto">
-      <div className="flex flex-col gap-4 bg-white p-8 shadow-2xl rounded-sm">
-        <h1>Olá!</h1>
-        <p className="text-slate-800">Se você chegou aqui é porque eu provavalmente pedi sua ajuda para testar essa aplicação.
-          Ela está básica, muito feia e provavelmente bem quebrada, mas é exatamente por isso que preciso dos seus testes e sugestões!
-        </p>
-        <div className="flex flex-col gap-2">
-          <Button
-            onClick={() => router.push('/signup')}
-            className="w-full self-center hover:underline"
-          >
-            Não tem uma conta?
-          </Button>
-          <Button
-            onClick={() => router.push('/login')}
-            variant="secondary"
-            className="w-full self-center hover:underline"
-          >
-            Já tenho cadastro
-          </Button>
-        </div>
+    <div className="bg-[image:var(--gradient)]">
+      <div className="layout-container flex min-h-dvh flex-col justify-center gap-4 px-4 md:items-center md:gap-10 lg:px-0">
+        <h1 className="text-[var(--foreground)]t text-center text-6xl font-bold tracking-tighter md:text-8xl">
+          Presenteio
+          <span className="block text-center text-lg font-light tracking-tight text-black md:text-left md:text-2xl">
+            Pra você parar de fingir que não quer presente!
+          </span>
+        </h1>
+        <Button
+          asChild
+          size="lg"
+          className="flex w-full gap-2 hover:gap-4 md:w-auto md:text-base"
+        >
+          <Link href="/login">
+            Vamos começar
+            <LogIn />
+          </Link>
+        </Button>
       </div>
     </div>
   )
