@@ -14,72 +14,65 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 interface ForgotPasswordProps {
-    setForgotPassword: Dispatch<SetStateAction<boolean>>
+  setFormType: Dispatch<
+    SetStateAction<'login' | 'register' | 'forgot-password'>
+  >
 }
 
-export const ForgotPasswordForm = ({
-    setForgotPassword,
-}: ForgotPasswordProps) => {
-    const {
-        register,
-        handleSubmit,
-        setError,
-        formState: { errors, isSubmitting },
-    } = useForm<ForgotPasswordFormData>({
-        resolver: zodResolver(forgotPasswordFormSchema),
-    })
+export const ForgotPasswordForm = ({ setFormType }: ForgotPasswordProps) => {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordFormSchema),
+  })
 
-    const onSubmit: SubmitHandler<ForgotPasswordFormData> = async (
-        formData: ForgotPasswordFormData
-    ) => {
-        const user = await getUserByEmail(formData.email)
-        if (!user) {
-            setError('email', { message: 'Email não cadastrado' })
-            return null
-        }
-
-        await authClient.forgetPassword({
-            email: formData.email,
-            redirectTo: '/reset-password',
-        })
-
-        toast.success(
-            `Um link de recuperação foi enviado para ${formData.email}`
-        )
+  const onSubmit: SubmitHandler<ForgotPasswordFormData> = async (
+    formData: ForgotPasswordFormData
+  ) => {
+    const user = await getUserByEmail(formData.email)
+    if (!user) {
+      setError('email', { message: 'Email não cadastrado' })
+      return null
     }
 
-    return (
-        <>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-4"
-            >
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="email">Email</Label>
-                    <Input {...register('email')} id="email" type="email" />
-                    {errors.email && (
-                        <div className="text-red-500">
-                            {errors.email.message}
-                        </div>
-                    )}
-                </div>
-                <div className="flex flex-col gap-2">
-                    <Button disabled={isSubmitting}>
-                        {isSubmitting ? (
-                            <LoaderCircle className="animate-spin" />
-                        ) : (
-                            'Enviar link de recuperação'
-                        )}
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => setForgotPassword(false)}
-                    >
-                        Voltar
-                    </Button>
-                </div>
-            </form>
-        </>
-    )
+    await authClient.forgetPassword({
+      email: formData.email,
+      redirectTo: '/reset-password',
+    })
+
+    toast.success(`Um link de recuperação foi enviado para ${formData.email}`)
+  }
+
+  return (
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input {...register('email')} id="email" type="email" />
+          {errors.email && (
+            <div className="text-red-500">{errors.email.message}</div>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Button disabled={isSubmitting}>
+            {isSubmitting ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              'Enviar link de recuperação'
+            )}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => setFormType('login')}
+          >
+            Fazer login
+          </Button>
+        </div>
+      </form>
+    </>
+  )
 }
