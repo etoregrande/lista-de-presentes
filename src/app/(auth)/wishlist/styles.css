@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+html {
+    overflow-y: scroll;
+}
+
 body {
     @apply bg-white;
 }

@@ -133,7 +133,7 @@ export const editWishlistItem = async (
 
     const editedWishlistItemData: WishlistItem = {
         name: name,
-        price: price ? price * 100 : null,
+        price: price ?? null,
         description: description ?? undefined,
         link: sanitizedLink ?? undefined,
         priority: priority,

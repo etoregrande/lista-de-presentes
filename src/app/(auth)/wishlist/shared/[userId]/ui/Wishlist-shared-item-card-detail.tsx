@@ -10,6 +10,7 @@ import { purchaseWishlistItem } from "@/server/wishlistItem"
 import { Dispatch, SetStateAction } from "react"
 import { useRouter } from "next/navigation"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { getDisplayPrice } from "@/lib/utils"
 
 
 interface WishlistSharedItemDetailProps {
@@ -68,7 +69,7 @@ export const WishlistSharedItemCardDetail = ({
             <div>
                 <h3 className="font-bold">{wishlistItem.name}</h3>
                 {wishlistItem.price && wishlistItem.price > 0 ?
-                    <p className="text-[var(--muted-foreground)] text-sm break-words">{`R$ ${wishlistItem.price / 100}`}</p>
+                    <p className="text-[var(--muted-foreground)] text-sm break-words">{getDisplayPrice(wishlistItem.price)}</p>
                     :
                     <p className="text-[var(--muted-foreground)] text-sm break-words">Produto sem preço</p>
                 }
