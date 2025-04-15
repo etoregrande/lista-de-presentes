@@ -32,11 +32,7 @@ export const WishlistSharedItemCardDetail = ({
   setOpenedWishlistItem,
   setWishlist,
 }: WishlistSharedItemDetailProps) => {
-  const router = useRouter()
-
-  const handleCloseModal = () => {
-    setOpenedWishlistItem(null)
-  }
+  const { imageSrc, isPlaceholder } = setImageSrc(wishlistItem)
 
   const setItemPurchased = async () => {
     if (!wishlistItem.id) throw new Error('Failed to get wishlist item id')
@@ -68,7 +64,6 @@ export const WishlistSharedItemCardDetail = ({
     }
   }
 
-  const imageSrc = setImageSrc(wishlistItem)
   return (
     <div className="flex max-h-[calc(100vh-6rem)] flex-col gap-4 overflow-y-auto px-4 md:mb-0">
       <AspectRatio ratio={16 / 9}>

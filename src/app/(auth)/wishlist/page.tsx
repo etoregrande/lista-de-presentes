@@ -4,16 +4,17 @@ import { listWishlistItems } from '@/server/wishlistItem'
 import { getSessionOnServer } from '@/server/session'
 import { Session } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { ThemeToggle } from '@/components/ui/button/theme-toggle-button'
 
 export default async function Page() {
-    const wishlistItems = await listWishlistItems()
-    const session: Session | null = await getSessionOnServer()
+  const wishlistItems = await listWishlistItems()
+  const session: Session | null = await getSessionOnServer()
 
-    if (!session) redirect('/login')
+  if (!session) redirect('/login')
 
-    return (
-        <div className="px-4 pt-8 pb-16 md:px-8 lg:px-0 lg:pb-0">
-            <Wishlist initialWishlist={wishlistItems} session={session} />
-        </div>
-    )
+  return (
+    <div className="px-4 pt-8 pb-16 md:px-8 lg:px-0 lg:pb-0">
+      <Wishlist initialWishlist={wishlistItems} session={session} />
+    </div>
+  )
 }
