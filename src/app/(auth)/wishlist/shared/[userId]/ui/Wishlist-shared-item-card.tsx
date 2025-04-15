@@ -34,7 +34,7 @@ export const WishlistSharedItemCard = ({
   const [openedWishlistItem, setOpenedWishlistItem] =
     useState<WishlistItem | null>(null)
   const [openItem, setOpenItem] = useState<boolean>(false)
-  const imageSrc = setImageSrc(wishlistItem)
+  const { imageSrc, isPlaceholder } = setImageSrc(wishlistItem)
   const ref = useRef<HTMLDivElement>(null)
 
   const handleOpenWishlistItemCardDetail = () => {
@@ -46,8 +46,6 @@ export const WishlistSharedItemCard = ({
       ref={ref}
       onClick={handleOpenWishlistItemCardDetail}
       layout="position"
-      initial={{ scale: 0.85 }}
-      animate={{ scale: 1 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       whileHover={{ y: -2 }}
       whileTap={{ y: 1 }}
@@ -56,13 +54,17 @@ export const WishlistSharedItemCard = ({
         wishlistItem.is_purchased && 'cursor-pointer opacity-50'
       )}
     >
-      <div className="relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
+      <div className="bg-muted-background relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
         <Image
           src={imageSrc}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
           alt="Imagem do produto"
-          className="object-cover transition-transform duration-200 ease-in-out group-hover:scale-102"
+          className={clsx(
+            'transition-transform duration-200 ease-in-out group-hover:scale-102',
+            !isPlaceholder && 'object-cover',
+            isPlaceholder && 'object-contain'
+          )}
           priority
         />
       </div>

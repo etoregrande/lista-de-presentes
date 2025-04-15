@@ -4,7 +4,3 @@
 html {
   overflow-y: scroll;
 }
-
-body {
-  @apply bg-white bg-none;
-}

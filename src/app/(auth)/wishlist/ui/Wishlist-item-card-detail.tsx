@@ -139,18 +139,18 @@ export const WishlistItemCardDetail = ({
     toast.success('Item editado com sucesso!')
   }
 
-  const imageSrc = setImageSrc(wishlistItem)
+  const { imageSrc } = setImageSrc(wishlistItem)
 
   return (
     <>
       <div className="flex max-h-[calc(100vh-6rem)] flex-col gap-4 overflow-y-auto px-4 md:mb-0">
-        <AspectRatio ratio={16 / 9}>
+        <AspectRatio ratio={16 / 9} className="rounded-md bg-purple-50">
           <Label
             htmlFor="image"
             className="relative block h-full w-full cursor-pointer"
           >
             <Image
-              src={previewUrl || imageSrc}
+              src={imageSrc}
               alt="Imagem do produto"
               fill
               className="rounded-md object-cover"
@@ -161,7 +161,6 @@ export const WishlistItemCardDetail = ({
             </div>
           </Label>
         </AspectRatio>
-
         <div>
           <h3 className="font-bold">{wishlistItem.name}</h3>
           {wishlistItem.price && wishlistItem.price > 0 ? (
@@ -174,7 +173,6 @@ export const WishlistItemCardDetail = ({
             </p>
           )}
         </div>
-
         <form
           onSubmit={handleSubmit(handleEditWishlistItem)}
           className="flex w-full flex-grow flex-col gap-4"
@@ -184,7 +182,7 @@ export const WishlistItemCardDetail = ({
               control={control}
               name="isActive"
               render={({ field }) => (
-                <div className="flex items-center space-x-2">
+                <div className="flex h-full items-center space-x-2">
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}

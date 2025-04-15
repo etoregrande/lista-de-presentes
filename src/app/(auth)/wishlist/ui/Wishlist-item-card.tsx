@@ -48,7 +48,7 @@ export const WishlistItemCard = ({
   const [openedWishlistItem, setOpenedWishlistItem] =
     useState<WishlistItem | null>(null)
   const [openItem, setOpenItem] = useState<boolean>(false)
-  const imageSrc = setImageSrc(wishlistItem)
+  const { imageSrc, isPlaceholder } = setImageSrc(wishlistItem)
   const ref = useRef<HTMLDivElement>(null)
 
   const formHook = useFormContext<CreateWishlistItemFormDataType>()
@@ -125,20 +125,23 @@ export const WishlistItemCard = ({
         mode === 'new' && 'bg-slate-50'
       )}
     >
-      <div className="relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
+      <div className="bg-secondary-foreground relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
         <Image
           src={imageSrc}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
           alt="Imagem do produto"
-          className="object-cover transition-transform duration-200 ease-in-out group-hover:scale-102"
+          className={clsx(
+            'transition-transform duration-200 ease-in-out group-hover:scale-102',
+            !isPlaceholder && 'object-cover',
+            isPlaceholder && 'object-contain'
+          )}
           priority
         />
       </div>
 
       {mode === 'edit' && (
         <div className="flex w-full flex-row justify-between gap-4 overflow-hidden py-2 transition-all duration-200 ease-in-out group-hover:px-2 md:min-h-15">
-          <div className="flex min-w-0 flex-col">
+          <div className="flex min-w-0 flex-col justify-center md:justify-start">
             <p className="truncate font-bold tracking-tight">
               {wishlistItem.name}
             </p>
@@ -150,25 +153,23 @@ export const WishlistItemCard = ({
               )}
           </div>
 
-          <div>
-            {!wishlistItem.is_active && (
-              <div className="flex items-center gap-1">
-                <p className="text-red-500">Invisível</p>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="cursor-pointer text-red-500" size={20} />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        Este produto não vai aparecer na sua lista compartilhada
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            )}
-          </div>
+          {!wishlistItem.is_active && (
+            <div className="flex items-center gap-1">
+              <p className="text-red-500">Invisível</p>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="cursor-pointer text-red-500" size={20} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Este produto não vai aparecer na sua lista compartilhada
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
         </div>
       )}
 
