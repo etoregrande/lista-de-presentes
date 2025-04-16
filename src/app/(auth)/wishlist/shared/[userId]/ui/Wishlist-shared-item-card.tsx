@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useRef, useState } from 'react'
 import Image from 'next/image'
 import { WishlistItem } from '@/types/wishlistItem'
-import { setImageSrc } from '../actions'
+import { setWishlistItemImageSrc } from '../actions'
 import { WishlistSharedItemCardDetail } from './Wishlist-shared-item-card-detail'
 import { Info } from 'lucide-react'
 import {
@@ -34,7 +34,7 @@ export const WishlistSharedItemCard = ({
   const [openedWishlistItem, setOpenedWishlistItem] =
     useState<WishlistItem | null>(null)
   const [openItem, setOpenItem] = useState<boolean>(false)
-  const { imageSrc, isPlaceholder } = setImageSrc(wishlistItem)
+  const { imageSrc, isPlaceholder } = setWishlistItemImageSrc(wishlistItem)
   const ref = useRef<HTMLDivElement>(null)
 
   const handleOpenWishlistItemCardDetail = () => {

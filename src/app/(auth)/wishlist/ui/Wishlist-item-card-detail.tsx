@@ -145,7 +145,9 @@ export const WishlistItemCardDetail = ({
 
   return (
     <>
-      <div className={`flex flex-col gap-4 px-4 ${className}`}>
+      <div
+        className={`flex flex-col gap-4 overflow-y-scroll px-4 pb-60 md:pb-6 ${className}`}
+      >
         <AspectRatio ratio={16 / 9} className="rounded-md bg-purple-50">
           <Label
             htmlFor="image"
@@ -307,14 +309,14 @@ export const WishlistItemCardDetail = ({
               <div className="text-red-500">{errors.priority.message}</div>
             )}
           </div>
-
+          {/* 
           <Button className="flex-1" type="submit" disabled={isSubmitting}>
             {isSubmitting ? (
               <LoaderCircle className="animate-spin" />
             ) : (
               'Salvar'
             )}
-          </Button>
+          </Button> */}
         </form>
       </div>
     </>
