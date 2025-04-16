@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button/button'
 import { Plus } from 'lucide-react'
 import { Session } from '@/lib/auth'
 import { WishlistCopyButton } from './Wishlist-copy-button'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
 interface WishlistProps {
   userId?: string
@@ -48,8 +48,8 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
   return (
     <>
       <FormProvider {...formHook}>
-        <div className="flex justify-between pb-4">
-          <h2 className="block font-bold md:pt-0">
+        <div className="flex justify-between gap-4 pb-4">
+          <h2 className="block truncate font-bold md:pt-0">
             Sua lista de presentes
             <span className="block truncate text-sm font-normal text-slate-500">
               Todos os seus presentes cadastrados
@@ -84,25 +84,20 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
           </div>
         </div>
         <EmptyWishlist isEmpty={isEmpty} newItem={newItem} />
-        <motion.div
-          layout
-          className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
-        >
-          <AnimatePresence initial={false}>
-            {wishlist
-              .slice()
-              .reverse()
-              .map((item) => (
-                <WishlistItemCard
-                  key={item.id}
-                  wishlistItem={item}
-                  setNewItem={setNewItem}
-                  setWishlist={setWishlist}
-                  mode={item.id === 'new' ? 'new' : 'edit'}
-                />
-              ))}
-          </AnimatePresence>
-        </motion.div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+          {wishlist
+            .slice()
+            .reverse()
+            .map((item) => (
+              <WishlistItemCard
+                key={item.id}
+                wishlistItem={item}
+                setNewItem={setNewItem}
+                setWishlist={setWishlist}
+                mode={item.id === 'new' ? 'new' : 'edit'}
+              />
+            ))}
+        </div>
       </FormProvider>
     </>
   )
