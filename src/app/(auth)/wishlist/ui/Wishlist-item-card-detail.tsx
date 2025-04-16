@@ -32,6 +32,7 @@ import { NumericFormat } from 'react-number-format'
 import { getDisplayPrice } from '@/lib/utils'
 
 interface WishlistItemCardDetailProps {
+  className?: string
   wishlistItem: WishlistItem
   setOpenedWishlistItem: (wishlistItem: WishlistItem | null) => void
   setWishlist: Dispatch<SetStateAction<WishlistItem[]>>
@@ -39,6 +40,7 @@ interface WishlistItemCardDetailProps {
 }
 
 export const WishlistItemCardDetail = ({
+  className,
   wishlistItem,
   setWishlist,
   setOpenItem,
@@ -143,7 +145,7 @@ export const WishlistItemCardDetail = ({
 
   return (
     <>
-      <div className="flex max-h-[calc(100vh-6rem)] flex-col gap-4 overflow-y-auto px-4 md:mb-0">
+      <div className={`flex flex-col gap-4 px-4 ${className}`}>
         <AspectRatio ratio={16 / 9} className="rounded-md bg-purple-50">
           <Label
             htmlFor="image"

@@ -113,16 +113,16 @@ export const WishlistItemCard = ({
     <motion.div
       ref={ref}
       onClick={handleOpenWishlistItemCardDetail}
-      layout={mode !== 'new' ? 'position' : false}
-      initial={{ scale: 0.85 }}
+      layout={mode === 'new' ? false : 'position'}
+      key={mode === 'new' ? 'new' : wishlistItem.id}
+      initial={mode === 'new' ? { scale: 0.85 } : false}
       animate={{ scale: 1 }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      whileHover={mode !== 'new' ? { y: -2 } : undefined}
-      whileTap={mode !== 'new' ? { y: 1 } : undefined}
+      whileTap={mode === 'new' ? undefined : { y: 1 }}
       className={clsx(
-        'group flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out hover:bg-slate-50 md:flex-col md:gap-0',
+        'group hover:bg-secondary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0',
         !wishlistItem.is_active && 'cursor-pointer opacity-50',
-        mode === 'new' && 'bg-slate-50'
+        mode === 'new' && 'bg-secondary-foreground'
       )}
     >
       <div className="bg-secondary-foreground relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
@@ -213,6 +213,7 @@ export const WishlistItemCard = ({
             setOpenedWishlistItem={setOpenedWishlistItem}
             setWishlist={setWishlist}
             setOpenItem={setOpenItem}
+            className="mb-40"
           />
         )}
       </SheetContent>
