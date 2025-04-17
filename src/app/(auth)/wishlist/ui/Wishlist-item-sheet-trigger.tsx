@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { setWishlistItemImageSrc } from '../actions'
 import { Info } from 'lucide-react'
 import {
   Tooltip,
@@ -11,6 +10,7 @@ import clsx from 'clsx'
 import { getDisplayPrice } from '@/lib/utils'
 import { WishlistItem } from '@/types/db'
 import { motion } from 'framer-motion'
+import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 
 interface WishlistItemSheetTriggerProps {
   wishlistItem: Partial<WishlistItem>
@@ -19,7 +19,6 @@ interface WishlistItemSheetTriggerProps {
 export const WishlistItemSheetTrigger = ({
   wishlistItem,
 }: WishlistItemSheetTriggerProps) => {
-  const { imageSrc, isPlaceholder } = setWishlistItemImageSrc(wishlistItem)
   return (
     <motion.div
       layout
@@ -34,13 +33,11 @@ export const WishlistItemSheetTrigger = ({
     >
       <div className="bg-secondary-foreground relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
         <Image
-          src={imageSrc}
+          src={wishlistItem.image ?? placeholder}
           fill
           alt="Imagem do produto"
           className={clsx(
-            'transition-transform duration-200 ease-in-out group-hover:scale-102',
-            !isPlaceholder && 'object-cover',
-            isPlaceholder && 'object-contain'
+            'transition-transform duration-200 ease-in-out group-hover:scale-102'
           )}
           priority
         />
