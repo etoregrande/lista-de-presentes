@@ -10,20 +10,15 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { s3 } from '@/lib/database/s3'
-import { Insertable, sql } from 'kysely'
+import { sql } from 'kysely'
 import { sanitizeLinkUrl } from '@/lib/utils'
 import { deleteImageFromS3, uploadImageToS3 } from './s3'
-import {
-  NewWishlistItem,
-  UpdateWishlistItem,
-  WishlistItem,
-  WishlistItemDB,
-} from '@/types/db'
+import { NewWishlistItem, UpdateWishlistItem, WishlistItem } from '@/types/db'
 
 export const createWishlistItem = async (
   formData: CreateWishlistItemFormDataType,
   userId: string
-) => {
+): Promise<Partial<WishlistItem> | null> => {
   const { name, isActive, link, priority, description, image, price } = formData
   const sanitizedLink = sanitizeLinkUrl(link)
   let imageUrl: string | null = null
@@ -53,7 +48,7 @@ export const createWishlistItem = async (
   }
 
   try {
-    const newWishlistItem = await db
+    const newWishlistItem: Partial<WishlistItem> | undefined = await db
       .insertInto('wishlist_item')
       .values(newWishlistItemData)
       .returning([
@@ -70,7 +65,8 @@ export const createWishlistItem = async (
       .executeTakeFirst()
 
     if (!newWishlistItem) {
-      throw new Error('Error creating wishlist item')
+      console.error('Error creating wishlist item')
+      return null
     }
 
     return newWishlistItem
@@ -80,7 +76,9 @@ export const createWishlistItem = async (
   }
 }
 
-export const listWishlistItems = async (user_id?: string) => {
+export const listWishlistItems = async (
+  user_id?: string
+): Promise<WishlistItem[]> => {
   let userId
 
   if (!user_id) {

@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { WishlistItem } from '@/types/wishlistItem'
 import { setWishlistItemImageSrc } from '../actions'
 import { Info } from 'lucide-react'
 import {
@@ -11,9 +10,10 @@ import {
 import clsx from 'clsx'
 
 import { getDisplayPrice } from '@/lib/utils'
+import { WishlistItem } from '@/types/db'
 
 interface WishlistItemCardProps {
-  wishlistItem: WishlistItem
+  wishlistItem: Partial<WishlistItem>
 }
 
 export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
