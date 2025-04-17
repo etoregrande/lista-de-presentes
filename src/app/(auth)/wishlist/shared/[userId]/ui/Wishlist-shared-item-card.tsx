@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useRef, useState } from 'react'
 import Image from 'next/image'
-import { WishlistItem } from '@/types/wishlistItem'
+import { WishlistItem } from '@/types/db'
 import { setWishlistItemImageSrc } from '../actions'
 import { WishlistSharedItemCardDetail } from './Wishlist-shared-item-card-detail'
 import { Info } from 'lucide-react'

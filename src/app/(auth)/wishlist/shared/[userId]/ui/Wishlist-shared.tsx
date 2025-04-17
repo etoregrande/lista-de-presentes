@@ -1,7 +1,7 @@
 'use client'
 
 import { EmptyWishlist } from './Wishlist-shared-empty'
-import { WishlistItem } from '@/types/wishlistItem'
+import { WishlistItem } from '@/types/db'
 import { useState } from 'react'
 import { WishlistSharedItemCard } from './Wishlist-shared-item-card'
 

@@ -1,23 +1,23 @@
-import { WishlistItem } from '@/types/wishlistItem'
-import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
+// import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
+// import { WishlistItem } from '@/types/db'
 
-export const setWishlistItemImageSrc = (wishlistItem: WishlistItem) => {
-  const image = wishlistItem.image
-  let imageSrc = placeholder
-  let isPlaceholder = true
+// export const setWishlistItemImageSrc = (wishlistItem: WishlistItem) => {
+//   const image = wishlistItem.image
+//   let imageSrc = placeholder
+//   let isPlaceholder = true
 
-  if (
-    typeof image === 'string' &&
-    (image.startsWith('http') ||
-      image.startsWith('blob:') ||
-      image.startsWith('/'))
-  ) {
-    imageSrc = image
-    isPlaceholder = false
-  }
+//   if (
+//     typeof image === 'string' &&
+//     (image.startsWith('http') ||
+//       image.startsWith('blob:') ||
+//       image.startsWith('/'))
+//   ) {
+//     imageSrc = image
+//     isPlaceholder = false
+//   }
 
-  return {
-    imageSrc,
-    isPlaceholder,
-  }
-}
+//   return {
+//     imageSrc,
+//     isPlaceholder,
+//   }
+// }

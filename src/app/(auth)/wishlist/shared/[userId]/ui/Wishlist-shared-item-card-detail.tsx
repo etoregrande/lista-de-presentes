@@ -1,10 +1,8 @@
 'use client'
 
-import { WishlistItem } from '@/types/wishlistItem'
-import { setWishlistItemImageSrc } from '../../../actions'
+import { WishlistItem } from '@/types/db'
 import { Button } from '@/components/ui/button/button'
 import Image from 'next/image'
-import Modal from '@/components/ui/modal'
 import {
   Dialog,
   DialogClose,
@@ -17,9 +15,9 @@ import {
 } from '@/components/ui/dialog'
 import { purchaseWishlistItem } from '@/server/wishlistItem'
 import { Dispatch, SetStateAction } from 'react'
-import { useRouter } from 'next/navigation'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { getDisplayPrice } from '@/lib/utils'
+import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 
 interface WishlistSharedItemDetailProps {
   wishlistItem: WishlistItem
@@ -32,8 +30,6 @@ export const WishlistSharedItemCardDetail = ({
   setOpenedWishlistItem,
   setWishlist,
 }: WishlistSharedItemDetailProps) => {
-  const { imageSrc, isPlaceholder } = setWishlistItemImageSrc(wishlistItem)
-
   const setItemPurchased = async () => {
     if (!wishlistItem.id) throw new Error('Failed to get wishlist item id')
     const isPurchased = wishlistItem.is_purchased ? false : true
@@ -68,7 +64,7 @@ export const WishlistSharedItemCardDetail = ({
     <div className="flex max-h-[calc(100vh-6rem)] flex-col gap-4 overflow-y-auto px-4 md:mb-0">
       <AspectRatio ratio={16 / 9}>
         <Image
-          src={imageSrc}
+          src={placeholder}
           alt="Imagem do produto"
           fill
           className="rounded-md object-cover"
