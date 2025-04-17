@@ -1,10 +1,7 @@
 'use server'
 
 import 'dotenv/config'
-import {
-  EditWishlistItemFormDataType,
-  type CreateWishlistItemFormDataType,
-} from '@/types/wishlistItem'
+import { type WishlistItemFormDataType } from '@/types/wishlistItem'
 import { db } from '@/lib/database/db'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
@@ -16,17 +13,16 @@ import { deleteImageFromS3, uploadImageToS3 } from './s3'
 import { NewWishlistItem, UpdateWishlistItem, WishlistItem } from '@/types/db'
 
 export const createWishlistItem = async (
-  formData: CreateWishlistItemFormDataType,
+  formData: WishlistItemFormDataType,
   userId: string
 ): Promise<Partial<WishlistItem> | null> => {
   const { name, isActive, link, priority, description, image, price } = formData
   const sanitizedLink = sanitizeLinkUrl(link)
   let imageUrl: string | null = null
-  const newImage = image?.[0]
 
-  if (newImage) {
+  if (image) {
     try {
-      imageUrl = await uploadImageToS3(newImage, userId)
+      imageUrl = await uploadImageToS3(image, userId)
     } catch (error) {
       throw new Error('Error handling image on S3')
     }
@@ -76,63 +72,18 @@ export const createWishlistItem = async (
   }
 }
 
-export const listWishlistItems = async (
-  user_id?: string
-): Promise<WishlistItem[]> => {
-  let userId
-
-  if (!user_id) {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    })
-
-    if (!session) {
-      throw new Error('Unable to get session')
-    }
-
-    userId = session.user.id
-  } else {
-    userId = user_id
-  }
-
-  try {
-    const wishlistItems = await db
-      .selectFrom('wishlist_item')
-      .selectAll()
-      .where('user_id', '=', userId)
-      .orderBy('is_active', 'asc')
-      .orderBy(
-        sql`
-                CASE 
-                WHEN priority = 'alta' THEN 1
-                WHEN priority = 'normal' THEN 2
-                WHEN priority = 'baixa' THEN 3
-                END
-                `,
-        'desc'
-      )
-      .execute()
-
-    return wishlistItems
-  } catch (error) {
-    console.error('Database Error:', error)
-    throw new Error('Failed to fetch Wishlist items.')
-  }
-}
-
 export const editWishlistItem = async (
-  formData: EditWishlistItemFormDataType,
+  formData: WishlistItemFormDataType,
   wishlistItemId: string,
   userId: string
 ) => {
   const { name, description, price, link, image, priority, isActive } = formData
   const sanitizedLink = sanitizeLinkUrl(link)
   let imageUrl: string | null = null
-  const newImage = image?.[0]
 
-  if (newImage) {
+  if (image) {
     try {
-      imageUrl = await uploadImageToS3(newImage, userId)
+      imageUrl = await uploadImageToS3(image, userId)
 
       const existingItem = await db
         .selectFrom('wishlist_item')
@@ -214,6 +165,50 @@ export const deleteWishlistItem = async (wishlistItemId: string) => {
   } catch (error) {
     console.error('Error deleting wishlist item =>', error)
     return null
+  }
+}
+
+export const listWishlistItems = async (
+  user_id?: string
+): Promise<WishlistItem[]> => {
+  let userId
+
+  if (!user_id) {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    })
+
+    if (!session) {
+      throw new Error('Unable to get session')
+    }
+
+    userId = session.user.id
+  } else {
+    userId = user_id
+  }
+
+  try {
+    const wishlistItems = await db
+      .selectFrom('wishlist_item')
+      .selectAll()
+      .where('user_id', '=', userId)
+      .orderBy('is_active', 'asc')
+      .orderBy(
+        sql`
+                CASE 
+                WHEN priority = 'alta' THEN 1
+                WHEN priority = 'normal' THEN 2
+                WHEN priority = 'baixa' THEN 3
+                END
+                `,
+        'desc'
+      )
+      .execute()
+
+    return wishlistItems
+  } catch (error) {
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch Wishlist items.')
   }
 }
 

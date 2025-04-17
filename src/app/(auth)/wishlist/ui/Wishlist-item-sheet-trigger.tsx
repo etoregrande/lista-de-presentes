@@ -22,10 +22,13 @@ export const WishlistItemSheetTrigger = ({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0.8, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ duration: 0.3 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{
+        duration: 0.2,
+        layout: { type: 'spring', stiffness: 300, damping: 24 },
+      }}
       className={clsx(
         'group hover:bg-secondary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0',
         !wishlistItem.is_active && 'cursor-pointer opacity-50'
@@ -36,8 +39,10 @@ export const WishlistItemSheetTrigger = ({
           src={wishlistItem.image ?? placeholder}
           fill
           alt="Imagem do produto"
+          sizes="(max-width: 768px) 100vw, 350px"
           className={clsx(
-            'transition-transform duration-200 ease-in-out group-hover:scale-102'
+            'transition-transform duration-200 ease-in-out group-hover:scale-102',
+            wishlistItem.image && 'object-cover'
           )}
           priority
         />

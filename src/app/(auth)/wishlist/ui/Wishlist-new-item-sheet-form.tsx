@@ -1,12 +1,5 @@
-import { CreateWishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormDataType } from '@/types/wishlistItem'
 import { Controller, useFormContext } from 'react-hook-form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import Image from 'next/image'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -14,18 +7,56 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Textarea } from '@/components/ui/textarea'
 import { NumericFormat } from 'react-number-format'
 import { Switch } from '@/components/ui/switch'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
-import { motion } from 'framer-motion'
 
-export const WishlistNewItemForm = () => {
+export const WishlistNewItemSheetForm = () => {
   const {
     register,
     watch,
+    setValue,
+    trigger,
+    reset,
     control,
     formState: { errors },
-  } = useFormContext<CreateWishlistItemFormDataType>()
+  } = useFormContext<WishlistItemFormDataType>()
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const image = watch('image')
+
+  useEffect(() => {
+    reset({
+      name: '',
+      description: '',
+      price: 0,
+      link: '',
+      image: null,
+      priority: 'normal',
+      isActive: true,
+    })
+  }, [reset])
+
+  useEffect(() => {
+    let url: string | null = null
+
+    if (image instanceof File) {
+      // trigger zod validation for image
+      trigger('image').then((isValid) => {
+        if (isValid) {
+          url = URL.createObjectURL(image)
+          setSelectedImage(url)
+        } else {
+          setSelectedImage(null)
+        }
+      })
+    } else {
+      setSelectedImage(null)
+    }
+
+    // revokes the URL before running useEffect again or when component is unmounted
+    return () => {
+      if (url) URL.revokeObjectURL(url)
+    }
+  }, [image, trigger])
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -39,6 +70,7 @@ export const WishlistNewItemForm = () => {
               src={selectedImage ?? placeholder}
               alt="Imagem do produto"
               fill
+              sizes="(max-width: 768px) 100vw, 350px"
               className="rounded-md object-cover"
               priority
             />
@@ -47,21 +79,22 @@ export const WishlistNewItemForm = () => {
               Alterar a imagem
             </div>
             <Input
-              {...register('image')}
               id="image"
               type="file"
               accept="image/jpeg,image/png,image/webp"
+              {...register('image')}
               onChange={(e) => {
                 const file = e.target.files?.[0]
-                setSelectedImage(file ? URL.createObjectURL(file) : null)
-                register('image').onChange(e)
+                setValue('image', file)
               }}
               className="hidden"
             />
           </Label>
         </AspectRatio>
         {errors.image && (
-          <div className="text-red-500">{String(errors.image.message)}</div>
+          <div className="-mt-6 text-sm text-red-500">
+            {String(errors.image.message)}
+          </div>
         )}
 
         <div className="flew-row flex items-center justify-between">
@@ -138,30 +171,6 @@ export const WishlistNewItemForm = () => {
           <Input {...register('link')} inputMode="url" placeholder="" />
           {errors.link && (
             <div className="text-red-500">{errors.link.message}</div>
-          )}
-        </div>
-
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="priority">Prioridade</Label>
-          <Controller
-            control={control}
-            name="priority"
-            defaultValue="normal"
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Selecione a prioridade" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="alta">Alta</SelectItem>
-                  <SelectItem value="normal">Normal</SelectItem>
-                  <SelectItem value="baixa">Baixa</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.priority && (
-            <div className="text-red-500">{errors.priority.message}</div>
           )}
         </div>
       </form>
