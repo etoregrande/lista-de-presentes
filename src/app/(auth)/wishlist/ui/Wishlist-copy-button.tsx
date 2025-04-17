@@ -18,10 +18,14 @@ import {
 } from '@/components/ui/credenza'
 
 interface WishlistCopyButtonProps {
+  className?: string
   userId: string
 }
 
-export const WishlistCopyButton = ({ userId }: WishlistCopyButtonProps) => {
+export const WishlistCopyButton = ({
+  className,
+  userId,
+}: WishlistCopyButtonProps) => {
   const [copied, setCopied] = useState(false)
   const [sharedUrl, setSharedUrl] = useState('')
 
@@ -41,15 +45,10 @@ export const WishlistCopyButton = ({ userId }: WishlistCopyButtonProps) => {
   return (
     <>
       <Credenza>
-        <CredenzaTrigger asChild className="hidden md:flex">
-          <Button variant="secondary">
+        <CredenzaTrigger asChild>
+          <Button variant="secondary" size="icontext" className={className}>
             <Share />
-            Compartilhar
-          </Button>
-        </CredenzaTrigger>
-        <CredenzaTrigger asChild className="md:hidden">
-          <Button variant="secondary" size="icon">
-            <Share />
+            <span className="hidden md:inline">Compartilhar</span>
           </Button>
         </CredenzaTrigger>
         <CredenzaContent>

@@ -1,7 +1,7 @@
 import { WishlistItem } from '@/types/wishlistItem'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 
-export const setImageSrc = (wishlistItem: WishlistItem) => {
+export const setWishlistItemImageSrc = (wishlistItem: WishlistItem) => {
   const image = wishlistItem.image
   let imageSrc = placeholder
   let isPlaceholder = true

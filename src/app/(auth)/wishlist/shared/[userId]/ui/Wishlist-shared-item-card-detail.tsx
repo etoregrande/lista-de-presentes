@@ -1,7 +1,7 @@
 'use client'
 
 import { WishlistItem } from '@/types/wishlistItem'
-import { setImageSrc } from '../../../actions'
+import { setWishlistItemImageSrc } from '../../../actions'
 import { Button } from '@/components/ui/button/button'
 import Image from 'next/image'
 import Modal from '@/components/ui/modal'
@@ -32,7 +32,7 @@ export const WishlistSharedItemCardDetail = ({
   setOpenedWishlistItem,
   setWishlist,
 }: WishlistSharedItemDetailProps) => {
-  const { imageSrc, isPlaceholder } = setImageSrc(wishlistItem)
+  const { imageSrc, isPlaceholder } = setWishlistItemImageSrc(wishlistItem)
 
   const setItemPurchased = async () => {
     if (!wishlistItem.id) throw new Error('Failed to get wishlist item id')

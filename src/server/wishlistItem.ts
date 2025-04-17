@@ -1,80 +1,106 @@
-"use server";
+'use server'
 
-import "dotenv/config";
+import 'dotenv/config'
 import {
   EditWishlistItemFormDataType,
-  WishlistItem,
   type CreateWishlistItemFormDataType,
-} from "@/types/wishlistItem";
-import { db } from "@/lib/database/db";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import { s3 } from "@/lib/database/s3";
-import { sql } from "kysely";
+} from '@/types/wishlistItem'
+import { db } from '@/lib/database/db'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
+import { DeleteObjectCommand } from '@aws-sdk/client-s3'
+import { s3 } from '@/lib/database/s3'
+import { sql } from 'kysely'
+import { sanitizeLinkUrl } from '@/lib/utils'
+import { deleteImageFromS3, uploadImageToS3 } from './s3'
+import { NewWishlistItem, UpdateWishlistItem, WishlistItem } from '@/types/db'
 
 export const createWishlistItem = async (
   formData: CreateWishlistItemFormDataType,
-  userId: string,
-) => {
-  const { name } = formData;
+  userId: string
+): Promise<Partial<WishlistItem> | null> => {
+  const { name, isActive, link, priority, description, image, price } = formData
+  const sanitizedLink = sanitizeLinkUrl(link)
+  let imageUrl: string | null = null
+  const newImage = image?.[0]
 
-  const newWishlistItemData = {
-    name: name,
-    user_id: userId ?? null,
-  };
+  if (newImage) {
+    try {
+      imageUrl = await uploadImageToS3(newImage, userId)
+    } catch (error) {
+      throw new Error('Error handling image on S3')
+    }
+  }
+
+  const newWishlistItemData: NewWishlistItem = {
+    name,
+    price: price ?? null,
+    description: description ?? undefined,
+    link: sanitizedLink ?? undefined,
+    priority,
+    is_active: isActive,
+    image: imageUrl ?? null,
+    user_id: userId,
+  }
+
+  if (imageUrl) {
+    newWishlistItemData.image = imageUrl
+  }
 
   try {
-    const newWishlistItem = await db
-      .insertInto("wishlist_item")
+    const newWishlistItem: Partial<WishlistItem> | undefined = await db
+      .insertInto('wishlist_item')
       .values(newWishlistItemData)
       .returning([
-        "id",
-        "name",
-        "description",
-        "price",
-        "link",
-        "image",
-        "priority",
-        "user_id",
-        "is_active",
+        'id',
+        'name',
+        'description',
+        'price',
+        'link',
+        'image',
+        'priority',
+        'user_id',
+        'is_active',
       ])
-      .executeTakeFirst();
+      .executeTakeFirst()
 
     if (!newWishlistItem) {
-      throw new Error("Error creating wishlist item");
+      console.error('Error creating wishlist item')
+      return null
     }
 
-    return newWishlistItem;
+    return newWishlistItem
   } catch (error) {
-    console.error("Error creating wishlist item =>", error);
-    return null;
+    console.error('Error creating wishlist item =>', error)
+    return null
   }
-};
+}
 
-export const listWishlistItems = async (user_id?: string) => {
-  let userId;
+export const listWishlistItems = async (
+  user_id?: string
+): Promise<WishlistItem[]> => {
+  let userId
 
   if (!user_id) {
     const session = await auth.api.getSession({
       headers: await headers(),
-    });
+    })
 
     if (!session) {
-      throw new Error("Unable to get session");
+      throw new Error('Unable to get session')
     }
 
-    userId = session.user.id;
+    userId = session.user.id
   } else {
-    userId = user_id;
+    userId = user_id
   }
 
   try {
     const wishlistItems = await db
-      .selectFrom("wishlist_item")
+      .selectFrom('wishlist_item')
       .selectAll()
-      .where("user_id", "=", userId)
-      .orderBy("is_active", "asc")
+      .where('user_id', '=', userId)
+      .orderBy('is_active', 'asc')
       .orderBy(
         sql`
                 CASE 
@@ -83,170 +109,148 @@ export const listWishlistItems = async (user_id?: string) => {
                 WHEN priority = 'baixa' THEN 3
                 END
                 `,
-        "desc",
+        'desc'
       )
-      .execute();
+      .execute()
 
-    return wishlistItems;
+    return wishlistItems
   } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch Wishlist items.");
+    console.error('Database Error:', error)
+    throw new Error('Failed to fetch Wishlist items.')
   }
-};
+}
 
 export const editWishlistItem = async (
   formData: EditWishlistItemFormDataType,
   wishlistItemId: string,
-  userId: string,
+  userId: string
 ) => {
-  const { name, description, price, link, image, priority, isActive } =
-    formData;
+  const { name, description, price, link, image, priority, isActive } = formData
+  const sanitizedLink = sanitizeLinkUrl(link)
+  let imageUrl: string | null = null
+  const newImage = image?.[0]
 
-  const sanitizedLink =
-    link && !link.startsWith("http://") && !link.startsWith("https://")
-      ? `https://${link}`
-      : link;
-
-  let imageUrl: string | null = null;
-
-  if (image?.[0]) {
+  if (newImage) {
     try {
-      const imageBuffer = Buffer.from(await image[0].arrayBuffer());
-
-      const params = {
-        Bucket: process.env.BUCKET_NAME,
-        Key: `wishlist-images/${userId}/${Date.now()}`,
-        Body: imageBuffer,
-        ContentType: image[0].type,
-      };
-
-      const command = new PutObjectCommand(params);
-      await s3.send(command);
-
-      imageUrl = `https://${process.env.BUCKET_NAME}.s3.${process.env.BUCKET_REGION}.amazonaws.com/${params.Key}`;
+      imageUrl = await uploadImageToS3(newImage, userId)
 
       const existingItem = await db
-        .selectFrom("wishlist_item")
-        .select(["image"])
-        .where("id", "=", wishlistItemId)
-        .where("user_id", "=", userId)
-        .executeTakeFirst();
+        .selectFrom('wishlist_item')
+        .select(['image'])
+        .where('id', '=', wishlistItemId)
+        .where('user_id', '=', userId)
+        .executeTakeFirst()
 
       if (existingItem?.image) {
-        const imageKey = new URL(existingItem.image).pathname.slice(1);
-        const deleteParams = {
-          Bucket: process.env.BUCKET_NAME,
-          Key: imageKey,
-        };
-        await s3.send(new DeleteObjectCommand(deleteParams));
+        await deleteImageFromS3(existingItem.image)
       }
     } catch (error) {
-      throw new Error("Error handling images on S3");
+      throw new Error('Error handling images on S3')
     }
   }
 
-  const editedWishlistItemData: WishlistItem = {
-    name: name,
+  const editedWishlistItemData: UpdateWishlistItem = {
+    name,
     price: price ?? null,
-    description: description ?? undefined,
-    link: sanitizedLink ?? undefined,
-    priority: priority,
+    description: description ?? null,
+    link: sanitizedLink ?? null,
+    priority,
     is_active: isActive,
-  };
+  }
 
   if (imageUrl) {
-    editedWishlistItemData.image = imageUrl;
+    editedWishlistItemData.image = imageUrl
   }
 
   try {
     const editedWishlistItem = await db
-      .updateTable("wishlist_item")
+      .updateTable('wishlist_item')
       .set(editedWishlistItemData)
-      .where("id", "=", wishlistItemId)
+      .where('id', '=', wishlistItemId)
       .returning([
-        "id",
-        "name",
-        "description",
-        "price",
-        "link",
-        "image",
-        "priority",
-        "user_id",
-        "is_active",
+        'id',
+        'name',
+        'description',
+        'price',
+        'link',
+        'image',
+        'priority',
+        'user_id',
+        'is_active',
       ])
-      .executeTakeFirst();
+      .executeTakeFirst()
 
     if (!editedWishlistItem) {
-      throw new Error("Error editing wishlist item");
+      throw new Error('Error editing wishlist item')
     }
 
-    return editedWishlistItem;
+    return editedWishlistItem
   } catch (error) {
-    console.error("Error creating wishlist item =>", error);
-    return null;
+    console.error('Error creating wishlist item =>', error)
+    return null
   }
-};
+}
 
 export const deleteWishlistItem = async (wishlistItemId: string) => {
   try {
     const deletedWishlistItem = await db
-      .deleteFrom("wishlist_item")
-      .where("id", "=", wishlistItemId)
-      .returning(["image"])
-      .executeTakeFirst();
+      .deleteFrom('wishlist_item')
+      .where('id', '=', wishlistItemId)
+      .returning(['image'])
+      .executeTakeFirst()
 
     if (!deletedWishlistItem) {
-      throw new Error("Error deleting wishlist item");
+      throw new Error('Error deleting wishlist item')
     }
     if (deletedWishlistItem.image) {
-      const imageKey = new URL(deletedWishlistItem.image).pathname.slice(1);
+      const imageKey = new URL(deletedWishlistItem.image).pathname.slice(1)
       const deleteParams = {
         Bucket: process.env.BUCKET_NAME,
         Key: imageKey,
-      };
-      await s3.send(new DeleteObjectCommand(deleteParams));
+      }
+      await s3.send(new DeleteObjectCommand(deleteParams))
     }
-    return;
+    return
   } catch (error) {
-    console.error("Error deleting wishlist item =>", error);
-    return null;
+    console.error('Error deleting wishlist item =>', error)
+    return null
   }
-};
+}
 
 export const purchaseWishlistItem = async (
   wishlistItem: WishlistItem,
-  isPurchased: boolean,
+  isPurchased: boolean
 ) => {
-  if (!wishlistItem.id) throw new Error("Wishlist item ID is required");
+  if (!wishlistItem.id) throw new Error('Wishlist item ID is required')
 
   const purchasedAt = wishlistItem.purchased_at
     ? new Date(wishlistItem.purchased_at)
-    : null;
+    : null
 
   try {
     let query = db
-      .updateTable("wishlist_item")
+      .updateTable('wishlist_item')
       .set({
         is_purchased: isPurchased,
         purchased_at: isPurchased ? new Date() : null,
       })
-      .where("id", "=", wishlistItem.id);
+      .where('id', '=', wishlistItem.id)
 
     if (purchasedAt === null) {
-      query = query.where("purchased_at", "is", null);
+      query = query.where('purchased_at', 'is', null)
     } else {
-      query = query.where("purchased_at", "=", purchasedAt);
+      query = query.where('purchased_at', '=', purchasedAt)
     }
 
-    const updatedWishlistItem = await query.returningAll().executeTakeFirst();
+    const updatedWishlistItem = await query.returningAll().executeTakeFirst()
 
     if (!updatedWishlistItem)
       throw new Error(
-        "Error updating wishlist item: possible conflict or item not found.",
-      );
+        'Error updating wishlist item: possible conflict or item not found.'
+      )
 
-    return updatedWishlistItem;
+    return updatedWishlistItem
   } catch (error) {
-    console.error("Error patching wishlist item =>", error);
+    console.error('Error patching wishlist item =>', error)
   }
-};
+}

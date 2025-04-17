@@ -1,104 +1,76 @@
 'use client'
 
-import {
-  CreateWishlistItemFormDataType,
-  WishlistItem,
-} from '@/types/wishlistItem'
+import { EditWishlistItemFormDataType } from '@/types/wishlistItem'
 import { FormProvider, useForm } from 'react-hook-form'
-import { WishlistItemCard } from './Wishlist-item-card'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createWishlistItemFormSchema } from '@/schemas/wishlistItem'
+import { editWishlistItemFormSchema } from '@/schemas/wishlistItem'
 import { EmptyWishlist } from './Wishlist-empty'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button/button'
-import { Plus } from 'lucide-react'
 import { Session } from '@/lib/auth'
 import { WishlistCopyButton } from './Wishlist-copy-button'
-import { AnimatePresence } from 'framer-motion'
+import { WishlistItem } from '@/types/db'
+import { Button } from '@/components/ui/button/button'
+import { WishlistNewItem } from './Wishlist-new-item'
+import { Plus } from 'lucide-react'
+import { WishlistItemSheet } from './Wishlist-item-sheet'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface WishlistProps {
   userId?: string
-  initialWishlist: WishlistItem[]
+  initialWishlist: Partial<WishlistItem>[]
   session: Session
 }
 
 export function Wishlist({ initialWishlist, session }: WishlistProps) {
-  const formHook = useForm<CreateWishlistItemFormDataType>({
-    resolver: zodResolver(createWishlistItemFormSchema),
-  })
-  const [newItem, setNewItem] = useState(false)
-  const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist)
+  const [wishlist, setWishlist] =
+    useState<Partial<WishlistItem>[]>(initialWishlist)
   const isEmpty = wishlist.length === 0
-
-  const handleNewItem = () => {
-    setNewItem(true)
-    setWishlist((prev) => [
-      ...prev,
-      {
-        id: 'new',
-        name: '',
-        is_active: true,
-        is_purchased: false,
-        user_id: session.user.id,
-        priority: 'normal',
-      },
-    ])
-  }
+  const formMethods = useForm<EditWishlistItemFormDataType>({
+    resolver: zodResolver(editWishlistItemFormSchema),
+    defaultValues: {
+      isActive: true,
+    },
+  })
 
   return (
     <>
-      <FormProvider {...formHook}>
-        <div className="flex justify-between gap-4 pb-4">
-          <h2 className="block truncate font-bold md:pt-0">
-            Sua lista de presentes
-            <span className="block truncate text-sm font-normal text-slate-500">
-              Todos os seus presentes cadastrados
-            </span>
-          </h2>
-          <div className="flex gap-2">
-            <WishlistCopyButton userId={session.user.id} />
-            <Button
-              type="button"
-              onClick={handleNewItem}
-              disabled={newItem}
-              className="hidden md:flex"
-            >
-              {newItem ? (
-                'Criando...'
-              ) : (
-                <>
-                  <Plus />
-                  Adicionar item
-                </>
-              )}
-            </Button>
-            <Button
-              type="button"
-              onClick={handleNewItem}
-              disabled={newItem}
-              size="icon"
-              className="md:hidden"
-            >
-              <Plus />
-            </Button>
-          </div>
+      <div className="flex justify-between gap-4 pb-4">
+        <h2 className="block truncate font-bold md:pt-0">
+          Sua lista de presentes
+          <span className="block truncate text-sm font-normal text-slate-500">
+            Todos os seus presentes cadastrados
+          </span>
+        </h2>
+        <div className="flex items-start justify-end gap-2">
+          <WishlistCopyButton className="" userId={session.user.id} />
+          <FormProvider {...formMethods}>
+            <WishlistNewItem setWishlist={setWishlist}>
+              <Button
+                className="flex items-center gap-2 px-2 md:px-4 md:py-2"
+                size="icontext"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden md:inline">Novo item</span>
+              </Button>
+            </WishlistNewItem>
+          </FormProvider>
         </div>
-        <EmptyWishlist isEmpty={isEmpty} newItem={newItem} />
+      </div>
+      <EmptyWishlist isEmpty={isEmpty} />
+      <AnimatePresence>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
           {wishlist
             .slice()
             .reverse()
             .map((item) => (
-              <WishlistItemCard
+              <WishlistItemSheet
                 key={item.id}
                 wishlistItem={item}
-                setNewItem={setNewItem}
                 setWishlist={setWishlist}
-                mode={item.id === 'new' ? 'new' : 'edit'}
               />
             ))}
         </div>
-      </FormProvider>
+      </AnimatePresence>
     </>
   )
 }
