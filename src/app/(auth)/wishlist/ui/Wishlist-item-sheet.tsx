@@ -33,8 +33,7 @@ export const WishlistItemSheet = ({
 }: WishlistItemSheetProps) => {
   const {
     handleSubmit,
-    reset,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = useFormContext<WishlistItemFormDataType>()
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
 

@@ -1,3 +1,4 @@
+import { isSafeUrl } from '@/lib/utils'
 import { z } from 'zod'
 
 export const wishlistItemSchema = z.object({
@@ -30,11 +31,15 @@ export const wishlistItemSchema = z.object({
     .nullable(),
   link: z
     .string()
+    .trim()
     .transform((val) => {
       if (!val) return val
       return val.startsWith('http://') || val.startsWith('https://')
         ? val
         : `https://${val}`
+    })
+    .refine((val) => !val || isSafeUrl(val), {
+      message: 'URL inválida ou não permitida',
     })
     .nullable(),
   priority: z

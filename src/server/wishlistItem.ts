@@ -77,6 +77,7 @@ export const editWishlistItem = async (
   wishlistItemId: string,
   userId: string
 ) => {
+  console.log(formData)
   const { name, description, price, link, image, priority, isActive } = formData
   const sanitizedLink = sanitizeLinkUrl(link)
   let imageUrl: string | null = null

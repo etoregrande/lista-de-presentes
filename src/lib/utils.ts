@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import psl from 'psl'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -60,4 +61,33 @@ export const sanitizeLinkUrl = (link: string | null) => {
       : link
 
   return sanitizedLink
+}
+
+export const isSafeUrl = (url: string): boolean => {
+  try {
+    const parsed = new URL(url)
+
+    if (!['http:', 'https:'].includes(parsed.protocol)) return false
+
+    const hostname = parsed.hostname.toLowerCase()
+
+    if (
+      hostname === 'localhost' ||
+      hostname.endsWith('.local') ||
+      hostname.endsWith('.internal')
+    )
+      return false
+
+    const ipRegex = /^(?:\d{1,3}\.){3}\d{1,3}$/
+    if (ipRegex.test(hostname)) return false
+
+    const parsedDomain = psl.parse(hostname)
+    if ('domain' in parsedDomain && parsedDomain.domain) {
+      return true
+    }
+
+    return false
+  } catch {
+    return false
+  }
 }

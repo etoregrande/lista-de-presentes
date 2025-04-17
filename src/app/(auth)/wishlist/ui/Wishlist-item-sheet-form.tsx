@@ -14,6 +14,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { NumericFormat } from 'react-number-format'
 import { WishlistItem } from '@/types/db'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
+import { FormError } from '@/components/ui/form/form-error'
 
 interface WishlistItemSheetFormProps {
   wishlistItem: Partial<WishlistItem>
@@ -69,7 +70,7 @@ export const WishlistItemSheetForm = ({
         description: wishlistItem.description ?? '',
         price: wishlistItem.price ?? 0,
         link: wishlistItem.link ?? '',
-        image: wishlistItem.image ?? null,
+        image: null,
         priority: wishlistItem.priority ?? 'normal',
         isActive: wishlistItem.is_active ?? true,
       })
@@ -84,6 +85,7 @@ export const WishlistItemSheetForm = ({
 
     setIsSheetOpen(false)
     setIsDeleting(false)
+
     setTimeout(() => {
       setWishlist((prev) => prev.filter((item) => item.id !== wishlistItem.id))
     }, 300)
@@ -94,41 +96,39 @@ export const WishlistItemSheetForm = ({
   return (
     <div className="flex-1 overflow-y-auto">
       <form className="space-y-6 p-6">
-        <AspectRatio ratio={16 / 9} className="rounded-md bg-purple-50">
-          <Label
-            htmlFor="image"
-            className="relative block h-full w-full cursor-pointer"
-          >
-            <Image
-              src={selectedImage ?? wishlistItem.image ?? placeholder}
-              alt="Imagem do produto"
-              fill
-              sizes="(max-width: 768px) 100vw, 350px"
-              className="rounded-md object-cover"
-              priority
-            />
+        <div>
+          <AspectRatio ratio={16 / 9} className="rounded-md bg-purple-50">
+            <Label
+              htmlFor="image"
+              className="relative block h-full w-full cursor-pointer"
+            >
+              <Image
+                src={selectedImage ?? wishlistItem.image ?? placeholder}
+                alt="Imagem do produto"
+                fill
+                sizes="(max-width: 768px) 100vw, 350px"
+                className="rounded-md object-cover"
+                priority
+              />
 
-            <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/40 p-12 text-center text-sm font-medium text-white transition-[background-color,color] md:text-base lg:bg-transparent lg:text-transparent lg:hover:bg-black/60 lg:hover:text-white">
-              Alterar a imagem
-            </div>
-            <Input
-              id="image"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              {...register('image')}
-              onChange={(e) => {
-                const file = e.target.files?.[0]
-                setValue('image', file)
-              }}
-              className="hidden"
-            />
-          </Label>
-        </AspectRatio>
-        {errors.image && (
-          <div className="-mt-4 text-sm text-red-500">
-            {String(errors.image.message)}
-          </div>
-        )}
+              <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/40 p-12 text-center text-sm font-medium text-white transition-[background-color,color] md:text-base lg:bg-transparent lg:text-transparent lg:hover:bg-black/60 lg:hover:text-white">
+                Alterar a imagem
+              </div>
+              <Input
+                id="image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                {...register('image')}
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  setValue('image', file)
+                }}
+                className="hidden"
+              />
+            </Label>
+          </AspectRatio>
+          <FormError message={errors.image?.message} />
+        </div>
 
         <div className="flew-row flex items-center justify-between">
           <Controller
@@ -171,17 +171,13 @@ export const WishlistItemSheetForm = ({
             <span className="text-muted-foreground text-xs">obrigatório</span>
           </Label>
           <Input {...register('name')} placeholder="" />
-          {errors.name && (
-            <div className="text-red-500">{errors.name.message}</div>
-          )}
+          <FormError message={errors.name?.message} />
         </div>
 
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="description">Descrição</Label>
           <Textarea {...register('description')} placeholder="" />
-          {errors.description && (
-            <div className="text-red-500">{errors.description.message}</div>
-          )}
+          <FormError message={errors.description?.message} />
         </div>
 
         <div className="grid w-full items-center gap-1.5">
@@ -207,17 +203,13 @@ export const WishlistItemSheetForm = ({
               />
             )}
           />
-          {errors.price && (
-            <div className="text-red-500">{errors.price.message}</div>
-          )}
+          <FormError message={errors.price?.message} />
         </div>
 
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="link">Link do produto</Label>
           <Input {...register('link')} inputMode="url" placeholder="" />
-          {errors.link && (
-            <div className="text-red-500">{errors.link.message}</div>
-          )}
+          <FormError message={errors.link?.message} />
         </div>
       </form>
     </div>
