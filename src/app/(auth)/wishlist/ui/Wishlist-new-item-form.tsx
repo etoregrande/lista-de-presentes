@@ -13,9 +13,10 @@ import { Input } from '@/components/ui/input'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Textarea } from '@/components/ui/textarea'
 import { NumericFormat } from 'react-number-format'
-import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 import { Switch } from '@/components/ui/switch'
 import { useState } from 'react'
+import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
+import { motion } from 'framer-motion'
 
 export const WishlistNewItemForm = () => {
   const {
@@ -28,7 +29,7 @@ export const WishlistNewItemForm = () => {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="space-y-8 p-6">
+      <form className="space-y-8 p-6">
         <AspectRatio ratio={16 / 9} className="rounded-md bg-purple-50">
           <Label
             htmlFor="image"
@@ -163,7 +164,7 @@ export const WishlistNewItemForm = () => {
             <div className="text-red-500">{errors.priority.message}</div>
           )}
         </div>
-      </div>
+      </form>
     </div>
   )
 }

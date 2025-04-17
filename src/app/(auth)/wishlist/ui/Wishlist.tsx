@@ -8,11 +8,12 @@ import { EmptyWishlist } from './Wishlist-empty'
 import { useState } from 'react'
 import { Session } from '@/lib/auth'
 import { WishlistCopyButton } from './Wishlist-copy-button'
-import { WishlistItemCard } from './Wishlist-item-card'
 import { WishlistItem } from '@/types/db'
 import { Button } from '@/components/ui/button/button'
 import { WishlistNewItem } from './Wishlist-new-item'
 import { Plus } from 'lucide-react'
+import { WishlistItemSheet } from './Wishlist-item-sheet'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface WishlistProps {
   userId?: string
@@ -56,14 +57,20 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
         </div>
       </div>
       <EmptyWishlist isEmpty={isEmpty} />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
-        {wishlist
-          .slice()
-          .reverse()
-          .map((item) => (
-            <WishlistItemCard key={item.id} wishlistItem={item} />
-          ))}
-      </div>
+      <AnimatePresence>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+          {wishlist
+            .slice()
+            .reverse()
+            .map((item) => (
+              <WishlistItemSheet
+                key={item.id}
+                wishlistItem={item}
+                setWishlist={setWishlist}
+              />
+            ))}
+        </div>
+      </AnimatePresence>
     </>
   )
 }

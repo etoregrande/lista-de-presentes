@@ -8,18 +8,25 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import clsx from 'clsx'
-
 import { getDisplayPrice } from '@/lib/utils'
 import { WishlistItem } from '@/types/db'
+import { motion } from 'framer-motion'
 
-interface WishlistItemCardProps {
+interface WishlistItemSheetTriggerProps {
   wishlistItem: Partial<WishlistItem>
 }
 
-export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
+export const WishlistItemSheetTrigger = ({
+  wishlistItem,
+}: WishlistItemSheetTriggerProps) => {
   const { imageSrc, isPlaceholder } = setWishlistItemImageSrc(wishlistItem)
   return (
-    <div
+    <motion.div
+      layout
+      initial={{ opacity: 0.8, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ duration: 0.3 }}
       className={clsx(
         'group hover:bg-secondary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0',
         !wishlistItem.is_active && 'cursor-pointer opacity-50'
@@ -40,7 +47,7 @@ export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
       </div>
 
       <div className="flex w-full flex-row justify-between gap-4 overflow-hidden py-2 transition-all duration-200 ease-in-out group-hover:px-2 md:min-h-15">
-        <div className="flex min-w-0 flex-col justify-center md:justify-start">
+        <div className="flex min-w-0 flex-col justify-center text-left md:justify-start">
           <p className="truncate font-bold tracking-tight">
             {wishlistItem.name}
           </p>
@@ -69,6 +76,6 @@ export const WishlistItemCard = ({ wishlistItem }: WishlistItemCardProps) => {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }
