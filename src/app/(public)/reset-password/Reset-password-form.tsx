@@ -50,7 +50,6 @@ export const ResetPasswordForm = () => {
     }
   }
 
-  console.log('formState errors:', errors)
   return (
     <div className="mx-auto flex h-screen max-w-sm flex-col justify-center space-y-4 px-4">
       <h1 className="text-center">Nova senha</h1>
