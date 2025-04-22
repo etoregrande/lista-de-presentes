@@ -1,6 +1,7 @@
 import { listWishlistItems } from '@/server/wishlistItem'
 import { WishlistShared } from './ui/Wishlist-shared'
 import { getUserById } from '@/lib/repositories/UserRepository'
+import { WishlistItem } from '@/types/db'
 
 interface SharedWishlistParams {
   params: Promise<{ userId: string }>
@@ -10,7 +11,7 @@ export default async function SharedWishlistPage({
   params,
 }: SharedWishlistParams) {
   const { userId } = await params
-  const wishlistItems = await listWishlistItems(userId)
+  const wishlistItems: WishlistItem[] = await listWishlistItems(userId)
   const wishlistOwner = await getUserById(userId)
   if (!wishlistOwner) throw new Error('Error fetching wishlist owner')
 

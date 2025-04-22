@@ -3,15 +3,18 @@
 import { EmptyWishlist } from './Wishlist-shared-empty'
 import { WishlistItem } from '@/types/db'
 import { useState } from 'react'
-import { WishlistSharedItemCard } from './Wishlist-shared-item-card'
+import { AnimatePresence } from 'framer-motion'
+import { WishlistSharedItemSheet } from './Wishlist-shared-item-sheet'
+import { WishlistSharedItemSheetTrigger } from './Wishlist-shared-item-sheet-trigger'
 
 interface WishlistSharedProps {
-  initialWishlist: WishlistItem[]
+  initialWishlist: Partial<WishlistItem>[]
 }
 
 export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
   const activeWishlist = initialWishlist.filter((item) => item.is_active)
-  const [wishlist, setWishlist] = useState<WishlistItem[]>(activeWishlist)
+  const [wishlist, setWishlist] =
+    useState<Partial<WishlistItem>[]>(activeWishlist)
 
   const notPurchasedWishlist = wishlist.filter((item) => !item.is_purchased)
   const purchasedWishlist = wishlist.filter((item) => item.is_purchased)
@@ -31,16 +34,20 @@ export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
             <EmptyWishlist isEmpty={true} />
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
-              {notPurchasedWishlist
-                .slice()
-                .reverse()
-                .map((wishlistItem) => (
-                  <WishlistSharedItemCard
-                    key={wishlistItem.id}
-                    wishlistItem={wishlistItem}
-                    setWishlist={setWishlist}
-                  />
-                ))}
+              <AnimatePresence initial={false}>
+                {notPurchasedWishlist
+                  .slice()
+                  .reverse()
+                  .map((item) => (
+                    <WishlistSharedItemSheet
+                      key={item.id}
+                      wishlistItem={item}
+                      setWishlist={setWishlist}
+                    >
+                      <WishlistSharedItemSheetTrigger wishlistItem={item} />
+                    </WishlistSharedItemSheet>
+                  ))}
+              </AnimatePresence>
             </div>
           )}
         </div>
@@ -54,16 +61,20 @@ export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
               </span>
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
-              {purchasedWishlist
-                .slice()
-                .reverse()
-                .map((wishlistItem) => (
-                  <WishlistSharedItemCard
-                    key={wishlistItem.id}
-                    wishlistItem={wishlistItem}
-                    setWishlist={setWishlist}
-                  />
-                ))}
+              <AnimatePresence initial={false}>
+                {purchasedWishlist
+                  .slice()
+                  .reverse()
+                  .map((item) => (
+                    <WishlistSharedItemSheet
+                      key={item.id}
+                      wishlistItem={item}
+                      setWishlist={setWishlist}
+                    >
+                      <WishlistSharedItemSheetTrigger wishlistItem={item} />
+                    </WishlistSharedItemSheet>
+                  ))}
+              </AnimatePresence>
             </div>
           </div>
         )}

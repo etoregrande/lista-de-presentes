@@ -214,7 +214,7 @@ export const listWishlistItems = async (
 }
 
 export const purchaseWishlistItem = async (
-  wishlistItem: WishlistItem,
+  wishlistItem: Partial<WishlistItem>,
   isPurchased: boolean
 ) => {
   if (!wishlistItem.id) throw new Error('Wishlist item ID is required')
