@@ -21,7 +21,7 @@ import {
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { getDisplayPrice } from '@/lib/utils'
 import { WishlistItem } from '@/types/db'
-import { WishlistSharedItemSheetForm } from './Wishlist-shared-item-sheet-form'
+import { WishlistSharedItemSheetContent } from './Wishlist-shared-item-sheet-content'
 import { purchaseWishlistItem } from '@/server/wishlistItem'
 
 interface WishlistSharedItemSheetProps {
@@ -82,7 +82,7 @@ export const WishlistSharedItemSheet = ({
               </span>
             </SheetDescription>
           </SheetHeader>
-          <WishlistSharedItemSheetForm
+          <WishlistSharedItemSheetContent
             wishlistItem={wishlistItem}
             setWishlist={setWishlist}
             setIsSheetOpen={setIsSheetOpen}

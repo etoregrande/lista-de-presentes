@@ -190,6 +190,7 @@ export const WishlistItemSheetForm = ({
                 thousandSeparator="."
                 decimalSeparator=","
                 decimalScale={2}
+                fixedDecimalScale
                 prefix="R$ "
                 allowNegative={false}
                 value={field.value ? field.value / 100 : ''}
