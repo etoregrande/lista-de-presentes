@@ -4,15 +4,15 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { WishlistItem } from '@/types/db'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 
-interface WishlistSharedItemSheetFormProps {
+interface WishlistSharedItemSheetContentProps {
   wishlistItem: Partial<WishlistItem>
   setWishlist: Dispatch<SetStateAction<Partial<WishlistItem>[]>>
   setIsSheetOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export const WishlistSharedItemSheetForm = ({
+export const WishlistSharedItemSheetContent = ({
   wishlistItem,
-}: WishlistSharedItemSheetFormProps) => {
+}: WishlistSharedItemSheetContentProps) => {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="space-y-6 p-6">
