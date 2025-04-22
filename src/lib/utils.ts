@@ -16,6 +16,24 @@ export const getDisplayName = (fullName: string) => {
   return lastName ? `${firstName} ${lastName}` : firstName
 }
 
+export const getFirstName = (fullName: string) => {
+  if (!fullName?.trim()) return undefined
+
+  const names = fullName.trim().split(' ')
+  const firstName = names[0]
+
+  return firstName
+}
+
+export const getLastName = (fullName: string) => {
+  if (!fullName?.trim()) return undefined
+
+  const names = fullName.trim().split(' ')
+  const lastName = names.length > 1 ? names[names.length - 1] : null
+
+  return lastName
+}
+
 export const getDisplayPrice = (priceInCents: number) => {
   if (!Number.isInteger(priceInCents)) {
     throw new Error('The price must be an integer.')

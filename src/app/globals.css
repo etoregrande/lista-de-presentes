@@ -31,10 +31,10 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
 
-  --navbar: var(--color-orange-500);
-  --navbar-foreground: var(--color-orange-100);
-  --navbar-muted-foreground: var(--color-orange-300);
-  --navbar-border: var(--color-orange-600);
+  --navbar: var(--color-white);
+  --navbar-foreground: var(--color-gray-950);
+  --navbar-muted-foreground: var(--color-orange-100);
+  --navbar-border: var(s);
 
   --gradient: linear-gradient(
     135deg,

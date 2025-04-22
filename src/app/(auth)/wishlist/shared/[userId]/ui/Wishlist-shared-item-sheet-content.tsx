@@ -18,7 +18,10 @@ export const WishlistSharedItemSheetContent = ({
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="space-y-6 p-6">
-        <AspectRatio ratio={16 / 9} className="rounded-md bg-purple-50">
+        <AspectRatio
+          ratio={16 / 9}
+          className="bg-secondary-foreground rounded-md"
+        >
           <Image
             src={wishlistItem.image ?? placeholder}
             alt="Imagem do produto"

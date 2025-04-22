@@ -23,11 +23,11 @@ export const WishlistSharedItemSheetTrigger = ({
         layout: { type: 'spring', stiffness: 300, damping: 24 },
       }}
       className={clsx(
-        'group hover:bg-secondary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0',
-        !wishlistItem.is_active && 'cursor-pointer opacity-50'
+        'group hover:bg-primary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0',
+        wishlistItem.is_purchased && 'cursor-pointer opacity-50'
       )}
     >
-      <div className="bg-secondary-foreground relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
+      <div className="bg-secondary-foreground hover:bg-primary-foreground relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
         <Image
           src={wishlistItem.image ?? placeholder}
           fill
@@ -46,6 +46,7 @@ export const WishlistSharedItemSheetTrigger = ({
           <p className="truncate font-bold tracking-tight">
             {wishlistItem.name}
           </p>
+          <p>{JSON.stringify(wishlistItem.is_purchased)}</p>
           {typeof wishlistItem.price === 'number' && wishlistItem.price > 0 && (
             <p className="flex-shrink-0 text-sm whitespace-nowrap text-slate-500">
               {getDisplayPrice(wishlistItem.price)}
