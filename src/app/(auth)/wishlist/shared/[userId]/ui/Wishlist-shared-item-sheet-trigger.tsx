@@ -16,10 +16,10 @@ export const WishlistSharedItemSheetTrigger = ({
     <motion.div
       layout
       initial={{ opacity: 0, scale: 0.95 }}
-      // animate={{
-      //   opacity: wishlistItem.is_purchased ? 0.4 : 1,
-      //   scale: 1,
-      // }}
+      animate={{
+        opacity: wishlistItem.is_purchased ? 0.4 : 1,
+        scale: 1,
+      }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{
         duration: 0.2,
@@ -49,7 +49,6 @@ export const WishlistSharedItemSheetTrigger = ({
           <p className="truncate font-bold tracking-tight">
             {wishlistItem.name}
           </p>
-          <p>{JSON.stringify(wishlistItem.is_purchased)}</p>
           {typeof wishlistItem.price === 'number' && wishlistItem.price > 0 && (
             <p className="flex-shrink-0 text-sm whitespace-nowrap text-slate-500">
               {getDisplayPrice(wishlistItem.price)}
