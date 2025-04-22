@@ -33,7 +33,7 @@ export const WishlistSharedItemSheetContent = ({
           <Label>Descrição</Label>
           {wishlistItem.description ? (
             <p className="text-muted-foreground break-words">
-              "{wishlistItem.description}"
+              {`"${wishlistItem.description}"`}
             </p>
           ) : (
             <p className="text-muted-foreground text-sm break-words">
