@@ -24,24 +24,6 @@ export default function NavbarContent({ session }: Props) {
   const [show, setShow] = useState(true)
   const router = useRouter()
   const avatarImage = session?.user?.image ?? ''
-  // const [lastScrollY, setLastScrollY] = useState(0)
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const currentScrollY = window.scrollY
-
-  //     if (currentScrollY > lastScrollY && currentScrollY > 50) {
-  //       setShow(false)
-  //     } else {
-  //       setShow(true)
-  //     }
-
-  //     setLastScrollY(currentScrollY)
-  //   }
-
-  //   window.addEventListener('scroll', handleScroll)
-  //   return () => window.removeEventListener('scroll', handleScroll)
-  // }, [lastScrollY])
 
   return (
     <div
