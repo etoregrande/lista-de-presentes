@@ -23,18 +23,20 @@ export const WishlistItemSheetTrigger = ({
     <motion.div
       layout
       initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
+      animate={{
+        opacity: !wishlistItem.is_active ? 0.4 : 1,
+        scale: 1,
+      }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{
         duration: 0.2,
         layout: { type: 'spring', stiffness: 300, damping: 24 },
       }}
       className={clsx(
-        'group hover:bg-primary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0',
-        !wishlistItem.is_active && 'cursor-pointer opacity-50'
+        'group hover:bg-primary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0'
       )}
     >
-      <div className="bg-muted hover:bg-primary-foreground relative aspect-square h-full min-h-22 min-w-22 overflow-hidden rounded-lg">
+      <div className="bg-secondary-foreground hover:bg-primary-foreground relative aspect-square h-full min-h-22 min-w-22 overflow-hidden rounded-lg">
         <Image
           src={wishlistItem.image ?? placeholder}
           fill
@@ -61,7 +63,7 @@ export const WishlistItemSheetTrigger = ({
         </div>
 
         {!wishlistItem.is_active && (
-          <div className="flex items-center gap-1">
+          <div className="flex gap-1">
             <p className="text-red-500">Invisível</p>
             <TooltipProvider>
               <Tooltip>
