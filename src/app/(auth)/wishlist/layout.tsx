@@ -9,7 +9,7 @@ export default async function WishlistLayout({
   return (
     <>
       <Navbar />
-      <main className="mt-16 pb-40">
+      <main className="pb-40">
         <div className="layout-container">{children}</div>
       </main>
     </>

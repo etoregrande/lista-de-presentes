@@ -2,6 +2,7 @@ import { listWishlistItems } from '@/server/wishlistItem'
 import { WishlistShared } from './ui/Wishlist-shared'
 import { getUserById } from '@/lib/repositories/UserRepository'
 import { WishlistItem } from '@/types/db'
+import { getDisplayName, getFirstName, getLastName } from '@/lib/utils'
 
 interface SharedWishlistParams {
   params: Promise<{ userId: string }>
@@ -17,14 +18,13 @@ export default async function SharedWishlistPage({
 
   return (
     <>
-      <div className="pt-8 pb-16 lg:pb-0">
-        <h1 className="block truncate px-4 pb-8 text-[var(--muted-foreground)] md:px-8 lg:px-0">
-          Você está vendo a lista de presentes de
-          <span className="block truncate text-2xl font-bold tracking-tight text-[var(--foreground)]">
-            {wishlistOwner.name}
-          </span>
+      <div className="pb-16 lg:pb-0">
+        <h1 className="block px-4 pt-10 pb-16 text-4xl leading-8 font-black tracking-tight break-words md:px-8 lg:px-0">
+          {getDisplayName(wishlistOwner.name)}
         </h1>
-        <WishlistShared initialWishlist={wishlistItems} />
+        <div className="px-4 md:px-8 lg:px-0">
+          <WishlistShared initialWishlist={wishlistItems} />
+        </div>
       </div>
     </>
   )

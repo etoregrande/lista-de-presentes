@@ -22,45 +22,47 @@ type Props = {
 
 export default function NavbarContent({ session }: Props) {
   const [show, setShow] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
   const router = useRouter()
   const avatarImage = session?.user?.image ?? ''
+  // const [lastScrollY, setLastScrollY] = useState(0)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const currentScrollY = window.scrollY
 
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        setShow(false)
-      } else {
-        setShow(true)
-      }
+  //     if (currentScrollY > lastScrollY && currentScrollY > 50) {
+  //       setShow(false)
+  //     } else {
+  //       setShow(true)
+  //     }
 
-      setLastScrollY(currentScrollY)
-    }
+  //     setLastScrollY(currentScrollY)
+  //   }
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+  //   window.addEventListener('scroll', handleScroll)
+  //   return () => window.removeEventListener('scroll', handleScroll)
+  // }, [lastScrollY])
 
   return (
     <div
-      className={`fixed top-0 left-0 z-50 w-full transition-transform duration-300 ${
+      className={`w-full transition-transform duration-300 ${
         show ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
-      <nav className="bg-navbar border-navbar-border h-16 w-full border-b pt-[env(safe-area-inset-top)]">
+      <nav className="bg-navbar h-20 w-full pt-[env(safe-area-inset-top)]">
         <div className="layout-container flex h-full items-center justify-between px-4 md:px-8 lg:px-0">
-          <div className="text-navbar-foreground flex items-center gap-2">
-            <Gift className="text-navbar-foreground -translate-y-0.5" />
-            <p className="font-black tracking-tighter">Presenteio</p>
+          <div className="text-primary flex items-center gap-2">
+            <Gift className="-translate-y-0.5" />
+            <p className="text-foreground font-extrabold tracking-tighter">
+              Presenteio
+            </p>
           </div>
           {/* <ThemeToggle /> */}
           {session?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="group cursor-pointer">
                 <div className="flex items-center gap-2">
-                  <p className="text-navbar-foreground truncate rounded-4xl px-2 font-medium group-hover:underline">
+                  <p className="text-navbar-foreground truncate rounded-4xl text-sm group-hover:underline">
                     {getDisplayName(session.user.name)}
                   </p>
                   {session?.user && (

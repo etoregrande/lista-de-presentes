@@ -30,11 +30,11 @@ export const WishlistItemSheetTrigger = ({
         layout: { type: 'spring', stiffness: 300, damping: 24 },
       }}
       className={clsx(
-        'group hover:bg-secondary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0',
+        'group hover:bg-primary-foreground flex flex-row gap-4 rounded-xl transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0',
         !wishlistItem.is_active && 'cursor-pointer opacity-50'
       )}
     >
-      <div className="bg-secondary-foreground relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">
+      <div className="bg-muted hover:bg-primary-foreground relative aspect-square h-full min-h-22 min-w-22 overflow-hidden rounded-lg">
         <Image
           src={wishlistItem.image ?? placeholder}
           fill

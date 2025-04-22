@@ -61,7 +61,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
 
       <EmptyWishlist isEmpty={isEmpty} />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-1 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
         <FormProvider {...formMethods}>
           <AnimatePresence initial={false}>
             {wishlist
