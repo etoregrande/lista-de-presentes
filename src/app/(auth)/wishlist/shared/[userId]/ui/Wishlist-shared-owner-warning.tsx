@@ -26,6 +26,7 @@ export const WishlistSharedOwnerWarning = ({
             alt=""
             width={600}
             height={600}
+            priority
             className="mx-auto"
           />
           <div className="mt-6 flex max-w-xl flex-col gap-4">
