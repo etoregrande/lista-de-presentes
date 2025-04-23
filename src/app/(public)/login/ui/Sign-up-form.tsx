@@ -5,18 +5,11 @@ import { signUpFormSchema } from '@/schemas/auth'
 import { signUp } from '@/server/auth'
 import { SignUpFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Dispatch, SetStateAction } from 'react'
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
-interface SignUpFormProps {
-  setFormType: Dispatch<
-    SetStateAction<'login' | 'register' | 'forgot-password'>
-  >
-}
-
-export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
+export const SignUpForm = () => {
   const router = useRouter()
   const {
     register,
@@ -26,12 +19,13 @@ export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpFormSchema),
   })
+  const [output, setOutput] = useState<string | null>(null)
 
   const handleSignUp: SubmitHandler<SignUpFormData> = async (
-    data: SignUpFormData
+    formData: SignUpFormData
   ) => {
     try {
-      const response = await signUp(data)
+      const response = await signUp(formData)
 
       if (response.code === 'USER_ALREADY_EXISTS') {
         setError('email', { message: 'Email já cadastrado' })
@@ -47,7 +41,7 @@ export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
   return (
     <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-4">
       <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="name">Nome</Label>
+        <Label htmlFor="name">Nome e sobrenome</Label>
         <Input {...register('name')} id="name" />
         {errors.name && (
           <div className="text-red-500">{errors.name.message}</div>
