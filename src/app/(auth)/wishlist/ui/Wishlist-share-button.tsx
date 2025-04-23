@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button/button'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import clsx from 'clsx'
 import { Copy, Share } from 'lucide-react'
@@ -17,15 +17,15 @@ import {
   CredenzaTrigger,
 } from '@/components/ui/credenza'
 
-interface WishlistCopyButtonProps {
+interface WishlistShareButtonProps {
   className?: string
   userId: string
 }
 
-export const WishlistCopyButton = ({
+export const WishlistShareButton = ({
   className,
   userId,
-}: WishlistCopyButtonProps) => {
+}: WishlistShareButtonProps) => {
   const [copied, setCopied] = useState(false)
   const [sharedUrl, setSharedUrl] = useState('')
 
@@ -56,7 +56,7 @@ export const WishlistCopyButton = ({
             <CredenzaTitle>Link de compartilhamento</CredenzaTitle>
             <CredenzaDescription>
               Recomendamos que você{' '}
-              <span className="font-bold">não acesse</span> a lista
+              <span className="text-primary font-bold">não acesse</span> a lista
               compartilhada porque outras pessoas vão marcar os items que já
               compraram.
             </CredenzaDescription>
@@ -75,6 +75,7 @@ export const WishlistCopyButton = ({
                 )}
               />
               <Button
+                autoFocus={true}
                 onClick={handleCopyWishlist}
                 disabled={copied}
                 size="icon"
