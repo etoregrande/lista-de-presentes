@@ -26,7 +26,9 @@ export const WishlistSharedOwnerWarning = ({
             alt=""
             width={600}
             height={600}
+            priority
             className="mx-auto"
+            style={{ aspectRatio: '1 / 1' }}
           />
           <div className="mt-6 flex max-w-xl flex-col gap-4">
             <h1 className="text-2xl font-black tracking-tight">
