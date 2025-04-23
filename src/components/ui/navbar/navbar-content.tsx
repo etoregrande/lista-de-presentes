@@ -32,7 +32,7 @@ export default function NavbarContent({ session }: Props) {
         show ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
-      <nav className="bg-navbar h-20 w-full pt-[env(safe-area-inset-top)]">
+      <nav className="bg-navbar h-[var(--navbar-height)] w-full pt-[env(safe-area-inset-top)]">
         <div className="layout-container flex h-full items-center justify-between px-4 md:px-8 lg:px-0">
           <div className="text-primary flex items-center gap-2">
             <Gift className="-translate-y-0.5" />

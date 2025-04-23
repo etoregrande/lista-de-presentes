@@ -35,6 +35,7 @@
   --navbar-foreground: var(--color-gray-950);
   --navbar-muted-foreground: var(--color-orange-100);
   --navbar-border: var(--color-gray-200);
+  --navbar-height: 5rem;
 
   --gradient: linear-gradient(
     135deg,
