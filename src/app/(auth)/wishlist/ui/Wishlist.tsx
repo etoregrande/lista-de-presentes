@@ -7,7 +7,7 @@ import { wishlistItemFormSchema } from '@/schemas/wishlistItem'
 import { EmptyWishlist } from './Wishlist-empty'
 import { useState } from 'react'
 import { Session } from '@/lib/auth'
-import { WishlistCopyButton } from './Wishlist-copy-button'
+import { WishlistShareButton } from './Wishlist-share-button'
 import { WishlistItem } from '@/types/db'
 import { Button } from '@/components/ui/button/button'
 import { WishlistNewItemSheet } from './Wishlist-new-item-sheet'
@@ -44,7 +44,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
           </span>
         </h2>
         <div className="flex items-start justify-end gap-2">
-          <WishlistCopyButton className="" userId={session.user.id} />
+          <WishlistShareButton className="" userId={session.user.id} />
           <FormProvider {...formMethods}>
             <WishlistNewItemSheet setWishlist={setWishlist}>
               <Button

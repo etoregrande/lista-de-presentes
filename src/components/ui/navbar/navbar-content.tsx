@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { Session } from '@/lib/auth'
 import { Gift } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLink,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { AvatarFallback, Avatar, AvatarImage } from '@/components/ui/avatar'
@@ -58,6 +59,9 @@ export default function NavbarContent({ session }: Props) {
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
+                <DropdownMenuLink href="/wishlist">
+                  Lista de presentes
+                </DropdownMenuLink>
                 <DropdownMenuItem disabled>Perfil</DropdownMenuItem>
                 <DropdownMenuItem onClick={signOut}>
                   <span>Sair</span>

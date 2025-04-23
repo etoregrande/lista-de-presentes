@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button/button'
-import { Input, PasswordInput } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/input'
 import { authClient } from '@/lib/auth-client'
 import { resetPasswordFormSchema } from '@/schemas/auth'
 import { ResetPasswordFormData } from '@/types/auth'
@@ -51,30 +51,33 @@ export const ResetPasswordForm = () => {
   }
 
   return (
-    <div className="mx-auto flex h-screen max-w-sm flex-col justify-center space-y-4 px-4">
-      <h1 className="text-center">Nova senha</h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 rounded-sm bg-white p-8 shadow-2xl"
-      >
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="password">Senha</Label>
-          <PasswordInput {...register('password')} id="password" />
-          {errors.password && (
-            <div className="text-red-500">{errors.password.message}</div>
-          )}
-        </div>
-        <Button disabled={isSubmitting || isSubmitSuccessful}>
-          {isSubmitting ? (
-            <LoaderCircle className="animate-spin" />
-          ) : (
-            'Redefinir senha'
-          )}
-        </Button>
-        {errors.root && (
-          <div className="text-red-500">{errors.root.message}</div>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex w-full max-w-sm flex-col gap-4"
+    >
+      <div className="mb-4">
+        <h2 className="max-w-sm text-3xl font-bold tracking-tight">
+          Nova senha
+        </h2>
+        <p className="max-w-sm text-[var(--muted-foreground)]">
+          Defina sua nova senha
+        </p>
+      </div>
+      <div className="grid w-full max-w-sm items-center gap-1.5">
+        <Label htmlFor="password">Senha</Label>
+        <PasswordInput {...register('password')} id="password" />
+        {errors.password && (
+          <div className="text-red-500">{errors.password.message}</div>
         )}
-      </form>
-    </div>
+      </div>
+      <Button disabled={isSubmitting || isSubmitSuccessful}>
+        {isSubmitting ? (
+          <LoaderCircle className="animate-spin" />
+        ) : (
+          'Redefinir senha'
+        )}
+      </Button>
+      {errors.root && <div className="text-red-500">{errors.root.message}</div>}
+    </form>
   )
 }
