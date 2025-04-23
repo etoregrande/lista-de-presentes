@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button/button'
-import { Input } from '@/components/ui/input'
+import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { signInFormSchema } from '@/schemas/auth'
 import { signIn } from '@/server/auth'
@@ -61,7 +61,7 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
       </div>
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="password">Senha</Label>
-        <Input {...register('password')} id="password" type="password" />
+        <PasswordInput {...register('password')} id="password" />
         <Label
           className="cursor-pointer hover:underline"
           onClick={() => setFormType('forgot-password')}
