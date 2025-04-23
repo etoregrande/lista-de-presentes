@@ -6,7 +6,7 @@ export default function Page() {
     <div className="bg-[image:var(--gradient)]">
       <div className="mx-auto flex min-h-dvh flex-col items-center justify-center px-2 sm:max-w-4xl sm:px-10">
         <div className="flex w-sm flex-col rounded-2xl bg-white shadow-2xl md:h-[600px] md:w-full md:flex-row">
-          <div className="w-full p-2 md:w-1/2">
+          <div className="hidden w-full p-2 md:block md:w-1/2">
             <div className="relative flex h-full w-full flex-col justify-between rounded-lg bg-[url('/assets/login/home.jpg')] bg-cover bg-center p-4">
               <div className="absolute inset-x-0 bottom-0 z-0 h-14 rounded-b-lg bg-gradient-to-t from-black/90 to-transparent md:h-60" />
               <div className="z-10 flex items-center gap-2">
