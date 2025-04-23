@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button/button'
-import { Input } from '@/components/ui/input'
+import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { signUpFormSchema } from '@/schemas/auth'
 import { signUp } from '@/server/auth'
@@ -56,7 +56,7 @@ export const SignUpForm = () => {
       </div>
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="password">Senha</Label>
-        <Input {...register('password')} id="password" type="password" />
+        <PasswordInput {...register('password')} id="password" />
         {errors.password && (
           <div className="text-red-500">{errors.password.message}</div>
         )}
