@@ -57,7 +57,7 @@ export function LoginWrapper({ className }: LoginWrapperProps) {
         </p>
 
         {formType === 'login' && <LoginForm setFormType={setFormType} />}
-        {formType === 'register' && <SignUpForm setFormType={setFormType} />}
+        {formType === 'register' && <SignUpForm />}
         {formType === 'forgot-password' && (
           <ForgotPasswordForm setFormType={setFormType} />
         )}
