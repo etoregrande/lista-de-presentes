@@ -5,6 +5,7 @@ import { getSessionOnServer } from '@/server/session'
 import { Session } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { WishlistItem } from '@/types/db'
+import Image from 'next/image'
 
 export default async function Page() {
   const wishlistItems: WishlistItem[] = await listWishlistItems()
