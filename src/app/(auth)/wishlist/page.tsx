@@ -5,6 +5,7 @@ import { getSessionOnServer } from '@/server/session'
 import { Session } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { WishlistItem } from '@/types/db'
+import Image from 'next/image'
 
 export default async function Page() {
   const wishlistItems: WishlistItem[] = await listWishlistItems()
@@ -13,7 +14,7 @@ export default async function Page() {
   if (!session) redirect('/login')
 
   return (
-    <div className="px-4 pt-8 pb-16 md:px-8 lg:px-0 lg:pb-0">
+    <div className="bg-white px-4 pt-8 pb-16 outline-20 outline-white md:px-8 lg:px-0 lg:pb-0">
       <Wishlist initialWishlist={wishlistItems} session={session} />
     </div>
   )
