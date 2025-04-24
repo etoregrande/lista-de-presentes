@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button/button'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { authClient } from '@/lib/auth-client'
 import { signUpFormSchema } from '@/schemas/auth'
 import { signUp } from '@/server/auth'
 import { SignUpFormData } from '@/types/auth'
@@ -38,6 +39,15 @@ export const SignUpForm = () => {
     }
   }
 
+  const handleSignInWithGmail = async () => {
+    console.log('Click')
+    const data = await authClient.signIn.social({
+      provider: 'google',
+    })
+
+    console.log(data)
+  }
+
   return (
     <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-4">
       <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -63,6 +73,15 @@ export const SignUpForm = () => {
       </div>
       <Button disabled={isSubmitting} className="grid w-full max-w-sm">
         {isSubmitting ? 'Carregando...' : 'Cadastrar'}
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleSignInWithGmail}
+        className="border-border"
+      >
+        <img src="/assets/icons/google.svg" alt="Google" className="h-5 w-5" />
+        Entrar com Google
       </Button>
     </form>
   )

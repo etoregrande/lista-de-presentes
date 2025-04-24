@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button/button'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { authClient } from '@/lib/auth-client'
 import { signInFormSchema } from '@/schemas/auth'
 import { signIn } from '@/server/auth'
 import { SignInFormData } from '@/types/auth'
@@ -11,6 +12,7 @@ import { LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import GoogleIcon from '@/../public/assets/icons/google.svg'
 
 interface LoginFormProps {
   setFormType: Dispatch<
@@ -30,7 +32,7 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
     resolver: zodResolver(signInFormSchema),
   })
 
-  const handlesignInUser: SubmitHandler<SignInFormData> = async (
+  const handleSignInUser: SubmitHandler<SignInFormData> = async (
     data: SignInFormData
   ) => {
     try {
@@ -47,9 +49,18 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
     }
   }
 
+  const handleSignInWithGmail = async () => {
+    console.log('Click')
+    const data = await authClient.signIn.social({
+      provider: 'google',
+    })
+
+    console.log(data)
+  }
+
   return (
     <form
-      onSubmit={handleSubmit(handlesignInUser)}
+      onSubmit={handleSubmit(handleSignInUser)}
       className={`flex w-full max-w-sm flex-col gap-4 ${className}`}
     >
       <div className="grid max-w-sm items-center gap-1.5">
@@ -77,6 +88,15 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
       </div>
       <Button disabled={isSubmitting}>
         {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleSignInWithGmail}
+        className="border-border"
+      >
+        <img src="/assets/icons/google.svg" alt="Google" className="h-5 w-5" />
+        Entrar com Google
       </Button>
     </form>
   )
