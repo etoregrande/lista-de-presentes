@@ -14,7 +14,7 @@ export default async function Page() {
   if (!session) redirect('/login')
 
   return (
-    <div className="bg-white px-4 pt-8 pb-16 outline-20 outline-white md:px-8 lg:px-0 lg:pb-0">
+    <div className="px-4 pt-8 pb-16 md:px-8 lg:px-0 lg:pb-0">
       <Wishlist initialWishlist={wishlistItems} session={session} />
     </div>
   )
