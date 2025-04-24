@@ -30,12 +30,24 @@ export const auth = betterAuth({
     sendOnSingUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      await sendEmail({
-        to: user.email,
-        subject: 'Verifique seu email',
-        template: VerificationEmailTemplate,
-        templateProps: { url },
-      })
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Verifique seu email',
+          template: VerificationEmailTemplate,
+          templateProps: { url },
+        })
+      } catch (error: any) {
+        console.error('[Resend Error]', error)
+
+        if (
+          error?.name === 'validation_error' ||
+          error?.message?.includes('Invalid `to` field')
+        ) {
+          throw new Error('INVALID_EMAIL_FOR_RESEND')
+        }
+        throw new Error('EMAIL_SENDING_FAILED')
+      }
     },
   },
   emailAndPassword: {

@@ -8,10 +8,17 @@ import { SignUpFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle } from 'lucide-react'
 import Image from 'next/image'
+import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-export const SignUpForm = () => {
+interface SignUpFormProps {
+  setFormType: Dispatch<
+    SetStateAction<'register' | 'login' | 'forgot-password'>
+  >
+}
+
+export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
   const {
     register,
     handleSubmit,
@@ -33,36 +40,44 @@ export const SignUpForm = () => {
       {
         onSuccess: async () => {
           toast.success('Cadastro realizado com sucesso!', {
-            description: 'Verifique seu email para fazer login',
+            description: 'Enviamos um email de verificação para você',
           })
+          setFormType('login')
         },
         onError: (ctx) => {
           console.log(ctx.error.status)
           console.log(ctx.error.code)
-          if (ctx.error.code === 'USER_ALREADY_EXISTS') {
+          const errorCode = ctx.error?.message || ctx.error?.code
+
+          if (errorCode === 'USER_ALREADY_EXISTS') {
             setError('email', {
               message: 'Email já cadastrado',
             })
             return
           }
-          if (ctx.error.status === 401) {
-            setError('root', {
-              message: 'Email não cadastrado',
+
+          if (errorCode === 'INVALID_EMAIL_FOR_RESEND') {
+            setError('email', {
+              message: 'Email inválido',
             })
             return
           }
+
+          if (errorCode === 'EMAIL_SENDING_FAILED') {
+            toast.error('Erro ao enviar email de verificação')
+            return
+          }
+
+          console.error('[SignUp Error]', ctx.error)
         },
       }
     )
   }
 
   const handleSignInWithGmail = async () => {
-    console.log('Click')
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: 'google',
     })
-
-    console.log(data)
   }
 
   return (

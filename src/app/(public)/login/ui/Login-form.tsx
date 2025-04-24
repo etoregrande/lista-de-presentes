@@ -48,9 +48,10 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
         },
         onError: (ctx) => {
           if (ctx.error.status === 403) {
-            toast.warning(
-              'Você precisa verificar seu email antes de fazer login'
-            )
+            toast.warning('Verifique seu email', {
+              description:
+                'Clique no link de verificação enviado para o seu email',
+            })
             setError('email', {
               message: 'Verifique seu email',
             })

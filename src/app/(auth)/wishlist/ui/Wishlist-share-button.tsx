@@ -70,7 +70,7 @@ export const WishlistShareButton = ({
                 disabled={copied}
                 readOnly
                 className={clsx(
-                  'max-w-60',
+                  'h-11 max-w-60 md:h-9',
                   copied && 'border-green-700 text-green-700'
                 )}
               />
