@@ -1,18 +1,17 @@
 import { Button } from '@/components/ui/button/button'
+import { FormError } from '@/components/ui/form/form-error'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
 import { signUpFormSchema } from '@/schemas/auth'
-import { signUp } from '@/server/auth'
 import { SignUpFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { LoaderCircle } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 export const SignUpForm = () => {
-  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -21,23 +20,40 @@ export const SignUpForm = () => {
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpFormSchema),
   })
-  const [output, setOutput] = useState<string | null>(null)
 
   const handleSignUp: SubmitHandler<SignUpFormData> = async (
     formData: SignUpFormData
   ) => {
-    try {
-      const response = await signUp(formData)
-
-      if (response.code === 'USER_ALREADY_EXISTS') {
-        setError('email', { message: 'Email já cadastrado' })
-        return
+    const { data, error } = await authClient.signUp.email(
+      {
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+      },
+      {
+        onSuccess: async () => {
+          toast.success('Cadastro realizado com sucesso!', {
+            description: 'Verifique seu email para fazer login',
+          })
+        },
+        onError: (ctx) => {
+          console.log(ctx.error.status)
+          console.log(ctx.error.code)
+          if (ctx.error.code === 'USER_ALREADY_EXISTS') {
+            setError('email', {
+              message: 'Email já cadastrado',
+            })
+            return
+          }
+          if (ctx.error.status === 401) {
+            setError('root', {
+              message: 'Email não cadastrado',
+            })
+            return
+          }
+        },
       }
-
-      router.push('/wishlist')
-    } catch (error: any) {
-      throw new Error('Erro interno do servidor')
-    }
+    )
   }
 
   const handleSignInWithGmail = async () => {
@@ -54,27 +70,25 @@ export const SignUpForm = () => {
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="name">Nome e sobrenome</Label>
         <Input {...register('name')} id="name" />
-        {errors.name && (
-          <div className="text-red-500">{errors.name.message}</div>
-        )}
+        <FormError message={errors.name?.message} />
       </div>
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="email">Email</Label>
         <Input {...register('email')} id="email" type="email" />
-        {errors.email && (
-          <div className="text-red-500">{errors.email.message}</div>
-        )}
+        <FormError message={errors.email?.message} />
       </div>
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="password">Senha</Label>
         <PasswordInput {...register('password')} id="password" />
-        {errors.password && (
-          <div className="text-red-500">{errors.password.message}</div>
-        )}
+        <FormError message={errors.password?.message} />
       </div>
       <div className="flex flex-col gap-2">
         <Button disabled={isSubmitting} className="grid w-full max-w-sm">
-          {isSubmitting ? 'Carregando...' : 'Cadastrar'}
+          {isSubmitting ? (
+            <LoaderCircle className="animate-spin" />
+          ) : (
+            'Cadastrar'
+          )}
         </Button>
         <Button
           type="button"
