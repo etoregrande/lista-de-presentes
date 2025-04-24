@@ -1,29 +1,30 @@
-import { Resend } from "resend";
-import { EmailTemplate } from "@/components/email-template";
+import { Resend } from 'resend'
+import { createElement } from 'react'
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY)
 
-interface SendEmailParams {
-  to: string;
-  subject: string;
-  url: string;
+interface SendEmailParams<T extends Record<string, any>> {
+  to: string
+  subject: string
+  template: React.FC<T>
+  templateProps: T
 }
 
-export async function sendEmail({ to, subject, url }: SendEmailParams) {
-  const firstName = to.split("@")[0];
-
+export async function sendEmail<T extends Record<string, any>>({
+  to,
+  subject,
+  template,
+  templateProps,
+}: SendEmailParams<T>) {
   const { error } = await resend.emails.send({
-    from: "Presenteio <noreply@presenteio.app>",
+    from: 'Presenteio <noreply@presenteio.app>',
     to,
     subject,
-    react: EmailTemplate({
-      firstName,
-      url,
-    }) as React.ReactElement,
-  });
+    react: createElement(template, templateProps),
+  })
 
   if (error) {
-    console.error("[Resend Error]", error);
-    throw new Error("Erro ao enviar o e-mail");
+    console.error('[Resend Error]', error)
+    throw new Error('Erro ao enviar o e-mail')
   }
 }

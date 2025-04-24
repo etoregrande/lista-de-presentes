@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button/button'
+import { FormError } from '@/components/ui/form/form-error'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
@@ -13,6 +14,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 interface LoginFormProps {
   setFormType: Dispatch<
@@ -33,29 +35,40 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
   })
 
   const handleSignInUser: SubmitHandler<SignInFormData> = async (
-    data: SignInFormData
+    formData: SignInFormData
   ) => {
-    try {
-      const response = await signIn(data)
-
-      if (response.code === 'INVALID_EMAIL_OR_PASSWORD') {
-        setError('root', { message: 'Email ou senha inválidos' })
-        return
+    await authClient.signIn.email(
+      {
+        email: formData.email,
+        password: formData.password,
+      },
+      {
+        onSuccess: async () => {
+          router.push('/wishlist')
+        },
+        onError: (ctx) => {
+          if (ctx.error.status === 403) {
+            toast.warning(
+              'Você precisa verificar seu email antes de fazer login'
+            )
+            setError('email', {
+              message: 'Verifique seu email',
+            })
+          }
+          if (ctx.error.status === 401) {
+            setError('root', {
+              message: 'Email não cadastrado',
+            })
+          }
+        },
       }
-
-      router.push('/')
-    } catch (error: any) {
-      throw new Error('Erro interno do servidor')
-    }
+    )
   }
 
   const handleSignInWithGmail = async () => {
-    console.log('Click')
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: 'google',
     })
-
-    console.log(data)
   }
 
   return (
@@ -79,12 +92,6 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
         >
           Esqueci minha senha
         </Label>
-        {errors.password && (
-          <div className="text-sm text-red-500">{errors.password.message}</div>
-        )}
-        {errors.root && (
-          <div className="text-sm text-red-500">{errors.root.message}</div>
-        )}
       </div>
       <div className="flex flex-col gap-2">
         <Button disabled={isSubmitting}>
@@ -105,6 +112,8 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
           Entrar com Google
         </Button>
       </div>
+      <FormError message={errors.password?.message} />
+      <FormError message={errors.root?.message} />
     </form>
   )
 }
