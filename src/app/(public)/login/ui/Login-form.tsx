@@ -9,10 +9,10 @@ import { signIn } from '@/server/auth'
 import { SignInFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import GoogleIcon from '@/../public/assets/icons/google.svg'
 
 interface LoginFormProps {
   setFormType: Dispatch<
@@ -86,18 +86,25 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
           <div className="text-sm text-red-500">{errors.root.message}</div>
         )}
       </div>
-      <Button disabled={isSubmitting}>
-        {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={handleSignInWithGmail}
-        className="border-border"
-      >
-        <img src="/assets/icons/google.svg" alt="Google" className="h-5 w-5" />
-        Entrar com Google
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button disabled={isSubmitting}>
+          {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleSignInWithGmail}
+          className="border-border"
+        >
+          <Image
+            src="/assets/icons/google.svg"
+            alt="Ícone do Google"
+            width={20}
+            height={20}
+          />
+          Entrar com Google
+        </Button>
+      </div>
     </form>
   )
 }

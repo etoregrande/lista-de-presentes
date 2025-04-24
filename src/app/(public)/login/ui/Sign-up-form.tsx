@@ -6,6 +6,7 @@ import { signUpFormSchema } from '@/schemas/auth'
 import { signUp } from '@/server/auth'
 import { SignUpFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -71,18 +72,25 @@ export const SignUpForm = () => {
           <div className="text-red-500">{errors.password.message}</div>
         )}
       </div>
-      <Button disabled={isSubmitting} className="grid w-full max-w-sm">
-        {isSubmitting ? 'Carregando...' : 'Cadastrar'}
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={handleSignInWithGmail}
-        className="border-border"
-      >
-        <img src="/assets/icons/google.svg" alt="Google" className="h-5 w-5" />
-        Entrar com Google
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button disabled={isSubmitting} className="grid w-full max-w-sm">
+          {isSubmitting ? 'Carregando...' : 'Cadastrar'}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleSignInWithGmail}
+          className="border-border"
+        >
+          <Image
+            src="/assets/icons/google.svg"
+            alt="Ícone do Google"
+            width={20}
+            height={20}
+          />
+          Entrar com Google
+        </Button>
+      </div>
     </form>
   )
 }
