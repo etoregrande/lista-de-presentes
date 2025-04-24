@@ -57,12 +57,9 @@ export const SignUpForm = () => {
   }
 
   const handleSignInWithGmail = async () => {
-    console.log('Click')
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: 'google',
     })
-
-    console.log(data)
   }
 
   return (
