@@ -1,10 +1,12 @@
 import { Button } from '@/components/ui/button/button'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { authClient } from '@/lib/auth-client'
 import { signUpFormSchema } from '@/schemas/auth'
 import { signUp } from '@/server/auth'
 import { SignUpFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -38,6 +40,15 @@ export const SignUpForm = () => {
     }
   }
 
+  const handleSignInWithGmail = async () => {
+    console.log('Click')
+    const data = await authClient.signIn.social({
+      provider: 'google',
+    })
+
+    console.log(data)
+  }
+
   return (
     <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-4">
       <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -61,9 +72,25 @@ export const SignUpForm = () => {
           <div className="text-red-500">{errors.password.message}</div>
         )}
       </div>
-      <Button disabled={isSubmitting} className="grid w-full max-w-sm">
-        {isSubmitting ? 'Carregando...' : 'Cadastrar'}
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button disabled={isSubmitting} className="grid w-full max-w-sm">
+          {isSubmitting ? 'Carregando...' : 'Cadastrar'}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleSignInWithGmail}
+          className="border-border"
+        >
+          <Image
+            src="/assets/icons/google.svg"
+            alt="Ícone do Google"
+            width={20}
+            height={20}
+          />
+          Entrar com Google
+        </Button>
+      </div>
     </form>
   )
 }

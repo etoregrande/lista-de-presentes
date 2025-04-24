@@ -1,15 +1,21 @@
-import "dotenv/config";
-import { betterAuth } from "better-auth";
-import { dialect } from "@/lib/database/db";
-import { nextCookies } from "better-auth/next-js";
-import { sendEmail } from "./email";
+import 'dotenv/config'
+import { betterAuth } from 'better-auth'
+import { dialect } from '@/lib/database/db'
+import { nextCookies } from 'better-auth/next-js'
+import { sendEmail } from './email'
 
 export const auth = betterAuth({
   database: {
     dialect: dialect,
-    type: "postgres",
+    type: 'postgres',
   },
   plugins: [nextCookies()],
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+  },
   session: {
     cookieCache: {
       enabled: false,
@@ -21,12 +27,12 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url, token }, request) => {
       await sendEmail({
         to: user.email,
-        subject: "Esqueci minha senha",
+        subject: 'Esqueci minha senha',
         url,
-      });
+      })
     },
     autoSignIn: true, //defaults to true
   },
-});
+})
 
-export type Session = typeof auth.$Infer.Session;
+export type Session = typeof auth.$Infer.Session

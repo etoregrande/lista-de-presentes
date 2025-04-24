@@ -3,11 +3,13 @@
 import { Button } from '@/components/ui/button/button'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { authClient } from '@/lib/auth-client'
 import { signInFormSchema } from '@/schemas/auth'
 import { signIn } from '@/server/auth'
 import { SignInFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -30,7 +32,7 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
     resolver: zodResolver(signInFormSchema),
   })
 
-  const handlesignInUser: SubmitHandler<SignInFormData> = async (
+  const handleSignInUser: SubmitHandler<SignInFormData> = async (
     data: SignInFormData
   ) => {
     try {
@@ -47,9 +49,18 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
     }
   }
 
+  const handleSignInWithGmail = async () => {
+    console.log('Click')
+    const data = await authClient.signIn.social({
+      provider: 'google',
+    })
+
+    console.log(data)
+  }
+
   return (
     <form
-      onSubmit={handleSubmit(handlesignInUser)}
+      onSubmit={handleSubmit(handleSignInUser)}
       className={`flex w-full max-w-sm flex-col gap-4 ${className}`}
     >
       <div className="grid max-w-sm items-center gap-1.5">
@@ -75,9 +86,25 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
           <div className="text-sm text-red-500">{errors.root.message}</div>
         )}
       </div>
-      <Button disabled={isSubmitting}>
-        {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button disabled={isSubmitting}>
+          {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleSignInWithGmail}
+          className="border-border"
+        >
+          <Image
+            src="/assets/icons/google.svg"
+            alt="Ícone do Google"
+            width={20}
+            height={20}
+          />
+          Entrar com Google
+        </Button>
+      </div>
     </form>
   )
 }

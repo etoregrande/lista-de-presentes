@@ -53,7 +53,11 @@ export function PasswordInput({
         aria-label={type === 'password' ? 'Mostrar senha' : 'Esconder senha'}
         className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 transition-colors"
       >
-        {type === 'password' ? <EyeClosed /> : <Eye />}
+        {type === 'password' ? (
+          <EyeClosed className="size-5" />
+        ) : (
+          <Eye className="size-5" />
+        )}
       </button>
     </div>
   )
