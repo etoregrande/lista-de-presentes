@@ -24,6 +24,7 @@ export const createWishlistItem = async (
     try {
       imageUrl = await uploadImageToS3(image, userId)
     } catch (error) {
+      console.error('Error uploading image to S3 =>', error)
       throw new Error('Error handling image on S3')
     }
   }
@@ -77,7 +78,6 @@ export const editWishlistItem = async (
   wishlistItemId: string,
   userId: string
 ) => {
-  console.log(formData)
   const { name, description, price, link, image, priority, isActive } = formData
   const sanitizedLink = sanitizeLinkUrl(link)
   let imageUrl: string | null = null
@@ -97,6 +97,7 @@ export const editWishlistItem = async (
         await deleteImageFromS3(existingItem.image)
       }
     } catch (error) {
+      console.error('Error uploading image to S3 =>', error)
       throw new Error('Error handling images on S3')
     }
   }

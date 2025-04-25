@@ -3,14 +3,14 @@ import { createElement } from 'react'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-interface SendEmailParams<T extends Record<string, any>> {
+interface SendEmailParams<T extends Record<string, unknown>> {
   to: string
   subject: string
   template: React.FC<T>
   templateProps: T
 }
 
-export async function sendEmail<T extends Record<string, any>>({
+export async function sendEmail<T extends Record<string, unknown>>({
   to,
   subject,
   template,

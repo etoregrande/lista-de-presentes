@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button/button'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import clsx from 'clsx'
 import { Copy, Share } from 'lucide-react'

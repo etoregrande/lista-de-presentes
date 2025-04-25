@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button/button'
 import { FormError } from '@/components/ui/form/form-error'
+import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
@@ -14,13 +15,15 @@ import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-interface ForgotPasswordProps {
+interface AuthForgotPasswordProps {
   setFormType: Dispatch<
     SetStateAction<'login' | 'register' | 'forgot-password'>
   >
 }
 
-export const ForgotPasswordForm = ({ setFormType }: ForgotPasswordProps) => {
+export const AuthForgotPasswordForm = ({
+  setFormType,
+}: AuthForgotPasswordProps) => {
   const {
     register,
     handleSubmit,
@@ -50,11 +53,12 @@ export const ForgotPasswordForm = ({ setFormType }: ForgotPasswordProps) => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="grid w-full max-w-sm items-center gap-1.5">
+        <FormInputWrapper>
           <Label htmlFor="email">Email</Label>
           <Input {...register('email')} id="email" type="email" />
           <FormError message={errors.email?.message} />
-        </div>
+        </FormInputWrapper>
+
         <div className="flex flex-col gap-2">
           <Button disabled={isSubmitting}>
             {isSubmitting ? (
@@ -68,7 +72,7 @@ export const ForgotPasswordForm = ({ setFormType }: ForgotPasswordProps) => {
             variant="secondary"
             onClick={() => setFormType('login')}
           >
-            Fazer login
+            Voltar para login
           </Button>
         </div>
       </form>

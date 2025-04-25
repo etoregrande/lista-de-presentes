@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button/button'
 import { FormError } from '@/components/ui/form/form-error'
+import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
@@ -15,14 +16,17 @@ import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-interface LoginFormProps {
+interface AuthLoginFormProps {
   setFormType: Dispatch<
     SetStateAction<'login' | 'register' | 'forgot-password'>
   >
   className?: string
 }
 
-export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
+export const AuthLoginForm = ({
+  setFormType,
+  className,
+}: AuthLoginFormProps) => {
   const router = useRouter()
   const {
     register,
@@ -47,7 +51,7 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
         },
         onError: (ctx) => {
           const errorCode = ctx.error?.code
-          console.log(errorCode)
+
           if (ctx.error.status === 403) {
             toast.warning('Verifique seu email', {
               description:
@@ -78,19 +82,15 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
       onSubmit={handleSubmit(handleSignInUser)}
       className={`flex w-full max-w-sm flex-col gap-4 ${className}`}
     >
-      <div className="grid max-w-sm items-center gap-1.5">
+      <FormInputWrapper>
         <Label htmlFor="email">Email</Label>
         <Input {...register('email')} id="email" type="email" />
         <FormError message={errors.email?.message} />
-      </div>
-      <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="password">Senha</Label>
-        <PasswordInput {...register('password')} id="password" />
-        <div className="flex w-full items-center justify-between">
-          <div className="min-h-5">
-            <FormError message={errors.password?.message} />
-          </div>
+      </FormInputWrapper>
 
+      <FormInputWrapper>
+        <div className="flex w-full items-center justify-between">
+          <Label htmlFor="password">Senha</Label>
           <Label
             className="text-primary cursor-pointer text-end hover:underline"
             onClick={() => setFormType('forgot-password')}
@@ -98,7 +98,10 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
             Esqueci minha senha
           </Label>
         </div>
-      </div>
+        <PasswordInput {...register('password')} id="password" />
+        <FormError message={errors.password?.message} />
+      </FormInputWrapper>
+
       <div className="flex flex-col gap-2">
         <Button disabled={isSubmitting}>
           {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}

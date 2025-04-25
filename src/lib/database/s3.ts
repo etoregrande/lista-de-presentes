@@ -1,5 +1,5 @@
-import "dotenv/config";
-import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
+import 'dotenv/config'
+import { S3Client } from '@aws-sdk/client-s3'
 
 if (
   !process.env.BUCKET_KEY ||
@@ -7,8 +7,8 @@ if (
   !process.env.BUCKET_REGION
 ) {
   throw new Error(
-    "Missing required environment variables: BUCKET_KEY, BUCKET_SECRET_KEY, or BUCKET_REGION",
-  );
+    'Missing required environment variables: BUCKET_KEY, BUCKET_SECRET_KEY, or BUCKET_REGION'
+  )
 }
 
 export const s3 = new S3Client({
@@ -17,4 +17,4 @@ export const s3 = new S3Client({
     secretAccessKey: process.env.BUCKET_SECRET_KEY,
   },
   region: process.env.BUCKET_REGION,
-});
+})

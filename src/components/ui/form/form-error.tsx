@@ -5,7 +5,7 @@ interface FormErrorProps {
   message:
     | string
     | FieldError
-    | Merge<FieldError, FieldErrorsImpl<any>>
+    | Merge<FieldError, FieldErrorsImpl<FieldError>>
     | undefined
   className?: string
 }
