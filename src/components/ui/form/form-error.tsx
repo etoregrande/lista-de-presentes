@@ -1,4 +1,5 @@
 import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface FormErrorProps {
   message:
@@ -10,11 +11,20 @@ interface FormErrorProps {
 }
 
 export const FormError = ({ message, className = '' }: FormErrorProps) => {
-  if (!message) return null
-
   return (
-    <p className={`mt-1 text-sm text-red-500 ${className}`}>
-      {String(message)}
-    </p>
+    <AnimatePresence mode="wait">
+      {message && (
+        <motion.p
+          key="form-error"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+          className={`text-sm text-red-500 ${className}`}
+        >
+          {String(message)}
+        </motion.p>
+      )}
+    </AnimatePresence>
   )
 }

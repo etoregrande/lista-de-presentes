@@ -1,4 +1,3 @@
-import { Gift } from 'lucide-react'
 import { ResetPasswordForm } from './Reset-password-form'
 
 export default function Page() {

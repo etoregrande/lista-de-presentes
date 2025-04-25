@@ -45,9 +45,7 @@ export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
           setFormType('login')
         },
         onError: (ctx) => {
-          console.log(ctx.error.status)
-          console.log(ctx.error.code)
-          const errorCode = ctx.error?.message || ctx.error?.code
+          const errorCode = ctx.error?.code
 
           if (errorCode === 'USER_ALREADY_EXISTS') {
             setError('email', {

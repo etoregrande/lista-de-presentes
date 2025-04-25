@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button/button'
+import { FormError } from '@/components/ui/form/form-error'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
@@ -52,9 +53,7 @@ export const ForgotPasswordForm = ({ setFormType }: ForgotPasswordProps) => {
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="email">Email</Label>
           <Input {...register('email')} id="email" type="email" />
-          {errors.email && (
-            <div className="text-red-500">{errors.email.message}</div>
-          )}
+          <FormError message={errors.email?.message} />
         </div>
         <div className="flex flex-col gap-2">
           <Button disabled={isSubmitting}>

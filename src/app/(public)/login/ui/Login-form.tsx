@@ -6,7 +6,6 @@ import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
 import { signInFormSchema } from '@/schemas/auth'
-import { signIn } from '@/server/auth'
 import { SignInFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle } from 'lucide-react'
@@ -47,6 +46,8 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
           router.push('/wishlist')
         },
         onError: (ctx) => {
+          const errorCode = ctx.error?.code
+          console.log(errorCode)
           if (ctx.error.status === 403) {
             toast.warning('Verifique seu email', {
               description:
@@ -56,9 +57,9 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
               message: 'Verifique seu email',
             })
           }
-          if (ctx.error.status === 401) {
-            setError('root', {
-              message: 'Email não cadastrado',
+          if (errorCode === 'INVALID_EMAIL_OR_PASSWORD') {
+            setError('password', {
+              message: 'Email ou senha inválidos',
             })
           }
         },
@@ -80,19 +81,23 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
       <div className="grid max-w-sm items-center gap-1.5">
         <Label htmlFor="email">Email</Label>
         <Input {...register('email')} id="email" type="email" />
-        {errors.email && (
-          <div className="text-sm text-red-500">{errors.email.message}</div>
-        )}
+        <FormError message={errors.email?.message} />
       </div>
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="password">Senha</Label>
         <PasswordInput {...register('password')} id="password" />
-        <Label
-          className="cursor-pointer hover:underline"
-          onClick={() => setFormType('forgot-password')}
-        >
-          Esqueci minha senha
-        </Label>
+        <div className="flex w-full items-center justify-between">
+          <div className="min-h-5">
+            <FormError message={errors.password?.message} />
+          </div>
+
+          <Label
+            className="text-primary cursor-pointer text-end hover:underline"
+            onClick={() => setFormType('forgot-password')}
+          >
+            Esqueci minha senha
+          </Label>
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <Button disabled={isSubmitting}>
@@ -113,8 +118,6 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
           Entrar com Google
         </Button>
       </div>
-      <FormError message={errors.password?.message} />
-      <FormError message={errors.root?.message} />
     </form>
   )
 }

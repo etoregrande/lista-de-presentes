@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button/button'
+import { FormError } from '@/components/ui/form/form-error'
 import { PasswordInput } from '@/components/ui/input'
 import { authClient } from '@/lib/auth-client'
 import { resetPasswordFormSchema } from '@/schemas/auth'
@@ -66,9 +67,7 @@ export const ResetPasswordForm = () => {
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="password">Senha</Label>
         <PasswordInput {...register('password')} id="password" />
-        {errors.password && (
-          <div className="text-red-500">{errors.password.message}</div>
-        )}
+        <FormError message={errors.password?.message} />
       </div>
       <Button disabled={isSubmitting || isSubmitSuccessful}>
         {isSubmitting ? (
@@ -77,7 +76,7 @@ export const ResetPasswordForm = () => {
           'Redefinir senha'
         )}
       </Button>
-      {errors.root && <div className="text-red-500">{errors.root.message}</div>}
+      <FormError message={errors.root?.message} />
     </form>
   )
 }
