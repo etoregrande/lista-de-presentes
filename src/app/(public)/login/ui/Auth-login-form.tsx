@@ -2,11 +2,11 @@
 
 import { Button } from '@/components/ui/button/button'
 import { FormError } from '@/components/ui/form/form-error'
+import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
 import { signInFormSchema } from '@/schemas/auth'
-import { signIn } from '@/server/auth'
 import { SignInFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle } from 'lucide-react'
@@ -16,14 +16,17 @@ import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-interface LoginFormProps {
+interface AuthLoginFormProps {
   setFormType: Dispatch<
     SetStateAction<'login' | 'register' | 'forgot-password'>
   >
   className?: string
 }
 
-export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
+export const AuthLoginForm = ({
+  setFormType,
+  className,
+}: AuthLoginFormProps) => {
   const router = useRouter()
   const {
     register,
@@ -47,6 +50,8 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
           router.push('/wishlist')
         },
         onError: (ctx) => {
+          const errorCode = ctx.error?.code
+
           if (ctx.error.status === 403) {
             toast.warning('Verifique seu email', {
               description:
@@ -56,9 +61,9 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
               message: 'Verifique seu email',
             })
           }
-          if (ctx.error.status === 401) {
-            setError('root', {
-              message: 'Email não cadastrado',
+          if (errorCode === 'INVALID_EMAIL_OR_PASSWORD') {
+            setError('password', {
+              message: 'Email ou senha inválidos',
             })
           }
         },
@@ -77,23 +82,26 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
       onSubmit={handleSubmit(handleSignInUser)}
       className={`flex w-full max-w-sm flex-col gap-4 ${className}`}
     >
-      <div className="grid max-w-sm items-center gap-1.5">
+      <FormInputWrapper>
         <Label htmlFor="email">Email</Label>
         <Input {...register('email')} id="email" type="email" />
-        {errors.email && (
-          <div className="text-sm text-red-500">{errors.email.message}</div>
-        )}
-      </div>
-      <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="password">Senha</Label>
+        <FormError message={errors.email?.message} />
+      </FormInputWrapper>
+
+      <FormInputWrapper>
+        <div className="flex w-full items-center justify-between">
+          <Label htmlFor="password">Senha</Label>
+          <Label
+            className="text-primary cursor-pointer text-end hover:underline"
+            onClick={() => setFormType('forgot-password')}
+          >
+            Esqueci minha senha
+          </Label>
+        </div>
         <PasswordInput {...register('password')} id="password" />
-        <Label
-          className="cursor-pointer hover:underline"
-          onClick={() => setFormType('forgot-password')}
-        >
-          Esqueci minha senha
-        </Label>
-      </div>
+        <FormError message={errors.password?.message} />
+      </FormInputWrapper>
+
       <div className="flex flex-col gap-2">
         <Button disabled={isSubmitting}>
           {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}
@@ -113,8 +121,6 @@ export const LoginForm = ({ setFormType, className }: LoginFormProps) => {
           Entrar com Google
         </Button>
       </div>
-      <FormError message={errors.password?.message} />
-      <FormError message={errors.root?.message} />
     </form>
   )
 }

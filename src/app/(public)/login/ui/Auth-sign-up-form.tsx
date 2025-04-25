@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button/button'
 import { FormError } from '@/components/ui/form/form-error'
+import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
@@ -12,13 +13,13 @@ import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-interface SignUpFormProps {
+interface AuthSignUpFormProps {
   setFormType: Dispatch<
     SetStateAction<'register' | 'login' | 'forgot-password'>
   >
 }
 
-export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
+export const AuthSignUpForm = ({ setFormType }: AuthSignUpFormProps) => {
   const {
     register,
     handleSubmit,
@@ -31,7 +32,7 @@ export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
   const handleSignUp: SubmitHandler<SignUpFormData> = async (
     formData: SignUpFormData
   ) => {
-    const { data, error } = await authClient.signUp.email(
+    await authClient.signUp.email(
       {
         email: formData.email,
         password: formData.password,
@@ -45,9 +46,7 @@ export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
           setFormType('login')
         },
         onError: (ctx) => {
-          console.log(ctx.error.status)
-          console.log(ctx.error.code)
-          const errorCode = ctx.error?.message || ctx.error?.code
+          const errorCode = ctx.error?.code
 
           if (errorCode === 'USER_ALREADY_EXISTS') {
             setError('email', {
@@ -82,21 +81,24 @@ export const SignUpForm = ({ setFormType }: SignUpFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-4">
-      <div className="grid w-full max-w-sm items-center gap-1.5">
+      <FormInputWrapper>
         <Label htmlFor="name">Nome e sobrenome</Label>
         <Input {...register('name')} id="name" />
         <FormError message={errors.name?.message} />
-      </div>
-      <div className="grid w-full max-w-sm items-center gap-1.5">
+      </FormInputWrapper>
+
+      <FormInputWrapper>
         <Label htmlFor="email">Email</Label>
         <Input {...register('email')} id="email" type="email" />
         <FormError message={errors.email?.message} />
-      </div>
-      <div className="grid w-full max-w-sm items-center gap-1.5">
+      </FormInputWrapper>
+
+      <FormInputWrapper>
         <Label htmlFor="password">Senha</Label>
         <PasswordInput {...register('password')} id="password" />
         <FormError message={errors.password?.message} />
-      </div>
+      </FormInputWrapper>
+
       <div className="flex flex-col gap-2">
         <Button disabled={isSubmitting} className="grid w-full max-w-sm">
           {isSubmitting ? (

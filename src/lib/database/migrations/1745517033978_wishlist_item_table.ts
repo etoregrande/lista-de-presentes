@@ -1,7 +1,8 @@
 // migrations/xxxx_create_wishlist_item_table_with_foreign_key.ts
+import { DB } from '@/types/db'
 import { Kysely, sql } from 'kysely'
 
-export async function up(db: Kysely<any>): Promise<void> {
+export async function up(db: Kysely<DB>): Promise<void> {
   // Criação da tabela wishlist_item
   await db.schema
     .createTable('wishlist_item')
@@ -40,7 +41,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute()
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+export async function down(db: Kysely<DB>): Promise<void> {
   await db.schema
     .alterTable('wishlist_item')
     .dropConstraint('wishlist_item_user_id_fkey')

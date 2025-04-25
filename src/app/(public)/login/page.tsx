@@ -1,5 +1,5 @@
 import { Gift } from 'lucide-react'
-import { LoginWrapper } from './ui/Login-wrapper'
+import { AuthWrapper } from './ui/Auth-wrapper'
 import Image from 'next/image'
 
 export default function Page() {
@@ -27,7 +27,7 @@ export default function Page() {
             </div>
           </div>
           <div className="flex items-center p-8 md:w-1/2 md:px-14">
-            <LoginWrapper className="" />
+            <AuthWrapper className="" />
           </div>
         </div>
       </div>

@@ -6,7 +6,6 @@ import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { WishlistSharedItemSheet } from './Wishlist-shared-item-sheet'
 import { WishlistSharedItemSheetTrigger } from './Wishlist-shared-item-sheet-trigger'
-import { Separator } from '@/components/ui/separator'
 
 interface WishlistSharedProps {
   initialWishlist: Partial<WishlistItem>[]

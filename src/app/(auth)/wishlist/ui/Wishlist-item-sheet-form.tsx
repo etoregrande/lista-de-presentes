@@ -15,6 +15,7 @@ import { NumericFormat } from 'react-number-format'
 import { WishlistItem } from '@/types/db'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 import { FormError } from '@/components/ui/form/form-error'
+import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
 
 interface WishlistItemSheetFormProps {
   wishlistItem: Partial<WishlistItem>
@@ -165,7 +166,7 @@ export const WishlistItemSheetForm = ({
           </Button>
         </div>
 
-        <div className="grid w-full items-center gap-1.5">
+        <FormInputWrapper>
           <Label
             htmlFor="name"
             className="flex items-center justify-between gap-1"
@@ -175,15 +176,15 @@ export const WishlistItemSheetForm = ({
           </Label>
           <Input {...register('name')} placeholder="" />
           <FormError message={errors.name?.message} />
-        </div>
+        </FormInputWrapper>
 
-        <div className="grid w-full items-center gap-1.5">
+        <FormInputWrapper>
           <Label htmlFor="description">Descrição</Label>
           <Textarea {...register('description')} placeholder="" />
           <FormError message={errors.description?.message} />
-        </div>
+        </FormInputWrapper>
 
-        <div className="grid w-full items-center gap-1.5">
+        <FormInputWrapper>
           <Label htmlFor="price">Preço</Label>
           <Controller
             name="price"
@@ -208,13 +209,13 @@ export const WishlistItemSheetForm = ({
             )}
           />
           <FormError message={errors.price?.message} />
-        </div>
+        </FormInputWrapper>
 
-        <div className="grid w-full items-center gap-1.5">
+        <FormInputWrapper>
           <Label htmlFor="link">Link do produto</Label>
           <Input {...register('link')} inputMode="url" placeholder="" />
           <FormError message={errors.link?.message} />
-        </div>
+        </FormInputWrapper>
       </form>
     </div>
   )

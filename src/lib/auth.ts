@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { betterAuth, User } from 'better-auth'
+import { betterAuth } from 'better-auth'
 import { dialect } from '@/lib/database/db'
 import { nextCookies } from 'better-auth/next-js'
 import { sendEmail } from './email'
@@ -29,31 +29,19 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSingUp: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url, token }, request) => {
-      try {
-        await sendEmail({
-          to: user.email,
-          subject: 'Verifique seu email',
-          template: VerificationEmailTemplate,
-          templateProps: { url },
-        })
-      } catch (error: any) {
-        console.error('[Resend Error]', error)
-
-        if (
-          error?.name === 'validation_error' ||
-          error?.message?.includes('Invalid `to` field')
-        ) {
-          throw new Error('INVALID_EMAIL_FOR_RESEND')
-        }
-        throw new Error('EMAIL_SENDING_FAILED')
-      }
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail({
+        to: user.email,
+        subject: 'Verifique seu email',
+        template: VerificationEmailTemplate,
+        templateProps: { url },
+      })
     },
   },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    sendResetPassword: async ({ user, url, token }, request) => {
+    sendResetPassword: async ({ user, url }) => {
       await sendEmail({
         to: user.email,
         subject: 'Esqueci minha senha',

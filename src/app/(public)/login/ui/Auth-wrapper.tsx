@@ -1,16 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { LoginForm } from './Login-form'
-import { ForgotPasswordForm } from './Forgot-password-form'
+import { AuthLoginForm } from './Auth-login-form'
+import { AuthForgotPasswordForm } from './Auth-forgot-password-form'
 import { AnimatePresence, motion } from 'framer-motion'
-import { SignUpForm } from './Sign-up-form'
+import { AuthSignUpForm } from './Auth-sign-up-form'
 
-interface LoginWrapperProps {
+interface AuthWrapperProps {
   className?: string
 }
 
-export function LoginWrapper({ className }: LoginWrapperProps) {
+export function AuthWrapper({ className }: AuthWrapperProps) {
   const [formType, setFormType] = useState<
     'login' | 'register' | 'forgot-password'
   >('login')
@@ -56,10 +56,12 @@ export function LoginWrapper({ className }: LoginWrapperProps) {
           {formType === 'forgot-password' && 'Informe seu email cadastrado'}
         </p>
 
-        {formType === 'login' && <LoginForm setFormType={setFormType} />}
-        {formType === 'register' && <SignUpForm setFormType={setFormType} />}
+        {formType === 'login' && <AuthLoginForm setFormType={setFormType} />}
+        {formType === 'register' && (
+          <AuthSignUpForm setFormType={setFormType} />
+        )}
         {formType === 'forgot-password' && (
-          <ForgotPasswordForm setFormType={setFormType} />
+          <AuthForgotPasswordForm setFormType={setFormType} />
         )}
       </motion.div>
     </AnimatePresence>
