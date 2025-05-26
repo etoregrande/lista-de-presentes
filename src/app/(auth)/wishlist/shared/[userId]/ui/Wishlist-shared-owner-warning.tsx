@@ -36,7 +36,7 @@ export const WishlistSharedOwnerWarning = ({
             <p>
               Se você continuar, poderá ver quais presentes já foram comprados
               para você. Isso pode estragar a surpresa! Se preferir, volte à sua
-              página inicial para evitar “spoilers”.
+              página inicial para evitar <i>spoilers</i>.
             </p>
             <div className="flex w-full gap-2">
               <Button
