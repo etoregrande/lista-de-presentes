@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎁 Presenteio
 
-## Getting Started
+**Presenteio** é uma aplicação fullstack desenvolvida com [Next.js](https://nextjs.org/) que permite a criação de listas de presentes personalizadas. Usuários autenticados podem cadastrar, visualizar, editar e excluir produtos que desejam ganhar em datas especiais, como aniversários, amigos secretos ou casamentos.
 
-First, run the development server:
+Autenticação segura via [BetterAuth](https://www.better-auth.com/), UI estruturada com Tailwind CSS e componentes shadcn/ui, experiência fluida com validação via React Hook Form e Zod.
+
+## ✨ Features
+
+- 🔐 Autenticação com BetterAuth, com recuperação de senha e login social
+- 🛍️ CRUD completo de produtos:
+  - Criar, editar, visualizar e excluir produtos com nome, descrição, link, preço, imagem e opção para alterar a visibilizade do produto
+- ✅ Validações robustas com Zod e React Hook Form
+- ⬆️ Página específica para compartilhamento dos produtos cadastrados
+
+## 🖼️ Demonstração
+
+> (Em breve)
+
+## 🧠 Tecnologias Utilizadas
+
+- [Next.js](https://nextjs.org/)
+- [React](https://reactjs.org/)
+- [BetterAuth](https://www.better-auth.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [React Hook Form](https://react-hook-form.com/)
+- [Zod](https://zod.dev/)
+- [Kysely](https://kysely.dev/)
+- [PostgreSQL](https://www.postgresql.org/)
+
+## 🚀 Como Rodar o Projeto Localmente
+
+### 1. Clone o repositório
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone (url temporária)
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
