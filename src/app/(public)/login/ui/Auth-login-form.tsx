@@ -36,6 +36,8 @@ export const AuthLoginForm = ({
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInFormSchema),
   })
+  const isPasswordRecoveryEnabled =
+    process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true' ? true : false
 
   const handleSignInUser: SubmitHandler<SignInFormData> = async (
     formData: SignInFormData
@@ -91,12 +93,14 @@ export const AuthLoginForm = ({
       <FormInputWrapper>
         <div className="flex w-full items-center justify-between">
           <Label htmlFor="password">Senha</Label>
-          <Label
-            className="text-primary cursor-pointer text-end hover:underline"
-            onClick={() => setFormType('forgot-password')}
-          >
-            Esqueci minha senha
-          </Label>
+          {isPasswordRecoveryEnabled && (
+            <Label
+              className="text-primary cursor-pointer text-end hover:underline"
+              onClick={() => setFormType('forgot-password')}
+            >
+              Esqueci minha senha
+            </Label>
+          )}
         </div>
         <PasswordInput {...register('password')} id="password" />
         <FormError message={errors.password?.message} />
