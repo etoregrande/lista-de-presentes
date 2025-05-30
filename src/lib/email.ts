@@ -1,7 +1,9 @@
 import { Resend } from 'resend'
 import { createElement } from 'react'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null
 
 interface SendEmailParams<T extends Record<string, unknown>> {
   to: string
@@ -16,6 +18,11 @@ export async function sendEmail<T extends Record<string, unknown>>({
   template,
   templateProps,
 }: SendEmailParams<T>) {
+  if (!resend) {
+    console.warn('[Resend] API key não configurada. E-mail não enviado.')
+    return
+  }
+
   const { error } = await resend.emails.send({
     from: 'Presenteio <noreply@presenteio.app>',
     to,
