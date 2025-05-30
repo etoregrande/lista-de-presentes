@@ -8,6 +8,9 @@ import {
   VerificationEmailTemplate,
 } from '@/components/email-template'
 
+const isPasswordRecoveryEnabled =
+  process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true' ? true : false
+
 export const auth = betterAuth({
   database: {
     dialect: dialect,
@@ -17,7 +20,7 @@ export const auth = betterAuth({
   session: {
     cookieCache: {
       enabled: false,
-      // maxAge: 5 * 60 // Cache duration in seconds
+      maxAge: 5 * 60, // Cache duration in seconds
     },
   },
   socialProviders: {
@@ -40,7 +43,7 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: isPasswordRecoveryEnabled,
     sendResetPassword: async ({ user, url }) => {
       await sendEmail({
         to: user.email,

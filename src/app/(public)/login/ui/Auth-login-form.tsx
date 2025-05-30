@@ -37,9 +37,9 @@ export const AuthLoginForm = ({
     resolver: zodResolver(signInFormSchema),
   })
   const isPasswordRecoveryEnabled =
-    process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true' ? true : false
+    process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true'
   const isSocialLoginEnabled =
-    process.env.NEXT_PUBLIC_SOCIAL_LOGIN_ENABLED === 'true' ? true : false
+    process.env.NEXT_PUBLIC_SOCIAL_LOGIN_ENABLED === 'true'
   const [isLoggingInWithGoogle, setIsLoggingInWithGoogle] = useState(false)
 
   const handleSignInUser: SubmitHandler<SignInFormData> = async (

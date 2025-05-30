@@ -9,6 +9,7 @@ import { SignUpFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle } from 'lucide-react'
 import Image from 'next/image'
+import { redirect } from 'next/navigation'
 import { Dispatch, SetStateAction } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -28,6 +29,12 @@ export const AuthSignUpForm = ({ setFormType }: AuthSignUpFormProps) => {
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpFormSchema),
   })
+  const isPasswordRecoveryEnabled =
+    process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true'
+
+  const signUpToastMessage = isPasswordRecoveryEnabled
+    ? 'Enviamos um email de verificação para você'
+    : 'Você já pode realizar o login'
 
   const handleSignUp: SubmitHandler<SignUpFormData> = async (
     formData: SignUpFormData
@@ -41,7 +48,7 @@ export const AuthSignUpForm = ({ setFormType }: AuthSignUpFormProps) => {
       {
         onSuccess: async () => {
           toast.success('Cadastro realizado com sucesso!', {
-            description: 'Enviamos um email de verificação para você',
+            description: signUpToastMessage,
           })
           setFormType('login')
         },
