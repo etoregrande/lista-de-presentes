@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -38,6 +38,9 @@ export const AuthLoginForm = ({
   })
   const isPasswordRecoveryEnabled =
     process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true' ? true : false
+  const isSocialLoginEnabled =
+    process.env.NEXT_PUBLIC_SOCIAL_LOGIN_ENABLED === 'true' ? true : false
+  const [isLoggingInWithGoogle, setIsLoggingInWithGoogle] = useState(false)
 
   const handleSignInUser: SubmitHandler<SignInFormData> = async (
     formData: SignInFormData
@@ -74,6 +77,7 @@ export const AuthLoginForm = ({
   }
 
   const handleSignInWithGmail = async () => {
+    setIsLoggingInWithGoogle(true)
     await authClient.signIn.social({
       provider: 'google',
     })
@@ -110,20 +114,29 @@ export const AuthLoginForm = ({
         <Button disabled={isSubmitting}>
           {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleSignInWithGmail}
-          className="border-border"
-        >
-          <Image
-            src="/assets/icons/google.svg"
-            alt="Ícone do Google"
-            width={20}
-            height={20}
-          />
-          Entrar com Google
-        </Button>
+        {isSocialLoginEnabled && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleSignInWithGmail}
+            disabled={isLoggingInWithGoogle}
+            className="border-border"
+          >
+            {isLoggingInWithGoogle ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              <>
+                <Image
+                  src="/assets/icons/google.svg"
+                  alt="Ícone do Google"
+                  width={20}
+                  height={20}
+                />
+                Entrar com o Google
+              </>
+            )}
+          </Button>
+        )}
       </div>
     </form>
   )
