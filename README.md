@@ -14,7 +14,10 @@ Autenticação segura via [BetterAuth](https://www.better-auth.com/), UI estrutu
 
 ## 🖼️ Demonstração
 
-> Você pode testar o projeto em produção em [https://www.presenteio.app/](https://www.presenteio.app/)
+🎉 A aplicação já está no ar!  
+Você pode testar todas as funcionalidades agora mesmo, em produção:
+
+👉 **Acesse em:** [https://www.presenteio.app/](https://www.presenteio.app/)
 
 ## 🧠 Tecnologias Utilizadas
 
@@ -47,11 +50,15 @@ git clone https://github.com/etoregrande/lista-de-presentes.git
 
 ```
 
+---
+
 ### 2. Instale as dependências
 
 ```bash
 npm install
 ```
+
+---
 
 ### 3. Configure o banco de dados PostgreSQL
 
