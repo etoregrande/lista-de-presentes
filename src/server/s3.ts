@@ -1,4 +1,4 @@
-import { s3 } from '@/lib/database/s3'
+import { s3 } from '@/lib/s3'
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 
 export const uploadImageToS3 = async (

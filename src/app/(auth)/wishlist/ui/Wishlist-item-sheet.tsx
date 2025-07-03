@@ -17,7 +17,7 @@ import { LoaderCircle } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { toast } from 'sonner'
 import { getDisplayPrice } from '@/lib/utils'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { WishlistItemSheetForm } from './Wishlist-item-sheet-form'
 
 interface WishlistItemSheetProps {

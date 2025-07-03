@@ -16,7 +16,7 @@ import { redirect } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { WishlistNewItemSheetForm } from './Wishlist-new-item-sheet-form'
 
 interface WishlistNewItemSheetProps {

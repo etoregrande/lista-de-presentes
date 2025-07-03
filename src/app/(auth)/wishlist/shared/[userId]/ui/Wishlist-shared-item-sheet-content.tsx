@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Dispatch, SetStateAction } from 'react'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 import { ExternalLink, Link2Off } from 'lucide-react'
 import { Label } from '@/components/ui/label'

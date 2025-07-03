@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dialog'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { getDisplayPrice } from '@/lib/utils'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { WishlistSharedItemSheetContent } from './Wishlist-shared-item-sheet-content'
 import { purchaseWishlistItem } from '@/server/wishlistItem'
 
@@ -39,11 +39,7 @@ export const WishlistSharedItemSheet = ({
 
   const onSubmit = async () => {
     if (!wishlistItem.id) throw new Error('Failed to get wishlist item id')
-    const isPurchased = wishlistItem.is_purchased ? false : true
-    const updatedWishlistItem = await purchaseWishlistItem(
-      wishlistItem,
-      isPurchased
-    )
+    const updatedWishlistItem = await purchaseWishlistItem(wishlistItem)
 
     try {
       if (!updatedWishlistItem) {
@@ -91,11 +87,9 @@ export const WishlistSharedItemSheet = ({
             <Dialog>
               <DialogTrigger asChild>
                 <Button
-                  variant={
-                    wishlistItem.is_purchased ? 'destructive' : 'default'
-                  }
+                  variant={wishlistItem.isPurchased ? 'destructive' : 'default'}
                 >
-                  {wishlistItem.is_purchased
+                  {wishlistItem.isPurchased
                     ? 'Desfazer compra'
                     : 'Marcar como comprado'}
                 </Button>
@@ -103,12 +97,12 @@ export const WishlistSharedItemSheet = ({
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>
-                    {wishlistItem.is_purchased
+                    {wishlistItem.isPurchased
                       ? 'Você quer desmarcar este item?'
                       : 'Você comprou este item?'}
                   </DialogTitle>
                   <DialogDescription>
-                    {wishlistItem.is_purchased
+                    {wishlistItem.isPurchased
                       ? 'Se você marcou esse item como comprado por engano pode confirmar para torná-lo disponível novamente. Deseja confirmar?'
                       : 'Se você marcar como comprado, outras pessoas não vão comprar este produto. Deseja confirmar?'}
                   </DialogDescription>

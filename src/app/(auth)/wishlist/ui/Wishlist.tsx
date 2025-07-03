@@ -8,13 +8,13 @@ import { EmptyWishlist } from './Wishlist-empty'
 import { useState } from 'react'
 import { Session } from '@/lib/auth'
 import { WishlistShareButton } from './Wishlist-share-button'
-import { WishlistItem } from '@/types/db'
 import { Button } from '@/components/ui/button/button'
 import { WishlistNewItemSheet } from './Wishlist-new-item-sheet'
 import { Plus } from 'lucide-react'
 import { WishlistItemSheet } from './Wishlist-item-sheet'
 import { AnimatePresence } from 'framer-motion'
 import { WishlistItemSheetTrigger } from './Wishlist-item-sheet-trigger'
+import type { WishlistItem } from '@/generated/prisma'
 
 interface WishlistProps {
   userId?: string
@@ -23,8 +23,7 @@ interface WishlistProps {
 }
 
 export function Wishlist({ initialWishlist, session }: WishlistProps) {
-  const [wishlist, setWishlist] =
-    useState<Partial<WishlistItem>[]>(initialWishlist)
+  const [wishlist, setWishlist] = useState(initialWishlist)
   const isEmpty = wishlist.length === 0
   const formMethods = useForm<WishlistItemFormDataType>({
     resolver: zodResolver(wishlistItemFormSchema),

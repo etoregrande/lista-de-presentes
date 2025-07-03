@@ -1,7 +1,7 @@
 'use client'
 
 import { EmptyWishlist } from './Wishlist-shared-empty'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { WishlistSharedItemSheet } from './Wishlist-shared-item-sheet'
@@ -12,12 +12,12 @@ interface WishlistSharedProps {
 }
 
 export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
-  const activeWishlist = initialWishlist.filter((item) => item.is_active)
+  const activeWishlist = initialWishlist.filter((item) => item.isActive)
   const [wishlist, setWishlist] =
     useState<Partial<WishlistItem>[]>(activeWishlist)
 
-  const notPurchasedWishlist = wishlist.filter((item) => !item.is_purchased)
-  const purchasedWishlist = wishlist.filter((item) => item.is_purchased)
+  const notPurchasedWishlist = wishlist.filter((item) => !item.isPurchased)
+  const purchasedWishlist = wishlist.filter((item) => item.isPurchased)
   const isEmpty = wishlist.length === 0 || notPurchasedWishlist.length === 0
 
   return (

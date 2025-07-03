@@ -34,7 +34,7 @@ export default function NavbarContent({ session }: Props) {
         </div>
         {session?.user ? (
           <DropdownMenu>
-            <DropdownMenuTrigger className="group cursor-pointer">
+            <DropdownMenuTrigger className="group cursor-pointer focus:pl-2">
               <div className="flex items-center gap-2">
                 <p className="text-navbar-foreground truncate rounded-4xl text-sm group-hover:underline">
                   {getDisplayName(session.user.name)}
@@ -53,6 +53,7 @@ export default function NavbarContent({ session }: Props) {
               <DropdownMenuLink href="/wishlist">
                 Lista de presentes
               </DropdownMenuLink>
+              <DropdownMenuLink href="/groups">Grupos</DropdownMenuLink>
               <DropdownMenuItem disabled>Perfil</DropdownMenuItem>
               <DropdownMenuItem onClick={signOut}>
                 <span>Sair</span>
