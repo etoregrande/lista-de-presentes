@@ -4,8 +4,6 @@ import { getSessionCookie } from 'better-auth/cookies'
 export async function middleware(request: NextRequest) {
   const sessionCookie = getSessionCookie(request)
 
-  console.log(sessionCookie)
-
   const { pathname } = request.nextUrl
 
   if (sessionCookie && pathname === '/') {
