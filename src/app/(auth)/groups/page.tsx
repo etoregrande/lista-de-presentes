@@ -21,7 +21,9 @@ export default async function Page() {
           </h1>
         </div>
         <div className="flex w-full flex-col items-end">
-          <p className="text-muted-foreground">Evento dia 24/12</p>
+          <p className="text-muted-foreground">
+            Evento dia <span className="font-bold">24/12</span>
+          </p>
           <p>
             Presentes até <span className="font-bold">R$100,00</span>
           </p>
