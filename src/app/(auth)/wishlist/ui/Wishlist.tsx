@@ -1,6 +1,6 @@
 'use client'
 
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { wishlistItemFormSchema } from '@/schemas/wishlistItem'
@@ -25,7 +25,7 @@ interface WishlistProps {
 export function Wishlist({ initialWishlist, session }: WishlistProps) {
   const [wishlist, setWishlist] = useState(initialWishlist)
   const isEmpty = wishlist.length === 0
-  const formMethods = useForm<WishlistItemFormDataType>({
+  const formMethods = useForm<WishlistItemFormData>({
     resolver: zodResolver(wishlistItemFormSchema),
     defaultValues: {
       isActive: true,

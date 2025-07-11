@@ -1,6 +1,6 @@
 'use server'
 
-import { type WishlistItemFormDataType } from '@/types/wishlistItem'
+import { type WishlistItemFormData } from '@/types/wishlistItem'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
@@ -11,7 +11,7 @@ import { deleteImageFromS3, uploadImageToS3 } from './s3'
 import { Priority, WishlistItem } from '@/generated/prisma'
 
 export const createWishlistItem = async (
-  formData: WishlistItemFormDataType,
+  formData: WishlistItemFormData,
   userId: string
 ) => {
   const { name, isActive, link, priority, description, image, price } = formData
@@ -54,7 +54,7 @@ export const createWishlistItem = async (
 }
 
 export const editWishlistItem = async (
-  formData: WishlistItemFormDataType,
+  formData: WishlistItemFormData,
   wishlistItemId: string,
   userId: string
 ) => {

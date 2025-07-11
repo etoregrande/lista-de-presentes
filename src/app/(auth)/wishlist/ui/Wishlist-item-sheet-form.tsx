@@ -1,4 +1,4 @@
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button/button'
 import { Label } from '@/components/ui/label'
@@ -36,7 +36,7 @@ export const WishlistItemSheetForm = ({
     reset,
     control,
     formState: { errors },
-  } = useFormContext<WishlistItemFormDataType>()
+  } = useFormContext<WishlistItemFormData>()
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const image = watch('image')

@@ -8,7 +8,7 @@ import {
   SheetTrigger,
   SheetFooter,
 } from '@/components/ui/sheet'
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { useFormContext } from 'react-hook-form'
 import { editWishlistItem } from '@/server/wishlistItem'
 import { authClient } from '@/lib/auth-client'
@@ -34,10 +34,10 @@ export const WishlistItemSheet = ({
   const {
     handleSubmit,
     formState: { isSubmitting },
-  } = useFormContext<WishlistItemFormDataType>()
+  } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
 
-  const onSubmit = async (formData: WishlistItemFormDataType) => {
+  const onSubmit = async (formData: WishlistItemFormData) => {
     const { data: session } = await authClient.getSession()
     if (!session) redirect('/login')
     if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')

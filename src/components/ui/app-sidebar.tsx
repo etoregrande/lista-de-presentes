@@ -5,7 +5,12 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupAction,
+  SidebarGroupLabel,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import {
   DropdownMenu,
@@ -20,6 +25,8 @@ import { Session } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import { signOut } from '@/server/auth'
 import { Button } from './button/button'
+import Link from 'next/link'
+import { Plus, ScrollText } from 'lucide-react'
 
 interface AppSidebarProps {
   session: Session | null
@@ -73,8 +80,50 @@ export const AppSidebar = ({ session }: AppSidebarProps) => {
         )}
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup></SidebarGroup>
-        <SidebarGroup> </SidebarGroup>
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/wishlist">
+                  <ScrollText />
+                  <span>Lista de Desejos</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Amigo secreto</SidebarGroupLabel>
+          <SidebarGroupAction
+            title="Add Project"
+            onClick={() => {
+              console.log('Add Project clicked')
+            }}
+          >
+            <Plus /> <span className="sr-only">Add Project</span>
+          </SidebarGroupAction>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/wishlist">
+                  <span>Nome do grupo</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Amigo secreto (convidado)</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/wishlist">
+                  <span>Nome do grupo</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <p>Footer</p>

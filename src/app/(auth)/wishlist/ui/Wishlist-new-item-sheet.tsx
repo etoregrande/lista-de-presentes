@@ -8,7 +8,7 @@ import {
   SheetTrigger,
   SheetFooter,
 } from '@/components/ui/sheet'
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { LoaderCircle } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import { createWishlistItem } from '@/server/wishlistItem'
@@ -32,7 +32,7 @@ export const WishlistNewItemSheet = ({
     handleSubmit,
     reset,
     formState: { isSubmitting },
-  } = useFormContext<WishlistItemFormDataType>()
+  } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export const WishlistNewItemSheet = ({
     }
   }, [isSheetOpen, reset])
 
-  const onSubmit = async (formData: WishlistItemFormDataType) => {
+  const onSubmit = async (formData: WishlistItemFormData) => {
     const { data: session } = await authClient.getSession()
     if (!session) redirect('/login')
 

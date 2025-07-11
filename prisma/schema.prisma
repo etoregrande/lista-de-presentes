@@ -10,8 +10,8 @@ datasource db {
 
 model User {
   id            String    @id
-  createdAt     DateTime
-  updatedAt     DateTime
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   name          String
   email         String @unique
@@ -21,6 +21,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
   wishlistItems WishlistItem[] 
+  secretSantaGroups SecretSantaGroup[]
+  drawGiver  SecretSantaDraw[] @relation("drawGiver")
+  drawReceiver SecretSantaDraw[] @relation("drawReceiver")
 
   @@map("users")
 }
@@ -82,6 +85,9 @@ enum Priority {
 
 model WishlistItem {
   id           String    @id @default(uuid())
+  purchasedAt  DateTime?                   
+  createdAt    DateTime  @default(now())    
+
   name         String    @db.VarChar(255)
   price        Int?
   description  String?
@@ -90,11 +96,61 @@ model WishlistItem {
   priority     Priority  @default(normal)
   isActive     Boolean   @default(true)     
   isPurchased  Boolean   @default(false)    
-  purchasedAt  DateTime?                   
-  createdAt    DateTime  @default(now())    
+
   userId       String                     
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  groups WishlistItemSecretSantaGroup[]
 
   @@map("wishlist_items")
 }
 
+model SecretSantaGroup {
+  id           String    @id @default(uuid())
+  createdAt    DateTime  @default(now())    
+
+  name         String    @db.VarChar(255)
+  priceLimit   Int?
+  drawDate     DateTime?
+
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  draws        SecretSantaDraw[]
+  wishlistItems WishlistItemSecretSantaGroup[]
+
+
+  @@map("secret_santa_groups")
+}
+
+model SecretSantaDraw {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+
+  groupId     String
+  giverId     String
+  receiverId  String
+
+  group       SecretSantaGroup @relation(fields: [groupId], references: [id])
+  giver       User     @relation("drawGiver", fields: [giverId], references: [id])
+  receiver    User     @relation("drawReceiver", fields: [receiverId], references: [id])
+
+  @@unique([groupId, giverId])
+  @@unique([groupId, receiverId])
+
+  @@map("secret_santa_draws")
+}
+
+model WishlistItemSecretSantaGroup {
+  id               String           @id @default(uuid())
+  createdAt        DateTime         @default(now())
+
+  wishlistItemId   String
+  secretSantaGroupId String
+
+  wishlistItem     WishlistItem     @relation(fields: [wishlistItemId], references: [id], onDelete: Cascade)
+  secretSantaGroup SecretSantaGroup @relation(fields: [secretSantaGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([wishlistItemId, secretSantaGroupId])
+  @@map("wishlist_items_secret_santa_groups")
+}
