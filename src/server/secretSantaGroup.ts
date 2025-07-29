@@ -1,4 +1,6 @@
 'use server'
+
+import { Prisma } from '@/generated/prisma'
 import { prisma } from '@/lib/prisma'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
 
@@ -23,6 +25,12 @@ export const createSecretSantaGroup = async (
 
     return newSecretSantaGroup
   } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      console.log('errroooo')
+    }
     console.error('Error creating Secret Santa group =>', error)
     return null
   }

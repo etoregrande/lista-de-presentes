@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "prisma generate && next dev",
     "build": "prisma generate && next build",
+    "postinstall": "prisma generate && prisma migrate deploy",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
     "migrate": "npx tsx src/lib/database/migrator"
@@ -33,6 +34,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
+    "framer-motion": "^12.23.11",
     "kysely": "^0.27.6",
     "kysely-migration-cli": "^0.4.2",
     "lucide-react": "^0.484.0",

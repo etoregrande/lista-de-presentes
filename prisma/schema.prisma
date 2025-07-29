@@ -119,6 +119,7 @@ model SecretSantaGroup {
   draws        SecretSantaDraw[]
   wishlistItems WishlistItemSecretSantaGroup[]
 
+  @@unique([userId, name])
 
   @@map("secret_santa_groups")
 }
