@@ -106,7 +106,6 @@ export const AppSidebar = ({ session }: AppSidebarProps) => {
             <SidebarGroupAction
               title="Add Project"
               onClick={() => {
-                console.log('Add Project clicked')
                 setIsCreatingNewGroup(true)
               }}
             >

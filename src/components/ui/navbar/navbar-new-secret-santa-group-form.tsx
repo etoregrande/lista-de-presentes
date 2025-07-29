@@ -48,6 +48,7 @@ export const NavbarNewSecretSantaGroupForm = () => {
             )}
           />
           <FormError message={errors.priceLimit?.message} />
+          <FormError message={errors.root?.message} />
         </FormInputWrapper>
       </form>
     </>

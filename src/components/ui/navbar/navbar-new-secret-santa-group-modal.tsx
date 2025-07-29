@@ -18,6 +18,7 @@ import { createSecretSantaGroup } from '@/server/secretSantaGroup'
 import { authClient } from '@/lib/auth-client'
 import { redirect } from 'next/navigation'
 import { toast } from 'sonner'
+import { LoaderCircle } from 'lucide-react'
 
 interface NavbarNewGroupModalProps {
   isOpen: boolean
@@ -31,26 +32,27 @@ export const NavbarNewSecretSantaGroupModal = ({
   const form = useForm<secretSantaGroupFormData>({
     resolver: zodResolver(secretSantaGroupFormSchema),
   })
-  const { handleSubmit, reset } = form
+  const {
+    handleSubmit,
+    reset,
+    setError,
+    formState: { isSubmitting },
+  } = form
 
   const onSubmit = async (data: secretSantaGroupFormData) => {
-    console.log('Form submitted:', data)
     const { data: session } = await authClient.getSession()
     if (!session) redirect('/login')
 
-    const newSecretSantaGroup = await createSecretSantaGroup(
-      data,
-      session.user.id
-    )
+    const result = await createSecretSantaGroup(data, session.user.id)
 
-    if (!newSecretSantaGroup) {
+    if (!result.success) {
+      setError(result.error!.field, { message: result.error!.message })
       return toast.error('Erro ao criar novo grupo')
     }
 
     setIsOpen(false)
     reset()
     toast.success('Grupo criado com sucesso!')
-    console.log('New Secret Santa Group created:', newSecretSantaGroup)
   }
 
   useEffect(() => {
@@ -78,15 +80,20 @@ export const NavbarNewSecretSantaGroupModal = ({
             <Button
               onClick={() => setIsOpen(false)}
               variant="secondary"
-              className="block flex-1 md:w-auto"
+              className="flex-1 md:w-auto"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleSubmit(onSubmit)}
-              className="block flex-1 md:w-auto"
+              className="flex-1 md:w-auto"
+              disabled={isSubmitting}
             >
-              Criar grupo
+              {isSubmitting ? (
+                <LoaderCircle className="animate-spin" />
+              ) : (
+                'Criar grupo'
+              )}
             </Button>
           </CredenzaFooter>
         </CredenzaContent>

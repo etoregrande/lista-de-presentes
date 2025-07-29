@@ -1,8 +1,13 @@
 'use server'
 
-import { Prisma } from '@/generated/prisma'
 import { prisma } from '@/lib/prisma'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
+import { Field } from 'react-hook-form'
+
+type FieldError = {
+  field: keyof secretSantaGroupFormData | 'root'
+  message: string
+}
 
 export const createSecretSantaGroup = async (
   formData: secretSantaGroupFormData,
@@ -23,15 +28,25 @@ export const createSecretSantaGroup = async (
       },
     })
 
-    return newSecretSantaGroup
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === 'P2002'
-    ) {
-      console.log('errroooo')
+    return { success: true, group: newSecretSantaGroup }
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return {
+        success: false,
+        error: {
+          field: 'name',
+          message: 'Já existe um grupo com este nome',
+        } satisfies FieldError,
+      }
     }
-    console.error('Error creating Secret Santa group =>', error)
-    return null
+
+    // console.error('Erro ao criar grupo =>', error)
+    return {
+      success: false,
+      error: {
+        field: 'root',
+        message: 'Erro ao criar o grupo',
+      } satisfies FieldError,
+    }
   }
 }
