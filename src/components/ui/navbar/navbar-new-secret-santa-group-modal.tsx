@@ -17,7 +17,6 @@ import { secretSantaGroupFormSchema } from '@/schemas/secretSantaGroup'
 import { createSecretSantaGroup } from '@/server/secretSantaGroup'
 import { authClient } from '@/lib/auth-client'
 import { redirect } from 'next/navigation'
-import { SecretSantaGroup } from '@/generated/prisma'
 import { toast } from 'sonner'
 
 interface NavbarNewGroupModalProps {
