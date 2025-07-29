@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "prisma generate && next dev",
     "build": "next build",
-    "postinstall": "prisma generate && prisma migrate deploy",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
-    "migrate": "npx tsx src/lib/database/migrator"
+    "migrate": "prisma migrate deploy"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
