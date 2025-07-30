@@ -2,11 +2,17 @@ import React from 'react'
 import { getSessionOnServer } from '@/server/session'
 import { Session } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { getSecretSantaGroup } from '@/server/secretSantaGroup'
 
-export default async function Page() {
+interface PageProps {
+  params: { groupId: string }
+}
+
+export default async function Page({ params }: PageProps) {
   const session: Session | null = await getSessionOnServer()
-
   if (!session) redirect('/login')
+
+  const group = await getSecretSantaGroup(params.groupId)
 
   return (
     <>
@@ -17,12 +23,17 @@ export default async function Page() {
             <span className="block text-base font-normal text-slate-500">
               Amigo secreto
             </span>
-            Nome do grupo
+            {group.name}
           </h1>
         </div>
         <div className="flex w-full flex-col items-end">
           <p className="text-muted-foreground text-right">
-            Evento dia <span className="font-bold">24/12</span>
+            Evento dia{' '}
+            <span className="font-bold">
+              {group.drawDate
+                ? new Date(group.drawDate).toLocaleDateString()
+                : 'indefinido'}
+            </span>
           </p>
           <p className="text-right">
             Presentes até <span className="font-bold">R$100,00</span>

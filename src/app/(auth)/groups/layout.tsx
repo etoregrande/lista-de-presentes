@@ -1,7 +1,8 @@
-import { AppSidebar } from '@/components/ui/app-sidebar'
+import { AppSidebar } from '@/components/ui/app-sidebar/app-sidebar'
 import Navbar from '@/components/ui/navbar/navbar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { getSessionOnServer } from '@/server/session'
+import { redirect } from 'next/navigation'
 
 export default async function WishlistLayout({
   children,
@@ -9,6 +10,9 @@ export default async function WishlistLayout({
   children: React.ReactNode
 }>) {
   const session = await getSessionOnServer()
+  if (!session) {
+    redirect('/login')
+  }
 
   return (
     <>

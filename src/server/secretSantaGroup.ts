@@ -1,12 +1,39 @@
 'use server'
 
+import { PrismaClientKnownRequestError } from '@/generated/prisma/runtime/library'
 import { prisma } from '@/lib/prisma'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
-import { Field } from 'react-hook-form'
 
 type FieldError = {
   field: keyof secretSantaGroupFormData | 'root'
   message: string
+}
+
+export const listSecretSantaGroups = async (userId: string) => {
+  if (!userId) {
+    throw new Error('User ID is required to list Secret Santa groups')
+  }
+  const secretSantaGroups = await prisma.secretSantaGroup.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  return secretSantaGroups
+}
+
+export const getSecretSantaGroup = async (groupId: string) => {
+  if (!groupId) {
+    throw new Error('Group ID is required to get a Secret Santa group')
+  }
+  const secretSantaGroup = await prisma.secretSantaGroup.findUnique({
+    where: { id: groupId },
+  })
+
+  if (!secretSantaGroup) {
+    throw new Error('Secret Santa group not found')
+  }
+
+  return secretSantaGroup
 }
 
 export const createSecretSantaGroup = async (
@@ -29,8 +56,11 @@ export const createSecretSantaGroup = async (
     })
 
     return { success: true, group: newSecretSantaGroup }
-  } catch (error: any) {
-    if (error.code === 'P2002') {
+  } catch (error: PrismaClientKnownRequestError | unknown) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
       return {
         success: false,
         error: {
@@ -40,7 +70,6 @@ export const createSecretSantaGroup = async (
       }
     }
 
-    // console.error('Erro ao criar grupo =>', error)
     return {
       success: false,
       error: {

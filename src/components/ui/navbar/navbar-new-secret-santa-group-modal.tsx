@@ -16,18 +16,21 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { secretSantaGroupFormSchema } from '@/schemas/secretSantaGroup'
 import { createSecretSantaGroup } from '@/server/secretSantaGroup'
 import { authClient } from '@/lib/auth-client'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { LoaderCircle } from 'lucide-react'
+import { SecretSantaGroup } from '@/generated/prisma'
 
 interface NavbarNewGroupModalProps {
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
+  setGroups: Dispatch<SetStateAction<SecretSantaGroup[]>>
 }
 
 export const NavbarNewSecretSantaGroupModal = ({
   isOpen,
   setIsOpen,
+  setGroups,
 }: NavbarNewGroupModalProps) => {
   const form = useForm<secretSantaGroupFormData>({
     resolver: zodResolver(secretSantaGroupFormSchema),
@@ -38,6 +41,7 @@ export const NavbarNewSecretSantaGroupModal = ({
     setError,
     formState: { isSubmitting },
   } = form
+  const router = useRouter()
 
   const onSubmit = async (data: secretSantaGroupFormData) => {
     const { data: session } = await authClient.getSession()
@@ -50,9 +54,15 @@ export const NavbarNewSecretSantaGroupModal = ({
       return toast.error('Erro ao criar novo grupo')
     }
 
-    setIsOpen(false)
-    reset()
-    toast.success('Grupo criado com sucesso!')
+    if (result.group) {
+      setGroups((prev) => [...prev, result.group])
+      setIsOpen(false)
+      reset()
+
+      toast.success('Grupo criado com sucesso!')
+      router.push(`/groups/${result.group.id}`)
+      return
+    }
   }
 
   useEffect(() => {
