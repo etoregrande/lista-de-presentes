@@ -5,14 +5,15 @@ import { redirect } from 'next/navigation'
 import { getSecretSantaGroup } from '@/server/secretSantaGroup'
 
 interface PageProps {
-  params: { groupId: string }
+  params: Promise<{ groupId: string }>
 }
 
 export default async function Page({ params }: PageProps) {
   const session: Session | null = await getSessionOnServer()
   if (!session) redirect('/login')
+  const { groupId } = await params
 
-  const group = await getSecretSantaGroup(params.groupId)
+  const group = await getSecretSantaGroup(groupId)
 
   return (
     <>
