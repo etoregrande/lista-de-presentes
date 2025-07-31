@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { SidebarMenuButton, SidebarMenuItem } from '../sidebar'
 import { Session } from '@/lib/auth'
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { SecretSantaGroup, UserSecretSantaGroup } from '@/generated/prisma'
+import { SecretSantaGroup } from '@/generated/prisma'
 
 interface AppSidebarSecretSantaGroupsProps {
   session: Session
