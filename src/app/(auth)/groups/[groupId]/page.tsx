@@ -37,7 +37,11 @@ export default async function Page({ params }: PageProps) {
             </span>
           </p>
           <p className="text-right">
-            Presentes até <span className="font-bold">R$100,00</span>
+            <span className="font-bold">
+              {group.priceLimit
+                ? `Presentes até R$${group.priceLimit / 100}`
+                : 'sem valor definido'}
+            </span>
           </p>
         </div>
       </header>
