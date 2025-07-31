@@ -14,7 +14,7 @@ export const listSecretSantaGroups = async (userId: string) => {
     throw new Error('User ID is required to list Secret Santa groups')
   }
   const secretSantaGroups = await prisma.secretSantaGroup.findMany({
-    where: { userId },
+    where: { ownerId: userId },
     orderBy: { createdAt: 'desc' },
   })
 
@@ -51,7 +51,7 @@ export const createSecretSantaGroup = async (
         name,
         priceLimit: priceLimit ?? null,
         drawDate: drawDate ? new Date(drawDate) : null,
-        userId,
+        ownerId: userId,
       },
     })
 

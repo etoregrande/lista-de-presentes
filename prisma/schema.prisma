@@ -14,16 +14,17 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   name          String
-  email         String @unique
+  email         String    @unique
   emailVerified Boolean
   image         String?
   
-  sessions      Session[]
-  accounts      Account[]
-  wishlistItems WishlistItem[] 
-  secretSantaGroups SecretSantaGroup[]
-  drawGiver  SecretSantaDraw[] @relation("drawGiver")
-  drawReceiver SecretSantaDraw[] @relation("drawReceiver")
+  sessions                     Session[]
+  accounts                     Account[]
+  wishlistItems                WishlistItem[] 
+  secretSantaGroups            SecretSantaGroup[]
+  drawGiver                    SecretSantaDraw[] @relation("drawGiver")
+  drawReceiver                 SecretSantaDraw[] @relation("drawReceiver")
+  secretSantaGroupParticipants UserSecretSantaGroup[]
 
   @@map("users")
 }
@@ -34,7 +35,7 @@ model Session {
   updatedAt DateTime
 
   expiresAt DateTime
-  token     String @unique
+  token     String   @unique
   ipAddress String?
   userAgent String?
   
@@ -113,13 +114,14 @@ model SecretSantaGroup {
   priceLimit   Int?
   drawDate     DateTime?
 
-  userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ownerId      String
+  owner        User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
-  draws        SecretSantaDraw[]
-  wishlistItems WishlistItemSecretSantaGroup[]
+  secretSantaDraws       SecretSantaDraw[]
+  wishlistItems          WishlistItemSecretSantaGroup[]
+  participants           UserSecretSantaGroup[]
 
-  @@unique([userId, name])
+  @@unique([ownerId, name])
 
   @@map("secret_santa_groups")
 }
@@ -133,8 +135,8 @@ model SecretSantaDraw {
   receiverId  String
 
   group       SecretSantaGroup @relation(fields: [groupId], references: [id])
-  giver       User     @relation("drawGiver", fields: [giverId], references: [id])
-  receiver    User     @relation("drawReceiver", fields: [receiverId], references: [id])
+  giver       User             @relation("drawGiver", fields: [giverId], references: [id])
+  receiver    User             @relation("drawReceiver", fields: [receiverId], references: [id])
 
   @@unique([groupId, giverId])
   @@unique([groupId, receiverId])
@@ -143,15 +145,24 @@ model SecretSantaDraw {
 }
 
 model WishlistItemSecretSantaGroup {
-  id               String           @id @default(uuid())
-  createdAt        DateTime         @default(now())
-
   wishlistItemId   String
   secretSantaGroupId String
 
   wishlistItem     WishlistItem     @relation(fields: [wishlistItemId], references: [id], onDelete: Cascade)
   secretSantaGroup SecretSantaGroup @relation(fields: [secretSantaGroupId], references: [id], onDelete: Cascade)
 
-  @@unique([wishlistItemId, secretSantaGroupId])
+  @@id([wishlistItemId, secretSantaGroupId])
   @@map("wishlist_items_secret_santa_groups")
+}
+
+model UserSecretSantaGroup {
+  userId   String
+  secretSantaGroupId String
+  createdAt          DateTime @default(now())
+
+  user     User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secretSantaGroup SecretSantaGroup @relation(fields: [secretSantaGroupId], references: [id], onDelete: Cascade)
+
+  @@id([userId, secretSantaGroupId])
+  @@map("users_secret_santa_groups")
 }
