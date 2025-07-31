@@ -55,6 +55,15 @@ export const createSecretSantaGroup = async (
       },
     })
 
+    if (newSecretSantaGroup) {
+      await prisma.userSecretSantaGroup.create({
+        data: {
+          userId,
+          secretSantaGroupId: newSecretSantaGroup.id,
+        },
+      })
+    }
+
     return { success: true, group: newSecretSantaGroup }
   } catch (error: PrismaClientKnownRequestError | unknown) {
     if (
