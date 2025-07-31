@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { SidebarMenuButton, SidebarMenuItem } from '../sidebar'
 import { Session } from '@/lib/auth'
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { SecretSantaGroup } from '@/generated/prisma'
+import { SecretSantaGroup, UserSecretSantaGroup } from '@/generated/prisma'
 
 interface AppSidebarSecretSantaGroupsProps {
   session: Session
@@ -21,6 +21,7 @@ export const AppSidebarSecretSantaGroups = ({
   useEffect(() => {
     const loadGroups = async () => {
       const secretSantaGroups = await listSecretSantaGroups(session.user.id)
+      console.log('Grupos =>', secretSantaGroups)
       setGroups(secretSantaGroups)
     }
     loadGroups()

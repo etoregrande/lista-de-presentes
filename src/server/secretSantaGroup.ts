@@ -13,12 +13,16 @@ export const listSecretSantaGroups = async (userId: string) => {
   if (!userId) {
     throw new Error('User ID is required to list Secret Santa groups')
   }
-  const secretSantaGroups = await prisma.secretSantaGroup.findMany({
-    where: { ownerId: userId },
-    orderBy: { createdAt: 'desc' },
+  const secretSantaGroups = await prisma.userSecretSantaGroup.findMany({
+    where: { userId },
+    orderBy: { secretSantaGroup: { name: 'asc' } },
+    include: {
+      secretSantaGroup: true,
+    },
   })
 
-  return secretSantaGroups
+  console.log('Grupos =>', secretSantaGroups)
+  return secretSantaGroups.map((group) => group.secretSantaGroup)
 }
 
 export const getSecretSantaGroup = async (groupId: string) => {
