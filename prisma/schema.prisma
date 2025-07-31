@@ -88,7 +88,7 @@ model WishlistItem {
   id           String    @id @default(uuid())
   purchasedAt  DateTime?                   
   createdAt    DateTime  @default(now())    
-  updatedAt    DateTime  @updatedAt
+  updatedAt    DateTime  @updatedAt @default(now())   
 
   name         String    @db.VarChar(255)
   price        Int?
