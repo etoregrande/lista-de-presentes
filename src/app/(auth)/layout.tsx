@@ -4,6 +4,8 @@ import { AppSidebar } from '@/components/ui/app-sidebar/app-sidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { getSessionOnServer } from '@/server/session'
 import { redirect } from 'next/navigation'
+import { listSecretSantaGroups } from '@/server/secretSantaGroup'
+import { SecretSantaGroupsProvider } from '@/lib/context/secretSantaGroups/provider'
 
 export default async function WishlistLayout({
   children,
@@ -15,9 +17,13 @@ export default async function WishlistLayout({
     redirect('/login')
   }
 
+  const initialSecretSantaGroups = await listSecretSantaGroups(session.user.id)
+
   return (
     <SidebarProvider>
-      <AppSidebar session={session} />
+      <SecretSantaGroupsProvider groups={initialSecretSantaGroups}>
+        <AppSidebar session={session} />
+      </SecretSantaGroupsProvider>
       <div className="flex w-full flex-col">
         <Navbar />
         {children}

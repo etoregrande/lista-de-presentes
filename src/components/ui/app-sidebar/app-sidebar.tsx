@@ -15,19 +15,24 @@ import {
 import { Session } from '@/lib/auth'
 import Link from 'next/link'
 import { Plus, ScrollText } from 'lucide-react'
-import { Suspense, useState } from 'react'
+import { Suspense, useContext, useState } from 'react'
 import { NavbarNewSecretSantaGroupModal } from '../navbar/navbar-new-secret-santa-group-modal'
 import { AppSidebarSecretSantaGroups } from './app-sidebar-secret-santa-groups'
 import { AppSidebarAvatar } from './app-sidebar-avatar'
 import { SecretSantaGroup } from '@/generated/prisma'
+import { SecretSantaGroupsContext } from '@/lib/context/secretSantaGroups/context'
 
 interface AppSidebarProps {
   session: Session
 }
 
 export const AppSidebar = ({ session }: AppSidebarProps) => {
+  const initialSecretSantaGroups = useContext(SecretSantaGroupsContext)
+
   const [isCreatingNewGroup, setIsCreatingNewGroup] = useState(false)
-  const [groups, setGroups] = useState<SecretSantaGroup[]>([])
+  const [groups, setGroups] = useState<SecretSantaGroup[]>(
+    initialSecretSantaGroups
+  )
 
   return (
     <>
@@ -66,11 +71,7 @@ export const AppSidebar = ({ session }: AppSidebarProps) => {
             </SidebarGroupAction>
             <SidebarMenu>
               <Suspense fallback={<div>Carregando grupos...</div>}>
-                <AppSidebarSecretSantaGroups
-                  session={session}
-                  groups={groups}
-                  setGroups={setGroups}
-                />
+                <AppSidebarSecretSantaGroups groups={groups} />
               </Suspense>
             </SidebarMenu>
           </SidebarGroup>

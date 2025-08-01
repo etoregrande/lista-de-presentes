@@ -21,7 +21,6 @@ export const listSecretSantaGroups = async (userId: string) => {
     },
   })
 
-  console.log('Grupos =>', secretSantaGroups)
   return secretSantaGroups.map((group) => group.secretSantaGroup)
 }
 
