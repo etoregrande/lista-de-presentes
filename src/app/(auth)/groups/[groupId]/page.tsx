@@ -3,6 +3,7 @@ import { getSessionOnServer } from '@/server/session'
 import { Session } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { getSecretSantaGroup } from '@/server/secretSantaGroup'
+import { ParticipantList } from './ui/participant/participant-list'
 
 interface PageProps {
   params: Promise<{ groupId: string }>
@@ -65,7 +66,7 @@ export default async function Page({ params }: PageProps) {
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Participantes</h2>
             <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
-              <p>N/A</p>
+              <ParticipantList groupId={groupId} />
             </div>
           </article>
         </section>

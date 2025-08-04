@@ -91,3 +91,30 @@ export const createSecretSantaGroup = async (
     }
   }
 }
+
+export const listSecretSantaGroupParticipants = async (groupId: string) => {
+  if (!groupId) {
+    throw new Error('Group ID is required to list participants')
+  }
+
+  try {
+    const participants = await prisma.user.findMany({
+      where: {
+        secretSantaGroupParticipants: {
+          some: { secretSantaGroupId: groupId },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        email: true,
+      },
+    })
+
+    return participants
+  } catch (error) {
+    console.error('Error listing participants:', error)
+    throw new Error('Failed to list participants')
+  }
+}
