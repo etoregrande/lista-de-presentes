@@ -6,6 +6,7 @@ CREATE TABLE "secret_santa_groups" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "name" VARCHAR(255) NOT NULL,
+    "slug" TEXT NOT NULL,
     "priceLimit" INTEGER,
     "drawDate" TIMESTAMP(3),
     "userId" TEXT NOT NULL,
@@ -39,6 +40,9 @@ CREATE UNIQUE INDEX "secret_santa_draws_groupId_giverId_key" ON "secret_santa_dr
 
 -- CreateIndex
 CREATE UNIQUE INDEX "secret_santa_draws_groupId_receiverId_key" ON "secret_santa_draws"("groupId", "receiverId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "secret_santa_groups_slug_key" ON "public"."secret_santa_groups"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "wishlist_items_secret_santa_groups_wishlistItemId_secretSan_key" ON "wishlist_items_secret_santa_groups"("wishlistItemId", "secretSantaGroupId");

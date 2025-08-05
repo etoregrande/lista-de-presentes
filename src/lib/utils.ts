@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import psl from 'psl'
+import { nanoid } from 'nanoid'
+import slugify from 'slugify'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -108,4 +110,10 @@ export const isSafeUrl = (url: string): boolean => {
   } catch {
     return false
   }
+}
+
+export function generateSecretSantaGroupSlug(name: string) {
+  const baseSlug = slugify(name, { lower: true, strict: true })
+  const randomCode = nanoid(6)
+  return `${baseSlug}-${randomCode}`
 }

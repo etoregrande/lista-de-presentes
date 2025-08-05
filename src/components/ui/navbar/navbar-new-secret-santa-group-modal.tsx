@@ -60,7 +60,7 @@ export const NavbarNewSecretSantaGroupModal = ({
       reset()
 
       toast.success('Grupo criado com sucesso!')
-      router.push(`/groups/${result.group.id}`)
+      router.push(`/groups/${result.group.slug}`)
       return
     }
   }

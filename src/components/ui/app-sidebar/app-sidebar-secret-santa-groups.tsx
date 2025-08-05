@@ -15,9 +15,9 @@ export const AppSidebarSecretSantaGroups = ({
     <>
       {groups.map((group) => {
         return (
-          <SidebarMenuItem key={group.id}>
+          <SidebarMenuItem key={group.slug}>
             <SidebarMenuButton asChild>
-              <Link href={`/groups/${group.id}`}>{group.name}</Link>
+              <Link href={`/groups/${group.slug}`}>{group.name}</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         )

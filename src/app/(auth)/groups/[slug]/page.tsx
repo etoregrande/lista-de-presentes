@@ -6,15 +6,15 @@ import { getSecretSantaGroup } from '@/server/secretSantaGroup'
 import { ParticipantList } from './ui/participant/participant-list'
 
 interface PageProps {
-  params: Promise<{ groupId: string }>
+  params: Promise<{ slug: string }>
 }
 
 export default async function Page({ params }: PageProps) {
   const session: Session | null = await getSessionOnServer()
   if (!session) redirect('/login')
-  const { groupId } = await params
+  const { slug } = await params
 
-  const group = await getSecretSantaGroup(groupId)
+  const group = await getSecretSantaGroup(slug)
 
   return (
     <>
@@ -66,7 +66,7 @@ export default async function Page({ params }: PageProps) {
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Participantes</h2>
             <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
-              <ParticipantList groupId={groupId} />
+              <ParticipantList groupId={group.id} />
             </div>
           </article>
         </section>

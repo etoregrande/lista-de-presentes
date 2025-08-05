@@ -2,6 +2,7 @@
 
 import { PrismaClientKnownRequestError } from '@/generated/prisma/runtime/library'
 import { prisma } from '@/lib/prisma'
+import { generateSecretSantaGroupSlug } from '@/lib/utils'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
 
 type FieldError = {
@@ -24,12 +25,12 @@ export const listSecretSantaGroups = async (userId: string) => {
   return secretSantaGroups.map((group) => group.secretSantaGroup)
 }
 
-export const getSecretSantaGroup = async (groupId: string) => {
-  if (!groupId) {
-    throw new Error('Group ID is required to get a Secret Santa group')
+export const getSecretSantaGroup = async (slug: string) => {
+  if (!slug) {
+    throw new Error('Group Slug is required to get a Secret Santa group')
   }
   const secretSantaGroup = await prisma.secretSantaGroup.findUnique({
-    where: { id: groupId },
+    where: { slug },
   })
 
   if (!secretSantaGroup) {
@@ -49,12 +50,14 @@ export const createSecretSantaGroup = async (
       throw new Error('User ID is required to create a Secret Santa group.')
     }
 
+    const slug = generateSecretSantaGroupSlug(name)
     const newSecretSantaGroup = await prisma.secretSantaGroup.create({
       data: {
         name,
         priceLimit: priceLimit ?? null,
         drawDate: drawDate ? new Date(drawDate) : null,
         ownerId: userId,
+        slug,
       },
     })
 
@@ -108,7 +111,6 @@ export const listSecretSantaGroupParticipants = async (groupId: string) => {
         id: true,
         name: true,
         image: true,
-        email: true,
       },
     })
 
