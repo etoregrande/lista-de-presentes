@@ -12,7 +12,10 @@ export async function middleware(request: NextRequest) {
 
   if (!sessionCookie) {
     const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('callbackUrl', request.nextUrl.href)
+    const callbackPath =
+      request.nextUrl.pathname + request.nextUrl.search + request.nextUrl.hash
+
+    loginUrl.searchParams.set('callbackUrl', callbackPath)
     return NextResponse.redirect(loginUrl)
   }
 

@@ -30,7 +30,8 @@ export const AuthSignUpForm = ({ setFormType }: AuthSignUpFormProps) => {
     resolver: zodResolver(signUpFormSchema),
   })
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/test'
+  const callbackUrl = searchParams.get('callbackUrl') || undefined
+
   const isPasswordRecoveryEnabled =
     process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true'
 
