@@ -5,11 +5,16 @@ import { headers } from 'next/headers'
 import { NextRequest } from 'next/server'
 
 export const getSessionOnServer = async (): Promise<Session | null> => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  })
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    })
 
-  return session
+    return session
+  } catch (error) {
+    console.error('Error getting session:', error)
+    throw new Error('Unable to get session data')
+  }
 }
 
 export const getServerUserId = async (request: NextRequest) => {
