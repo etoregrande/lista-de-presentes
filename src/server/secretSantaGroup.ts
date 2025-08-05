@@ -111,6 +111,7 @@ export const listSecretSantaGroupParticipants = async (groupId: string) => {
         id: true,
         name: true,
         image: true,
+        email: true,
       },
     })
 
