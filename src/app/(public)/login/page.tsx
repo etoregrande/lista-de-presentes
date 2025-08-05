@@ -1,6 +1,7 @@
-import { Gift } from 'lucide-react'
+import { Gift, LoaderCircle } from 'lucide-react'
 import { AuthWrapper } from './ui/Auth-wrapper'
 import Image from 'next/image'
+import { Suspense } from 'react'
 
 export default function Page() {
   return (
@@ -27,7 +28,9 @@ export default function Page() {
             </div>
           </div>
           <div className="flex items-center p-8 md:w-1/2 md:px-14">
-            <AuthWrapper className="" />
+            <Suspense fallback={<LoaderCircle className="animate-spin pr-1" />}>
+              <AuthWrapper className="" />
+            </Suspense>
           </div>
         </div>
       </div>
