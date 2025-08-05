@@ -11,7 +11,7 @@ import { SignInFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -36,6 +36,14 @@ export const AuthLoginForm = ({
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInFormSchema),
   })
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || undefined
+
+  let pushToUrl = '/wishlist'
+  if (callbackUrl) {
+    pushToUrl = callbackUrl
+  }
+
   const isPasswordRecoveryEnabled =
     process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true'
   const isSocialLoginEnabled =
@@ -52,7 +60,7 @@ export const AuthLoginForm = ({
       },
       {
         onSuccess: async () => {
-          router.push('/wishlist')
+          router.push(pushToUrl)
         },
         onError: (ctx) => {
           const errorCode = ctx.error?.code
