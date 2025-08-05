@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import './styles.css'
 import Navbar from '@/components/ui/navbar/navbar'
 import { AppSidebar } from '@/components/ui/app-sidebar/app-sidebar'
