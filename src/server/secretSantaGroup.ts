@@ -149,3 +149,23 @@ export const listSecretSantaGroupParticipants = async (groupId: string) => {
     throw new Error('Failed to list participants')
   }
 }
+
+export const isSecretSantaGroupParticipant = async (
+  slug: string,
+  userId: string
+): Promise<boolean> => {
+  if (!slug || !userId) {
+    throw new Error('Slug and User ID are required')
+  }
+
+  const participant = await prisma.userSecretSantaGroup.findFirst({
+    where: {
+      userId,
+      secretSantaGroup: {
+        slug,
+      },
+    },
+  })
+
+  return !!participant
+}

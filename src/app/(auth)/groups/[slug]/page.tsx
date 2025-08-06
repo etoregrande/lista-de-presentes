@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import {
   deleteSecretSantaGroup,
   getSecretSantaGroup,
+  isSecretSantaGroupParticipant,
 } from '@/server/secretSantaGroup'
 import { ParticipantList } from './ui/participant/participant-list'
 import { GroupDeleteButton } from './ui/group-delete-button'
@@ -17,6 +18,14 @@ export default async function Page({ params }: PageProps) {
   if (!session) redirect('/login')
 
   const { slug } = await params
+  const isParticipant = await isSecretSantaGroupParticipant(
+    slug,
+    session.user.id
+  )
+  if (!isParticipant) {
+    redirect('/wishlist')
+  }
+
   const group = await getSecretSantaGroup(slug)
 
   async function handleDelete() {
