@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import psl from 'psl'
 import { nanoid } from 'nanoid'
 import slugify from 'slugify'
-import { SecretSantaDraw, UserSecretSantaGroup } from '@/generated/prisma'
+import { UserSecretSantaGroup } from '@/generated/prisma'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
