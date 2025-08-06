@@ -1,20 +1,28 @@
 import React from 'react'
 import { getSessionOnServer } from '@/server/session'
-import { Session } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { getSecretSantaGroup } from '@/server/secretSantaGroup'
+import {
+  deleteSecretSantaGroup,
+  getSecretSantaGroup,
+} from '@/server/secretSantaGroup'
 import { ParticipantList } from './ui/participant/participant-list'
+import { GroupDeleteButton } from './ui/group-delete-button'
 
 interface PageProps {
   params: Promise<{ slug: string }>
 }
 
 export default async function Page({ params }: PageProps) {
-  const session: Session | null = await getSessionOnServer()
+  const session = await getSessionOnServer()
   if (!session) redirect('/login')
-  const { slug } = await params
 
+  const { slug } = await params
   const group = await getSecretSantaGroup(slug)
+
+  async function handleDelete() {
+    'use server'
+    return await deleteSecretSantaGroup(session!.user.id, group.id)
+  }
 
   return (
     <>
@@ -28,6 +36,7 @@ export default async function Page({ params }: PageProps) {
             {group.name}
           </h1>
         </div>
+        <GroupDeleteButton handleDelete={handleDelete} groupId={group.id} />
         <div className="flex w-full flex-col items-end">
           <p className="text-muted-foreground text-right">
             Evento dia{' '}

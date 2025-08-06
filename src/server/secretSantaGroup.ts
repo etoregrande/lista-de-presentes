@@ -36,7 +36,6 @@ export const getSecretSantaGroup = async (slug: string) => {
   if (!secretSantaGroup) {
     throw new Error('Secret Santa group not found')
   }
-
   return secretSantaGroup
 }
 
@@ -92,6 +91,35 @@ export const createSecretSantaGroup = async (
         message: 'Erro ao criar o grupo',
       } satisfies FieldError,
     }
+  }
+}
+
+export const deleteSecretSantaGroup = async (
+  userId: string,
+  groupId: string
+) => {
+  if (!groupId || !userId) {
+    throw new Error('Group ID and User ID are required to delete a group')
+  }
+
+  try {
+    console.log('Deleting group with ID:', groupId, 'by user ID:', userId)
+    const deletedGroup = await prisma.secretSantaGroup.delete({
+      where: {
+        id: groupId,
+        ownerId: userId,
+      },
+    })
+
+    console.log('Deleted group:', deletedGroup)
+    if (!deletedGroup) {
+      return { success: false, error: 'Group not found or not owned by user' }
+    }
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error deleting Secret Santa group:', error)
+    return { success: false, error: 'Failed to delete group' }
   }
 }
 

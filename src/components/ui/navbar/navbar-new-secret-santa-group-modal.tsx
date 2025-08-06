@@ -19,19 +19,18 @@ import { authClient } from '@/lib/auth-client'
 import { redirect, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { LoaderCircle } from 'lucide-react'
-import { SecretSantaGroup } from '@/generated/prisma'
+import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
 
 interface NavbarNewGroupModalProps {
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  setGroups: Dispatch<SetStateAction<SecretSantaGroup[]>>
 }
 
 export const NavbarNewSecretSantaGroupModal = ({
   isOpen,
   setIsOpen,
-  setGroups,
 }: NavbarNewGroupModalProps) => {
+  const { setGroups } = useSecretSantaGroups()
   const form = useForm<secretSantaGroupFormData>({
     resolver: zodResolver(secretSantaGroupFormSchema),
   })

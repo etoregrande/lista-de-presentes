@@ -24,13 +24,13 @@ export default async function WishlistLayout({
 
   return (
     <SidebarProvider>
-      <SecretSantaGroupsProvider groups={initialSecretSantaGroups}>
+      <SecretSantaGroupsProvider initialGroups={initialSecretSantaGroups}>
         <AppSidebar session={session} />
+        <div className="flex w-full flex-col">
+          <Navbar />
+          {children}
+        </div>
       </SecretSantaGroupsProvider>
-      <div className="flex w-full flex-col">
-        <Navbar />
-        {children}
-      </div>
     </SidebarProvider>
   )
 }

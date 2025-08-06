@@ -2,15 +2,11 @@
 
 import Link from 'next/link'
 import { SidebarMenuButton, SidebarMenuItem } from '../sidebar'
-import { SecretSantaGroup } from '@/generated/prisma'
+import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
 
-interface AppSidebarSecretSantaGroupsProps {
-  groups: SecretSantaGroup[]
-}
+export const AppSidebarSecretSantaGroups = () => {
+  const { groups } = useSecretSantaGroups()
 
-export const AppSidebarSecretSantaGroups = ({
-  groups,
-}: AppSidebarSecretSantaGroupsProps) => {
   return (
     <>
       {groups.map((group) => {
