@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import psl from 'psl'
 import { nanoid } from 'nanoid'
 import slugify from 'slugify'
+import { SecretSantaDraw, UserSecretSantaGroup } from '@/generated/prisma'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -116,4 +117,50 @@ export function generateSecretSantaGroupSlug(name: string) {
   const baseSlug = slugify(name, { lower: true, strict: true })
   const randomCode = nanoid(6)
   return `${baseSlug}-${randomCode}`
+}
+
+export const shuffleArray = <T>(array: T[]): T[] => {
+  const arrayCopy = [...array]
+
+  for (let i = array.length - 1; i > 0; i--) {
+    const random = Math.floor(Math.random() * (i + 1))
+
+    ;[arrayCopy[i], arrayCopy[random]] = [arrayCopy[random], arrayCopy[i]]
+  }
+
+  return arrayCopy
+}
+
+type SecretSantaDrawResult = {
+  giverId: string
+  receiverId: string
+}
+
+export const drawSecretSanta = (
+  participants: Partial<UserSecretSantaGroup>[]
+) => {
+  if (participants.length < 3) {
+    throw new Error('At least three participants are required for the draw')
+  }
+
+  const shuffledParticipants = shuffleArray([...participants])
+  console.log('Shuffled Participants:', shuffledParticipants)
+
+  const drawResult: SecretSantaDrawResult[] = shuffledParticipants.map(
+    (participant, i) => {
+      const receiver =
+        shuffledParticipants[(i + 1) % shuffledParticipants.length]
+
+      if (!participant.userId || !receiver.userId) {
+        throw new Error('All participants must have a userId')
+      }
+
+      return {
+        giverId: participant.userId,
+        receiverId: receiver.userId,
+      }
+    }
+  )
+
+  return drawResult
 }
