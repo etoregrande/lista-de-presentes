@@ -5,9 +5,11 @@ import {
   deleteSecretSantaGroup,
   getSecretSantaGroup,
   isSecretSantaGroupParticipant,
+  deleteSecretSantaGroupParticipant,
 } from '@/server/secretSantaGroup'
 import { ParticipantList } from './ui/participant/participant-list'
 import { GroupDeleteButton } from './ui/group-delete-button'
+import { GroupLeaveButton } from './ui/group-leave-button'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -27,10 +29,16 @@ export default async function Page({ params }: PageProps) {
   }
 
   const group = await getSecretSantaGroup(slug)
+  const isOwner = session.user.id === group.ownerId
 
   async function handleDelete() {
     'use server'
     return await deleteSecretSantaGroup(session!.user.id, group.id)
+  }
+
+  async function handleLeave() {
+    'use server'
+    return await deleteSecretSantaGroupParticipant(session!.user.id, group.id)
   }
 
   return (
@@ -45,7 +53,11 @@ export default async function Page({ params }: PageProps) {
             {group.name}
           </h1>
         </div>
-        <GroupDeleteButton handleDelete={handleDelete} groupId={group.id} />
+        {isOwner ? (
+          <GroupDeleteButton handleDelete={handleDelete} groupId={group.id} />
+        ) : (
+          <GroupLeaveButton handleLeave={handleLeave} groupId={group.id} />
+        )}
         <div className="flex w-full flex-col items-end">
           <p className="text-muted-foreground text-right">
             Evento dia{' '}

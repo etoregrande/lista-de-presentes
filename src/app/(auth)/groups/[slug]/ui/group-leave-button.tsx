@@ -17,32 +17,38 @@ import { Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-interface GroupDeleteButtonProps {
-  handleDelete: () => Promise<{
-    success: boolean
-    error?: string | undefined
-  }>
+interface GroupLeaveButtonProps {
+  handleLeave: () => Promise<
+    | {
+        success: boolean
+        error: string
+      }
+    | {
+        success: boolean
+        error?: undefined
+      }
+  >
   groupId: string
 }
 
-export const GroupDeleteButton = ({
-  handleDelete,
+export const GroupLeaveButton = ({
+  handleLeave,
   groupId,
-}: GroupDeleteButtonProps) => {
+}: GroupLeaveButtonProps) => {
   const { setGroups } = useSecretSantaGroups()
   const router = useRouter()
 
   const onClick = async () => {
-    const response = await handleDelete()
+    const response = await handleLeave()
 
     if (response.success) {
-      toast.success('Grupo deletado com sucesso!')
+      toast.success('Você saiu do amigo secreto')
       setGroups((prev) => prev.filter((group) => group.id !== groupId))
 
       router.push('/wishlist')
     } else {
       console.error(response.error)
-      toast.error('Erro ao deletar o grupo')
+      toast.error('Erro ao abandonar o grupo')
     }
   }
 
@@ -51,14 +57,14 @@ export const GroupDeleteButton = ({
       <CredenzaTrigger asChild>
         <Button variant={'destructive'}>
           <Trash />
-          Deletar grupo
+          Abandonar grupo
         </Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
-          <CredenzaTitle>Deletar grupo</CredenzaTitle>
+          <CredenzaTitle>Sair do grupo</CredenzaTitle>
           <CredenzaDescription>
-            Você tem certeza que deseja deletar esse amigo secreto? Essa ação
+            Você tem certeza que deseja sair desse amigo secreto? Essa ação
             <span className="text-primary font-bold">
               {' '}
               não poderá ser desfeita!
@@ -73,7 +79,7 @@ export const GroupDeleteButton = ({
             <Button variant={'secondary'}>Cancelar</Button>
           </CredenzaClose>
           <Button onClick={onClick} variant="destructive">
-            Deletar grupo
+            Abandonar grupo
           </Button>
         </CredenzaFooter>
       </CredenzaContent>

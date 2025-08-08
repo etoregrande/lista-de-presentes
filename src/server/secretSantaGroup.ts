@@ -103,7 +103,6 @@ export const deleteSecretSantaGroup = async (
   }
 
   try {
-    console.log('Deleting group with ID:', groupId, 'by user ID:', userId)
     const deletedGroup = await prisma.secretSantaGroup.delete({
       where: {
         id: groupId,
@@ -168,4 +167,58 @@ export const isSecretSantaGroupParticipant = async (
   })
 
   return !!participant
+}
+
+export const createSecretSantaGroupParticipant = async (
+  userId: string,
+  groupId: string
+) => {
+  if (!userId || !groupId) {
+    throw new Error('User ID and Group ID are required to join a group')
+  }
+
+  try {
+    const joinedGroup = await prisma.userSecretSantaGroup.create({
+      data: {
+        userId,
+        secretSantaGroupId: groupId,
+      },
+      include: {
+        secretSantaGroup: true,
+      },
+    })
+
+    return { success: true, secretSantaGroup: joinedGroup.secretSantaGroup }
+  } catch (error) {
+    console.error('Error creating participant:', error)
+    throw new Error('Failed to join secret santa group')
+  }
+}
+
+export const deleteSecretSantaGroupParticipant = async (
+  userId: string,
+  groupId: string
+) => {
+  if (!userId || !groupId) {
+    throw new Error('User ID and Group ID are required to join a group')
+  }
+
+  try {
+    const leftGroup = await prisma.userSecretSantaGroup.delete({
+      where: {
+        userId_secretSantaGroupId: {
+          userId,
+          secretSantaGroupId: groupId,
+        },
+      },
+      select: {
+        secretSantaGroupId: true,
+      },
+    })
+
+    return { success: true, groupId: leftGroup.secretSantaGroupId }
+  } catch (error) {
+    console.error('Error deleting participant group:', error)
+    throw new Error('Failed to join secret santa group')
+  }
 }
