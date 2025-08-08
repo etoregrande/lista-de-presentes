@@ -2,7 +2,7 @@
 
 import { PrismaClientKnownRequestError } from '@/generated/prisma/runtime/library'
 import { prisma } from '@/lib/prisma'
-import { generateSecretSantaGroupSlug } from '@/lib/utils'
+import { drawSecretSanta, generateSecretSantaGroupSlug } from '@/lib/utils'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
 
 type FieldError = {
@@ -220,5 +220,54 @@ export const deleteSecretSantaGroupParticipant = async (
   } catch (error) {
     console.error('Error deleting participant group:', error)
     throw new Error('Failed to join secret santa group')
+  }
+}
+
+export const createSecretSantaGroupDraw = async (groupId: string) => {
+  if (!groupId) {
+    throw new Error('Group ID is required to hold the secret santa draw')
+  }
+
+  try {
+    const participants = await prisma.user.findMany({
+      where: {
+        secretSantaGroupParticipants: {
+          some: { secretSantaGroupId: groupId },
+        },
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    const drawResult = drawSecretSanta(participants)
+
+    if (!drawResult) {
+      return {
+        success: false,
+        error: 'At least 4 participants are needed to hold a draw',
+      }
+    }
+
+    const draw = drawResult.map((d) => {
+      if (!d.giverId || !d.receiverId) {
+        throw new Error('Draw result must have both giverId and receiverId')
+      }
+      return {
+        ...d,
+        groupId,
+        giverId: d.giverId,
+        receiverId: d.receiverId,
+      }
+    })
+
+    const createDraw = await prisma.secretSantaDraw.createMany({
+      data: [...draw],
+    })
+
+    return { success: true, draw: createDraw }
+  } catch (error) {
+    console.error('Error holding secret santa draw:', error)
+    return { success: false, error: 'Failed to hold secret santa draw' }
   }
 }

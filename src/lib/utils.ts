@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import psl from 'psl'
 import { nanoid } from 'nanoid'
 import slugify from 'slugify'
-import { UserSecretSantaGroup } from '@/generated/prisma'
+import { SecretSantaDraw, User } from '@/generated/prisma'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -131,33 +131,25 @@ export const shuffleArray = <T>(array: T[]): T[] => {
   return arrayCopy
 }
 
-type SecretSantaDrawResult = {
-  giverId: string
-  receiverId: string
-}
-
-export const drawSecretSanta = (
-  participants: Partial<UserSecretSantaGroup>[]
-) => {
-  if (participants.length < 3) {
-    throw new Error('At least three participants are required for the draw')
+export const drawSecretSanta = (participants: Partial<User>[]) => {
+  if (participants.length < 4) {
+    return null
   }
 
   const shuffledParticipants = shuffleArray([...participants])
-  console.log('Shuffled Participants:', shuffledParticipants)
 
-  const drawResult: SecretSantaDrawResult[] = shuffledParticipants.map(
+  const drawResult: Partial<SecretSantaDraw>[] = shuffledParticipants.map(
     (participant, i) => {
       const receiver =
         shuffledParticipants[(i + 1) % shuffledParticipants.length]
 
-      if (!participant.userId || !receiver.userId) {
+      if (!participant.id || !receiver.id) {
         throw new Error('All participants must have a userId')
       }
 
       return {
-        giverId: participant.userId,
-        receiverId: receiver.userId,
+        giverId: participant.id,
+        receiverId: receiver.id,
       }
     }
   )

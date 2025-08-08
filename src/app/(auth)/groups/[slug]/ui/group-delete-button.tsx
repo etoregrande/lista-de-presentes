@@ -16,24 +16,22 @@ import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
 import { Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { deleteSecretSantaGroupAction } from '../actions'
 
 interface GroupDeleteButtonProps {
-  handleDelete: () => Promise<{
-    success: boolean
-    error?: string | undefined
-  }>
   groupId: string
+  userId: string
 }
 
 export const GroupDeleteButton = ({
-  handleDelete,
   groupId,
+  userId,
 }: GroupDeleteButtonProps) => {
   const { setGroups } = useSecretSantaGroups()
   const router = useRouter()
 
   const onClick = async () => {
-    const response = await handleDelete()
+    const response = await deleteSecretSantaGroupAction(userId, groupId)
 
     if (response.success) {
       toast.success('Grupo deletado com sucesso!')

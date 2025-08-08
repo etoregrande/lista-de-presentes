@@ -16,40 +16,32 @@ import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
 import { Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { leaveSecretSantaGroupAction } from '../actions'
 
 interface GroupLeaveButtonProps {
-  handleLeave: () => Promise<
-    | {
-        success: boolean
-        error: string
-      }
-    | {
-        success: boolean
-        error?: undefined
-      }
-  >
+  userId: string
   groupId: string
 }
 
 export const GroupLeaveButton = ({
-  handleLeave,
+  userId,
   groupId,
 }: GroupLeaveButtonProps) => {
   const { setGroups } = useSecretSantaGroups()
   const router = useRouter()
 
   const onClick = async () => {
-    const response = await handleLeave()
+    const response = await leaveSecretSantaGroupAction(userId, groupId)
 
-    if (response.success) {
-      toast.success('Você saiu do amigo secreto')
-      setGroups((prev) => prev.filter((group) => group.id !== groupId))
-
-      router.push('/wishlist')
-    } else {
-      console.error(response.error)
+    if (!response.success) {
       toast.error('Erro ao abandonar o grupo')
+      return
     }
+
+    toast.success('Você saiu do amigo secreto')
+    setGroups((prev) => prev.filter((group) => group.id !== groupId))
+
+    router.push('/wishlist')
   }
 
   return (

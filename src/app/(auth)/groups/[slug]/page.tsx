@@ -1,15 +1,16 @@
+'use server'
+
 import React from 'react'
 import { getSessionOnServer } from '@/server/session'
 import { redirect } from 'next/navigation'
 import {
-  deleteSecretSantaGroup,
   getSecretSantaGroup,
   isSecretSantaGroupParticipant,
-  deleteSecretSantaGroupParticipant,
 } from '@/server/secretSantaGroup'
 import { ParticipantList } from './ui/participant/participant-list'
 import { GroupDeleteButton } from './ui/group-delete-button'
 import { GroupLeaveButton } from './ui/group-leave-button'
+import { GroupHoldDrawButton } from './ui/group-hold-draw-button'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -29,18 +30,15 @@ export default async function Page({ params }: PageProps) {
     redirect('/wishlist')
   }
 
-  const group = await getSecretSantaGroup(slug)
-  const isOwner = session.user.id === group.ownerId
-
-  async function handleDelete() {
-    'use server'
-    return await deleteSecretSantaGroup(session!.user.id, group.id)
-  }
-
-  async function handleLeave() {
-    'use server'
-    return await deleteSecretSantaGroupParticipant(session!.user.id, group.id)
-  }
+  const { id: userId } = session.user
+  const {
+    id: groupId,
+    name: groupName,
+    estimateDrawDate,
+    priceLimit,
+    ownerId,
+  } = await getSecretSantaGroup(slug)
+  const isOwner = userId === ownerId
 
   return (
     <>
@@ -51,27 +49,30 @@ export default async function Page({ params }: PageProps) {
             <span className="block text-base font-normal text-slate-500">
               Amigo secreto
             </span>
-            {group.name}
+            {groupName}
           </h1>
         </div>
         {isOwner ? (
-          <GroupDeleteButton handleDelete={handleDelete} groupId={group.id} />
+          <>
+            <GroupDeleteButton groupId={groupId} userId={userId} />
+            <GroupHoldDrawButton groupId={groupId} />
+          </>
         ) : (
-          <GroupLeaveButton handleLeave={handleLeave} groupId={group.id} />
+          <GroupLeaveButton userId={userId} groupId={groupId} />
         )}
         <div className="flex w-full flex-col items-end">
           <p className="text-muted-foreground text-right">
             Evento dia{' '}
             <span className="font-bold">
-              {group.estimateDrawDate
-                ? new Date(group.estimateDrawDate).toLocaleDateString()
+              {estimateDrawDate
+                ? new Date(estimateDrawDate).toLocaleDateString()
                 : 'indefinido'}
             </span>
           </p>
           <p className="text-right">
             <span className="font-bold">
-              {group.priceLimit
-                ? `Presentes até R$${group.priceLimit / 100}`
+              {priceLimit
+                ? `Presentes até R$${priceLimit / 100}`
                 : 'sem valor definido'}
             </span>
           </p>
@@ -97,7 +98,7 @@ export default async function Page({ params }: PageProps) {
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Participantes</h2>
             <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
-              <ParticipantList groupId={group.id} />
+              <ParticipantList groupId={groupId} />
             </div>
           </article>
         </section>
