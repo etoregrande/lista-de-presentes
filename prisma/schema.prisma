@@ -130,7 +130,6 @@ model SecretSantaGroup {
 }
 
 model SecretSantaDraw {
-  id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
 
   groupId     String
@@ -141,7 +140,7 @@ model SecretSantaDraw {
   giver       User             @relation("drawGiver", fields: [giverId], references: [id])
   receiver    User             @relation("drawReceiver", fields: [receiverId], references: [id])
 
-  @@unique([groupId, giverId])
+  @@id([groupId, giverId])
   @@unique([groupId, receiverId])
 
   @@map("secret_santa_draws")

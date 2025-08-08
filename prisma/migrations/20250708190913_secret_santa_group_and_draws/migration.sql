@@ -16,13 +16,12 @@ CREATE TABLE "secret_santa_groups" (
 
 -- CreateTable
 CREATE TABLE "secret_santa_draws" (
-    "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "groupId" TEXT NOT NULL,
     "giverId" TEXT NOT NULL,
     "receiverId" TEXT NOT NULL,
 
-    CONSTRAINT "secret_santa_draws_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "secret_santa_draws_pkey" PRIMARY KEY ("groupId", "giverId")
 );
 
 -- CreateTable
@@ -35,8 +34,6 @@ CREATE TABLE "wishlist_items_secret_santa_groups" (
     CONSTRAINT "wishlist_items_secret_santa_groups_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "secret_santa_draws_groupId_giverId_key" ON "secret_santa_draws"("groupId", "giverId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "secret_santa_draws_groupId_receiverId_key" ON "secret_santa_draws"("groupId", "receiverId");
