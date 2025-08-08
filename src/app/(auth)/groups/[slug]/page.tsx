@@ -63,8 +63,8 @@ export default async function Page({ params }: PageProps) {
           <p className="text-muted-foreground text-right">
             Evento dia{' '}
             <span className="font-bold">
-              {group.drawDate
-                ? new Date(group.drawDate).toLocaleDateString()
+              {group.estimateDrawDate
+                ? new Date(group.estimateDrawDate).toLocaleDateString()
                 : 'indefinido'}
             </span>
           </p>

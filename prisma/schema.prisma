@@ -108,13 +108,14 @@ model WishlistItem {
 }
 
 model SecretSantaGroup {
-  id           String    @id @default(uuid())
-  createdAt    DateTime  @default(now())    
+  id                   String    @id @default(uuid())
+  createdAt            DateTime  @default(now())    
 
-  name         String    @db.VarChar(255)
-  slug         String    @unique
-  priceLimit   Int?
-  drawDate     DateTime?
+  name                 String    @db.VarChar(255)
+  slug                 String    @unique
+  priceLimit           Int?
+  estimateDrawDate     DateTime?
+  isDrawn              Boolean   @default(false)
 
   ownerId      String
   owner        User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)

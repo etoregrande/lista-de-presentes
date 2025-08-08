@@ -54,7 +54,7 @@ export const createSecretSantaGroup = async (
       data: {
         name,
         priceLimit: priceLimit ?? null,
-        drawDate: drawDate ? new Date(drawDate) : null,
+        estimateDrawDate: drawDate ? new Date(drawDate) : null,
         ownerId: userId,
         slug,
       },
