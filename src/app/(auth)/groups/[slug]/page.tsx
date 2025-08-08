@@ -24,6 +24,7 @@ export default async function Page({ params }: PageProps) {
     slug,
     session.user.id
   )
+
   if (!isParticipant) {
     redirect('/wishlist')
   }

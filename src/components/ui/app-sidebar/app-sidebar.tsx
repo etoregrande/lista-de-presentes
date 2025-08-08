@@ -67,18 +67,6 @@ export const AppSidebar = ({ session }: AppSidebarProps) => {
               </Suspense>
             </SidebarMenu>
           </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>Amigo secreto (convidado)</SidebarGroupLabel>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/wishlist">
-                    <span>Nome do grupo</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
           <p>Footer</p>
