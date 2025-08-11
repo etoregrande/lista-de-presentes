@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "prisma generate && next dev",
-    "resetdev": "npx prisma migrate reset && npx prisma migrate dev && prisma generate && next dev",
+    "resetdev": "npx prisma migrate reset && npx prisma generate && next dev",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
     "migrate": "prisma migrate deploy"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "npx ts-node --project tsconfig.local.json prisma/seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.777.0",
