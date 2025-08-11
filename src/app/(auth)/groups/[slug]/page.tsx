@@ -11,6 +11,12 @@ import { ParticipantList } from './ui/participant/participant-list'
 import { GroupDeleteButton } from './ui/group-delete-button'
 import { GroupLeaveButton } from './ui/group-leave-button'
 import { GroupHoldDrawButton } from './ui/group-hold-draw-button'
+import { DrawResult } from './ui/draw-result'
+import {
+  getSecretSantaReceiver,
+  listSecretSantaReceivers,
+} from '@/server/secretSantaDraw'
+import { TempDrawList } from './ui/participant/temp-draw-list'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -39,6 +45,9 @@ export default async function Page({ params }: PageProps) {
     ownerId,
   } = await getSecretSantaGroup(slug)
   const isOwner = userId === ownerId
+
+  const drawResult = await getSecretSantaReceiver(userId, groupId)
+  const receiverList = await listSecretSantaReceivers(groupId)
 
   return (
     <>
@@ -84,7 +93,7 @@ export default async function Page({ params }: PageProps) {
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Quem eu tirei</h2>
             <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
-              <p>O sorteio ainda não foi realizado!</p>
+              <DrawResult receiver={drawResult} />
             </div>
           </article>
           <article className="grid w-full gap-2">
@@ -93,11 +102,19 @@ export default async function Page({ params }: PageProps) {
               <p>Lista de presentes vazia</p>
             </div>
           </article>
+          <article className="grid w-full gap-2">
+            <h2 className="text-lg font-bold">
+              Resultados do sorteio (Somente dev)
+            </h2>
+            <div className="bg-muted flex min-h-40 w-full flex-col items-center justify-center rounded-md">
+              <TempDrawList receiverList={receiverList} />
+            </div>
+          </article>
         </section>
         <section className="w-full md:w-1/3">
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Participantes</h2>
-            <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
+            <div className="bg-muted flex min-h-40 w-full flex-col justify-center gap-2 rounded-md p-6">
               <ParticipantList groupId={groupId} />
             </div>
           </article>
