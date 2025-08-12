@@ -20,9 +20,13 @@ export const ParticipantListItem = ({
           {setAvatarFallbackString(userName)}
         </AvatarFallback>
       </Avatar>
-      <div>
-        <p className="truncate">{userName}</p>
-        <p className="text-muted-foreground truncate text-sm">{userEmail}</p>
+      <div className="min-w-0 flex-1">
+        <p className="truncate" title={userName}>
+          {userName}
+        </p>
+        <p className="text-muted-foreground truncate text-sm" title={userEmail}>
+          {userEmail}
+        </p>
       </div>
     </div>
   )

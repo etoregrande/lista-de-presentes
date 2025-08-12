@@ -15,12 +15,12 @@ import {
 import { Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { holdSecretSantaDrawAction } from '../actions'
+import { useSecretSantaGroup } from '../context/context'
 
-interface GroupHoldDrawButtonProps {
-  groupId: string
-}
+export const GroupHoldDrawButton = () => {
+  const { secretSantaGroup } = useSecretSantaGroup()
+  const { id: groupId } = secretSantaGroup
 
-export const GroupHoldDrawButton = ({ groupId }: GroupHoldDrawButtonProps) => {
   const onClick = async () => {
     const response = await holdSecretSantaDrawAction(groupId)
 

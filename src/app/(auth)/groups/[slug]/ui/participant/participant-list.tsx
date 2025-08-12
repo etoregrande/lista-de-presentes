@@ -1,15 +1,21 @@
-'use server'
+'use client'
 
-import { listSecretSantaGroupParticipants } from '@/server/secretSantaGroup'
-import { ParticipantListClient } from './participant-list-client'
+import { useSecretSantaGroup } from '../../context/context'
+import { ParticipantListItem } from './participant-list-item'
 
-interface ParticipantListProps {
-  groupId: string
-}
+export const ParticipantList = () => {
+  const { participants } = useSecretSantaGroup()
 
-export const ParticipantList = async ({ groupId }: ParticipantListProps) => {
-  let participants = await listSecretSantaGroupParticipants(groupId)
-  if (!participants) participants = []
-
-  return <ParticipantListClient participants={participants} />
+  return (
+    <>
+      {participants.map((participant) => (
+        <ParticipantListItem
+          key={participant.id}
+          userName={participant.name || 'Usuário sem nome'}
+          userEmail={participant.email || 'sem email'}
+          userImage={participant.image || ''}
+        />
+      ))}
+    </>
+  )
 }

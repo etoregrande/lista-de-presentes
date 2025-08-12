@@ -6,8 +6,8 @@ import { redirect } from 'next/navigation'
 import {
   getSecretSantaGroup,
   isSecretSantaGroupParticipant,
+  listSecretSantaGroupParticipants,
 } from '@/server/secretSantaGroup'
-import { ParticipantList } from './ui/participant/participant-list'
 import { GroupDeleteButton } from './ui/group-delete-button'
 import { GroupLeaveButton } from './ui/group-leave-button'
 import { GroupHoldDrawButton } from './ui/group-hold-draw-button'
@@ -17,6 +17,13 @@ import {
   listSecretSantaReceivers,
 } from '@/server/secretSantaDraw'
 import { TempDrawList } from './ui/participant/temp-draw-list'
+import { GroupDatePicker } from './ui/group-date-picker'
+import { Button } from '@/components/ui/button/button'
+import { Settings } from 'lucide-react'
+import { GroupEditDialog } from './ui/group-edit-dialog'
+import { SecretSantaGroupsProvider } from '@/lib/context/secretSantaGroups/provider'
+import { SecretSantaGroupProvider } from './context/provider'
+import { ParticipantList } from './ui/participant/participant-list'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -37,20 +44,18 @@ export default async function Page({ params }: PageProps) {
   }
 
   const { id: userId } = session.user
-  const {
-    id: groupId,
-    name: groupName,
-    estimateDrawDate,
-    priceLimit,
-    ownerId,
-  } = await getSecretSantaGroup(slug)
+  const group = await getSecretSantaGroup(slug)
+  const { id: groupId, name: groupName, ownerId } = group
   const isOwner = userId === ownerId
-
   const drawResult = await getSecretSantaReceiver(userId, groupId)
   const receiverList = await listSecretSantaReceivers(groupId)
+  const participants = await listSecretSantaGroupParticipants(groupId)
 
   return (
-    <>
+    <SecretSantaGroupProvider
+      secretSantaGroup={group}
+      participants={participants}
+    >
       <header className="layout-container flex justify-between py-10">
         <div className="grid w-full grid-cols-[auto_1fr] gap-4">
           <div className="aspect-square w-full rounded-md bg-amber-300"></div>
@@ -59,32 +64,16 @@ export default async function Page({ params }: PageProps) {
               Amigo secreto
             </span>
             {groupName}
-          </h1>
+          </h1>{' '}
         </div>
-        {isOwner ? (
-          <>
-            <GroupDeleteButton groupId={groupId} userId={userId} />
-            <GroupHoldDrawButton groupId={groupId} />
-          </>
-        ) : (
-          <GroupLeaveButton userId={userId} groupId={groupId} />
-        )}
+        <GroupEditDialog>
+          <Button variant={'secondary'} size={'icon'} className="self-end">
+            <Settings />
+          </Button>
+        </GroupEditDialog>
+        {!isOwner && <GroupLeaveButton />}
         <div className="flex w-full flex-col items-end">
-          <p className="text-muted-foreground text-right">
-            Evento dia{' '}
-            <span className="font-bold">
-              {estimateDrawDate
-                ? new Date(estimateDrawDate).toLocaleDateString()
-                : 'indefinido'}
-            </span>
-          </p>
-          <p className="text-right">
-            <span className="font-bold">
-              {priceLimit
-                ? `Presentes até R$${priceLimit / 100}`
-                : 'sem valor definido'}
-            </span>
-          </p>
+          <GroupDatePicker />
         </div>
       </header>
 
@@ -114,12 +103,12 @@ export default async function Page({ params }: PageProps) {
         <section className="w-full md:w-1/3">
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Participantes</h2>
-            <div className="bg-muted flex min-h-40 w-full flex-col justify-center gap-2 rounded-md p-6">
-              <ParticipantList groupId={groupId} />
+            <div className="flex w-full flex-col justify-center gap-2 overflow-hidden rounded-md">
+              <ParticipantList />
             </div>
           </article>
         </section>
       </main>
-    </>
+    </SecretSantaGroupProvider>
   )
 }
