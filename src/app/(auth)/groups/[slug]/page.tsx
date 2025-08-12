@@ -8,9 +8,7 @@ import {
   isSecretSantaGroupParticipant,
   listSecretSantaGroupParticipants,
 } from '@/server/secretSantaGroup'
-import { GroupDeleteButton } from './ui/group-delete-button'
 import { GroupLeaveButton } from './ui/group-leave-button'
-import { GroupHoldDrawButton } from './ui/group-hold-draw-button'
 import { DrawResult } from './ui/draw-result'
 import {
   getSecretSantaReceiver,
@@ -21,7 +19,6 @@ import { GroupDatePicker } from './ui/group-date-picker'
 import { Button } from '@/components/ui/button/button'
 import { Settings } from 'lucide-react'
 import { GroupEditDialog } from './ui/group-edit-dialog'
-import { SecretSantaGroupsProvider } from '@/lib/context/secretSantaGroups/provider'
 import { SecretSantaGroupProvider } from './context/provider'
 import { ParticipantList } from './ui/participant/participant-list'
 

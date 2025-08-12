@@ -37,7 +37,6 @@ interface RootCredenzaProps extends BaseProps {
 interface CredenzaProps extends BaseProps {
   className?: string
   asChild?: true
-  onInteractOutside?: (event?: any) => void
 }
 
 const CredenzaContext = React.createContext<{ isMobile: boolean }>({
@@ -89,12 +88,7 @@ const CredenzaClose = ({ className, children, ...props }: CredenzaProps) => {
   )
 }
 
-const CredenzaContent = ({
-  className,
-  children,
-  onInteractOutside,
-  ...props
-}: CredenzaProps) => {
+const CredenzaContent = ({ className, children, ...props }: CredenzaProps) => {
   const { isMobile } = useCredenzaContext()
   const BaseContent = isMobile ? DrawerContent : DialogContent
 
@@ -104,7 +98,6 @@ const CredenzaContent = ({
         isMobile && 'flex max-h-[100dvh] flex-col border-[var(--border)]',
         className
       )}
-      onInteractOutside={onInteractOutside}
       {...props}
     >
       {children}
