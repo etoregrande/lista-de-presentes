@@ -13,26 +13,25 @@ import {
   CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
-import { Trash } from 'lucide-react'
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { deleteSecretSantaGroupAction } from '../actions'
 import { useSecretSantaGroup } from '../context/context'
-import { authClient } from '@/lib/auth-client'
+import { ReactNode } from 'react'
+import { useSession } from '@/lib/context/session/context'
 
-export const GroupDeleteButton = () => {
+interface GroupDeleteButtonProps {
+  children: ReactNode
+}
+export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
+  const router = useRouter()
   const { setGroups } = useSecretSantaGroups()
   const { secretSantaGroup } = useSecretSantaGroup()
 
   const { id: groupId } = secretSantaGroup
-  const { data: session } = authClient.useSession()
-
-  if (!session) {
-    redirect('/login')
-  }
+  const session = useSession()
 
   const { id: userId } = session.user
-  const router = useRouter()
 
   const onClick = async () => {
     const response = await deleteSecretSantaGroupAction(userId, groupId)
@@ -50,12 +49,7 @@ export const GroupDeleteButton = () => {
 
   return (
     <Credenza>
-      <CredenzaTrigger asChild>
-        <Button variant={'destructive'}>
-          <Trash />
-          Deletar grupo
-        </Button>
-      </CredenzaTrigger>
+      <CredenzaTrigger asChild>{children}</CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
           <CredenzaTitle>Deletar grupo</CredenzaTitle>

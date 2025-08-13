@@ -1,6 +1,6 @@
 'use server'
 
-import { PrismaClientKnownRequestError } from '@/generated/prisma/runtime/library'
+import { isPrismaP2002 } from '@/lib/error'
 import { prisma } from '@/lib/prisma'
 import { drawSecretSanta, generateSecretSantaGroupSlug } from '@/lib/utils'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
@@ -43,7 +43,7 @@ export const createSecretSantaGroup = async (
   formData: secretSantaGroupFormData,
   userId: string
 ) => {
-  const { name, priceLimit, drawDate } = formData
+  const { name, priceLimit, eventDate } = formData
   try {
     if (!userId) {
       throw new Error('User ID is required to create a Secret Santa group.')
@@ -54,7 +54,7 @@ export const createSecretSantaGroup = async (
       data: {
         name,
         priceLimit: priceLimit ?? null,
-        estimateDrawDate: drawDate ? new Date(drawDate) : null,
+        eventDate: eventDate ? new Date(eventDate) : null,
         ownerId: userId,
         slug,
       },
@@ -70,11 +70,8 @@ export const createSecretSantaGroup = async (
     }
 
     return { success: true, group: newSecretSantaGroup }
-  } catch (error: PrismaClientKnownRequestError | unknown) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === 'P2002'
-    ) {
+  } catch (error) {
+    if (isPrismaP2002(error)) {
       return {
         success: false,
         error: {
@@ -83,7 +80,6 @@ export const createSecretSantaGroup = async (
         } satisfies FieldError,
       }
     }
-
     return {
       success: false,
       error: {
@@ -91,6 +87,41 @@ export const createSecretSantaGroup = async (
         message: 'Erro ao criar o grupo',
       } satisfies FieldError,
     }
+  }
+}
+
+export const updateSecretSantaGroup = async (
+  ownerId: string,
+  groupId: string,
+  formData: secretSantaGroupFormData
+) => {
+  if (!groupId || !ownerId) {
+    throw new Error('Group ID and Owner ID are required to update a group')
+  }
+
+  const { name, eventDate, priceLimit } = formData
+
+  try {
+    const updatedGroup = await prisma.secretSantaGroup.update({
+      where: {
+        id: groupId,
+        ownerId: ownerId,
+      },
+      data: {
+        name,
+        priceLimit,
+        eventDate,
+      },
+    })
+
+    if (!updatedGroup) {
+      return { success: false, error: 'Group not found or not owned by user' }
+    }
+
+    return { success: true, group: updatedGroup }
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to update group')
   }
 }
 
@@ -110,7 +141,6 @@ export const deleteSecretSantaGroup = async (
       },
     })
 
-    console.log('Deleted group:', deletedGroup)
     if (!deletedGroup) {
       return { success: false, error: 'Group not found or not owned by user' }
     }

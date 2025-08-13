@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sheet'
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { useFormContext } from 'react-hook-form'
-import { editWishlistItem } from '@/server/wishlistItem'
+import { updateWishlistItem } from '@/server/wishlistItem'
 import { authClient } from '@/lib/auth-client'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
@@ -42,7 +42,7 @@ export const WishlistItemSheet = ({
     if (!session) redirect('/login')
     if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
 
-    const updatedItem = await editWishlistItem(
+    const updatedItem = await updateWishlistItem(
       formData,
       wishlistItem.id,
       session.user.id
@@ -63,41 +63,39 @@ export const WishlistItemSheet = ({
   }
 
   return (
-    <>
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetTrigger>{children}</SheetTrigger>
-        <SheetContent side="right" className="p-0">
-          <SheetHeader className="border-border flex-none border-b p-6 text-left">
-            <SheetTitle>{wishlistItem.name}</SheetTitle>
-            <SheetDescription>
-              <span className="text-sm break-words text-[var(--muted-foreground)]">
-                {wishlistItem.price && wishlistItem.price > 0
-                  ? getDisplayPrice(wishlistItem.price)
-                  : 'Produto sem preço'}
-              </span>
-            </SheetDescription>
-          </SheetHeader>
-          <WishlistItemSheetForm
-            wishlistItem={wishlistItem}
-            setWishlist={setWishlist}
-            setIsSheetOpen={setIsSheetOpen}
-          />
-          <SheetFooter className="flex-none border-t p-6">
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              className="flex-1"
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <LoaderCircle className="animate-spin" />
-              ) : (
-                'Salvar'
-              )}
-            </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-    </>
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+      <SheetTrigger>{children}</SheetTrigger>
+      <SheetContent side="right" className="p-0">
+        <SheetHeader className="border-border flex-none border-b p-6 text-left">
+          <SheetTitle>{wishlistItem.name}</SheetTitle>
+          <SheetDescription>
+            <span className="text-sm break-words text-[var(--muted-foreground)]">
+              {wishlistItem.price && wishlistItem.price > 0
+                ? getDisplayPrice(wishlistItem.price)
+                : 'Produto sem preço'}
+            </span>
+          </SheetDescription>
+        </SheetHeader>
+        <WishlistItemSheetForm
+          wishlistItem={wishlistItem}
+          setWishlist={setWishlist}
+          setIsSheetOpen={setIsSheetOpen}
+        />
+        <SheetFooter className="flex-none border-t p-6">
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            className="flex-1"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              'Salvar'
+            )}
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }

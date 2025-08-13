@@ -114,7 +114,7 @@ model SecretSantaGroup {
   name                 String    @db.VarChar(255)
   slug                 String    @unique
   priceLimit           Int?
-  estimateDrawDate     DateTime?
+  eventDate     DateTime?
   isDrawn              Boolean   @default(false)
 
   ownerId      String

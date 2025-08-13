@@ -53,7 +53,7 @@ export const createWishlistItem = async (
   }
 }
 
-export const editWishlistItem = async (
+export const updateWishlistItem = async (
   formData: WishlistItemFormData,
   wishlistItemId: string,
   userId: string
