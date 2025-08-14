@@ -33,34 +33,3 @@ export const getSecretSantaReceiver = async (
     throw new Error('Failed to fetch giver')
   }
 }
-
-// DEV ONLY - listSecretSantaReceivers
-export const listSecretSantaReceivers = async (groupId: string) => {
-  if (!groupId) {
-    throw new Error('Group ID is required to list group receivers')
-  }
-
-  try {
-    const result = await prisma.secretSantaDraw.findMany({
-      where: { groupId },
-      select: {
-        giver: {
-          select: {
-            name: true,
-          },
-        },
-        receiver: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    })
-
-    if (!result) return null
-    return result
-  } catch (error) {
-    console.error('Error listing receivers:', error)
-    throw new Error('Failed to list receivers')
-  }
-}

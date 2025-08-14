@@ -10,12 +10,7 @@ import {
 } from '@/server/secretSantaGroup'
 import { GroupLeaveButton } from './ui/group-leave-button'
 import { DrawResult } from './ui/draw-result'
-import {
-  getSecretSantaReceiver,
-  listSecretSantaReceivers,
-} from '@/server/secretSantaDraw'
-import { TempDrawList } from './ui/participant/temp-draw-list'
-import { GroupDatePicker } from './ui/group-date-picker'
+import { getSecretSantaReceiver } from '@/server/secretSantaDraw'
 import { Button } from '@/components/ui/button/button'
 import { Settings } from 'lucide-react'
 import { GroupEditSheet } from './ui/group-edit-sheet'
@@ -46,7 +41,6 @@ export default async function Page({ params }: PageProps) {
   const { id: groupId, name: groupName, ownerId } = group
   const isOwner = userId === ownerId
   const drawResult = await getSecretSantaReceiver(userId, groupId)
-  const receiverList = await listSecretSantaReceivers(groupId)
   const participants = await listSecretSantaGroupParticipants(groupId)
 
   return (
@@ -55,7 +49,7 @@ export default async function Page({ params }: PageProps) {
         secretSantaGroup={group}
         participants={participants}
       >
-        <header className="layout-container flex justify-between py-10">
+        <header className="layout-container flex py-10">
           <div className="grid w-full grid-cols-[auto_1fr] gap-4">
             <div className="aspect-square w-full rounded-md bg-amber-300"></div>
             <h1 className="truncate text-2xl font-bold">
@@ -63,19 +57,17 @@ export default async function Page({ params }: PageProps) {
                 Amigo secreto
               </span>
               {groupName}
-            </h1>{' '}
+            </h1>
           </div>
           {isOwner && (
             <GroupEditSheet>
-              <Button variant={'secondary'} size={'icon'} className="self-end">
+              <Button variant={'secondary'} size={'icontext'}>
                 <Settings />
+                <span className="hidden md:inline">Editar grupo</span>
               </Button>
             </GroupEditSheet>
           )}
-          {!isOwner && <GroupLeaveButton />}
-          <div className="flex w-full flex-col items-end">
-            <GroupDatePicker />
-          </div>
+          {!isOwner && <GroupLeaveButton className="self-end" />}
         </header>
 
         <main className="layout-container flex flex-col gap-10 md:flex-row">
@@ -90,14 +82,6 @@ export default async function Page({ params }: PageProps) {
               <h2 className="text-lg font-bold">Minha lista de presentes</h2>
               <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
                 <p>Lista de presentes vazia</p>
-              </div>
-            </article>
-            <article className="grid w-full gap-2">
-              <h2 className="text-lg font-bold">
-                Resultados do sorteio (Somente dev)
-              </h2>
-              <div className="bg-muted flex min-h-40 w-full flex-col items-center justify-center rounded-md">
-                <TempDrawList receiverList={receiverList} />
               </div>
             </article>
           </section>

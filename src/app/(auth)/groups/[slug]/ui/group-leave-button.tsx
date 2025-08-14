@@ -20,7 +20,11 @@ import { leaveSecretSantaGroupAction } from '../actions'
 import { useSecretSantaGroup } from '../context/context'
 import { authClient } from '@/lib/auth-client'
 
-export const GroupLeaveButton = () => {
+interface GroupLeaveButtonProps {
+  className: string
+}
+
+export const GroupLeaveButton = ({ className }: GroupLeaveButtonProps) => {
   const { setGroups } = useSecretSantaGroups()
   const { secretSantaGroup } = useSecretSantaGroup()
 
@@ -51,7 +55,7 @@ export const GroupLeaveButton = () => {
   return (
     <Credenza>
       <CredenzaTrigger asChild>
-        <Button variant={'destructive'}>
+        <Button variant={'destructive'} className={className}>
           <Trash />
           Abandonar grupo
         </Button>
