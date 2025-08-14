@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { GroupDeleteButton } from './group-delete-button'
 import {
   Sheet,
@@ -34,6 +34,8 @@ export const GroupEditSheet = ({ children }: GroupEditProps) => {
   const { secretSantaGroup } = useSecretSantaGroup()
   const { name, eventDate, priceLimit, id: groupId } = secretSantaGroup
 
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
   const formMethods = useForm<secretSantaGroupFormData>({
     resolver: zodResolver(secretSantaGroupFormSchema),
     defaultValues: {
@@ -45,6 +47,7 @@ export const GroupEditSheet = ({ children }: GroupEditProps) => {
   const {
     formState: { isSubmitting, isDirty },
     handleSubmit,
+    reset,
   } = formMethods
 
   const onSubmit = async (formData: secretSantaGroupFormData) => {
@@ -57,6 +60,7 @@ export const GroupEditSheet = ({ children }: GroupEditProps) => {
         })
       }
       toast.success('O grupo foi salvo com sucesso!')
+      setIsSheetOpen(false)
     } catch (error) {
       console.error(error)
       throw new Error('Erro ao atualizar amigo secreto')
@@ -65,7 +69,19 @@ export const GroupEditSheet = ({ children }: GroupEditProps) => {
 
   return (
     <FormProvider {...formMethods}>
-      <Sheet>
+      <Sheet
+        open={isSheetOpen}
+        onOpenChange={(open) => {
+          setIsSheetOpen(open)
+          if (!open) {
+            reset({
+              name,
+              priceLimit,
+              eventDate,
+            })
+          }
+        }}
+      >
         <SheetTrigger asChild>{children}</SheetTrigger>
         <SheetContent side="right">
           <SheetHeader className="border-border flex-none border-b p-6 text-left">
