@@ -65,7 +65,7 @@ export default async function Page({ params }: PageProps) {
             </Button>
           </GroupEditSheet>
         )}
-        {!isOwner && <GroupLeaveButton className="self-end" />}
+        {!isOwner && <GroupLeaveButton />}
       </header>
 
       <main className="layout-container flex flex-col gap-10 md:flex-row">

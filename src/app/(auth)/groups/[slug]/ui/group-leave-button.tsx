@@ -21,7 +21,7 @@ import { useSecretSantaGroup } from '../context/context'
 import { useSession } from '@/lib/context/session/context'
 
 interface GroupLeaveButtonProps {
-  className: string
+  className?: string
 }
 
 export const GroupLeaveButton = ({ className }: GroupLeaveButtonProps) => {
