@@ -12,19 +12,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { Session } from '@/lib/auth'
 import Link from 'next/link'
 import { Plus, ScrollText } from 'lucide-react'
 import { Suspense, useState } from 'react'
-import { NavbarNewSecretSantaGroupModal } from '../navbar/navbar-new-secret-santa-group-modal'
+import { NavbarNewSecretSantaGroupModal } from './app-sidebar-new-secret-santa-group-modal'
 import { AppSidebarSecretSantaGroups } from './app-sidebar-secret-santa-groups'
 import { AppSidebarAvatar } from './app-sidebar-avatar'
 
-interface AppSidebarProps {
-  session: Session
-}
-
-export const AppSidebar = ({ session }: AppSidebarProps) => {
+export const AppSidebar = () => {
   const [isCreatingNewGroup, setIsCreatingNewGroup] = useState(false)
 
   return (
@@ -36,7 +31,7 @@ export const AppSidebar = ({ session }: AppSidebarProps) => {
 
       <Sidebar>
         <SidebarHeader>
-          <AppSidebarAvatar session={session} />
+          <AppSidebarAvatar />
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>

@@ -11,14 +11,13 @@ import {
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { useFormContext } from 'react-hook-form'
 import { updateWishlistItem } from '@/server/wishlistItem'
-import { authClient } from '@/lib/auth-client'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
-import { redirect } from 'next/navigation'
 import { toast } from 'sonner'
 import { getDisplayPrice } from '@/lib/utils'
 import { WishlistItem } from '@/generated/prisma'
 import { WishlistItemSheetForm } from './Wishlist-item-sheet-form'
+import { useSession } from '@/lib/context/session/context'
 
 interface WishlistItemSheetProps {
   children: ReactNode
@@ -36,16 +35,15 @@ export const WishlistItemSheet = ({
     formState: { isSubmitting },
   } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
+  const { user } = useSession()
 
   const onSubmit = async (formData: WishlistItemFormData) => {
-    const { data: session } = await authClient.getSession()
-    if (!session) redirect('/login')
     if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
 
     const updatedItem = await updateWishlistItem(
       formData,
       wishlistItem.id,
-      session.user.id
+      user.id
     )
 
     setWishlist((prev) =>

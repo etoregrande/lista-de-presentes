@@ -14,11 +14,11 @@ import {
 } from '@/components/ui/credenza'
 import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
 import { Trash } from 'lucide-react'
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { leaveSecretSantaGroupAction } from '../actions'
 import { useSecretSantaGroup } from '../context/context'
-import { authClient } from '@/lib/auth-client'
+import { useSession } from '@/lib/context/session/context'
 
 interface GroupLeaveButtonProps {
   className: string
@@ -27,15 +27,10 @@ interface GroupLeaveButtonProps {
 export const GroupLeaveButton = ({ className }: GroupLeaveButtonProps) => {
   const { setGroups } = useSecretSantaGroups()
   const { secretSantaGroup } = useSecretSantaGroup()
-
+  const { user } = useSession()
   const { id: groupId } = secretSantaGroup
-  const { data: session } = authClient.useSession()
+  const { id: userId } = user
 
-  if (!session) {
-    redirect('/login')
-  }
-
-  const { id: userId } = session.user
   const router = useRouter()
 
   const onClick = async () => {

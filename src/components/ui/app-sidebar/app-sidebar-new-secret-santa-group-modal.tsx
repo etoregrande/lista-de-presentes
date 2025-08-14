@@ -8,18 +8,18 @@ import {
   CredenzaHeader,
   CredenzaTitle,
 } from '@/components/ui/credenza'
-import { NavbarNewSecretSantaGroupForm } from './navbar-new-secret-santa-group-form'
+import { AppSidebarNewSecretSantaGroupForm } from './app-sidebar-new-secret-santa-group-form'
 import { Button } from '../button/button'
 import { FormProvider, useForm } from 'react-hook-form'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { secretSantaGroupFormSchema } from '@/schemas/secretSantaGroup'
 import { createSecretSantaGroup } from '@/server/secretSantaGroup'
-import { authClient } from '@/lib/auth-client'
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { LoaderCircle } from 'lucide-react'
 import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
+import { useSession } from '@/lib/context/session/context'
 
 interface NavbarNewGroupModalProps {
   isOpen: boolean
@@ -31,6 +31,7 @@ export const NavbarNewSecretSantaGroupModal = ({
   setIsOpen,
 }: NavbarNewGroupModalProps) => {
   const { setGroups } = useSecretSantaGroups()
+  const { user } = useSession()
   const form = useForm<secretSantaGroupFormData>({
     resolver: zodResolver(secretSantaGroupFormSchema),
   })
@@ -43,10 +44,7 @@ export const NavbarNewSecretSantaGroupModal = ({
   const router = useRouter()
 
   const onSubmit = async (data: secretSantaGroupFormData) => {
-    const { data: session } = await authClient.getSession()
-    if (!session) redirect('/login')
-
-    const result = await createSecretSantaGroup(data, session.user.id)
+    const result = await createSecretSantaGroup(data, user.id)
 
     if (!result.success) {
       setError(result.error!.field, { message: result.error!.message })
@@ -82,7 +80,7 @@ export const NavbarNewSecretSantaGroupModal = ({
           </CredenzaHeader>
           <CredenzaBody className="md:overflow-visible">
             <FormProvider {...form}>
-              <NavbarNewSecretSantaGroupForm />
+              <AppSidebarNewSecretSantaGroupForm />
             </FormProvider>
           </CredenzaBody>
           <CredenzaFooter className="flex flex-col gap-2 md:flex-row">

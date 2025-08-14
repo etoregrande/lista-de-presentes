@@ -1,6 +1,5 @@
 'use client'
 
-import { Session } from '@/lib/auth'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,40 +11,33 @@ import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 import { signOut } from '@/server/auth'
 import { Button } from '../button/button'
 import { useRouter } from 'next/navigation'
+import { useSession } from '@/lib/context/session/context'
 
-interface AppSidebarProps {
-  session: Session
-}
-
-export const AppSidebarAvatar = ({ session }: AppSidebarProps) => {
+export const AppSidebarAvatar = () => {
+  const { user } = useSession()
   const router = useRouter()
-  const avatarImage = session?.user?.image ?? ''
+  const avatarImage = user.image ?? ''
 
   return (
     <>
-      {' '}
-      {session?.user ? (
+      {user ? (
         <DropdownMenu>
           <DropdownMenuTrigger className="group cursor-pointer focus:outline-1">
             <div className="flex items-center gap-2">
-              {session?.user && (
+              {user && (
                 <Avatar className="h-10 w-10">
                   <AvatarImage src={avatarImage} />
                   <AvatarFallback className="bg-navbar-muted-foreground font-bold">
-                    {setAvatarFallbackString(session.user.name)}
+                    {setAvatarFallbackString(user.name)}
                   </AvatarFallback>
                 </Avatar>
               )}
               <p className="text-navbar-foreground truncate rounded-4xl text-sm group-hover:underline">
-                {getDisplayName(session.user.name)}
+                {getDisplayName(user.name)}
               </p>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            {/* <DropdownMenuLink href="/wishlist">
-              Lista de presentes
-            </DropdownMenuLink>
-            <DropdownMenuLink href="/groups">Grupos</DropdownMenuLink> */}
             <DropdownMenuItem disabled>Perfil</DropdownMenuItem>
             <DropdownMenuItem onClick={signOut}>
               <span>Sair</span>

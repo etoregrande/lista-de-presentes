@@ -12,12 +12,11 @@ import { WishlistItemFormData } from '@/types/wishlistItem'
 import { LoaderCircle } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import { createWishlistItem } from '@/server/wishlistItem'
-import { redirect } from 'next/navigation'
-import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { WishlistItem } from '@/generated/prisma'
 import { WishlistNewItemSheetForm } from './Wishlist-new-item-sheet-form'
+import { useSession } from '@/lib/context/session/context'
 
 interface WishlistNewItemSheetProps {
   children: ReactNode
@@ -34,6 +33,7 @@ export const WishlistNewItemSheet = ({
     formState: { isSubmitting },
   } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const { user } = useSession()
 
   useEffect(() => {
     if (isSheetOpen) {
@@ -42,12 +42,9 @@ export const WishlistNewItemSheet = ({
   }, [isSheetOpen, reset])
 
   const onSubmit = async (formData: WishlistItemFormData) => {
-    const { data: session } = await authClient.getSession()
-    if (!session) redirect('/login')
-
     const newItem: Partial<WishlistItem> | null = await createWishlistItem(
       formData,
-      session.user.id
+      user.id
     )
     if (!newItem) {
       return toast.error('Erro ao criar novo item')

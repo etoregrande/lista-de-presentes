@@ -6,7 +6,7 @@ import { Label } from '../label'
 import { NumericFormat } from 'react-number-format'
 import { FormError } from '../form/form-error'
 
-export const NavbarNewSecretSantaGroupForm = () => {
+export const AppSidebarNewSecretSantaGroupForm = () => {
   const {
     control,
     register,

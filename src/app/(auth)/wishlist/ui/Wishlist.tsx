@@ -15,6 +15,7 @@ import { WishlistItemSheet } from './Wishlist-item-sheet'
 import { AnimatePresence } from 'framer-motion'
 import { WishlistItemSheetTrigger } from './Wishlist-item-sheet-trigger'
 import type { WishlistItem } from '@/generated/prisma'
+import { SessionProvider } from '@/lib/context/session/provider'
 
 interface WishlistProps {
   userId?: string
@@ -34,7 +35,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
   })
 
   return (
-    <>
+    <SessionProvider session={session}>
       <div className="flex justify-between gap-4 pb-4">
         <h2 className="block truncate font-bold md:pt-0">
           Sua lista de desejos
@@ -43,7 +44,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
           </span>
         </h2>
         <div className="flex items-start justify-end gap-2">
-          <WishlistShareButton className="" userId={session.user.id} />
+          <WishlistShareButton />
           <FormProvider {...formMethods}>
             <WishlistNewItemSheet setWishlist={setWishlist}>
               <Button
@@ -78,6 +79,6 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
           </AnimatePresence>
         </FormProvider>
       </div>
-    </>
+    </SessionProvider>
   )
 }

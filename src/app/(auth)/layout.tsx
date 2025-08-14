@@ -8,6 +8,7 @@ import { getSessionOnServer } from '@/server/session'
 import { redirect } from 'next/navigation'
 import { listSecretSantaGroups } from '@/server/secretSantaGroup'
 import { SecretSantaGroupsProvider } from '@/lib/context/secretSantaGroups/provider'
+import { SessionProvider } from '@/lib/context/session/provider'
 
 export default async function WishlistLayout({
   children,
@@ -24,13 +25,15 @@ export default async function WishlistLayout({
 
   return (
     <SidebarProvider>
-      <SecretSantaGroupsProvider initialGroups={initialSecretSantaGroups}>
-        <AppSidebar session={session} />
-        <div className="flex w-full flex-col">
-          <Navbar />
-          {children}
-        </div>
-      </SecretSantaGroupsProvider>
+      <SessionProvider session={session}>
+        <SecretSantaGroupsProvider initialGroups={initialSecretSantaGroups}>
+          <AppSidebar />
+          <div className="flex w-full flex-col">
+            <Navbar />
+            {children}
+          </div>
+        </SecretSantaGroupsProvider>
+      </SessionProvider>
     </SidebarProvider>
   )
 }
