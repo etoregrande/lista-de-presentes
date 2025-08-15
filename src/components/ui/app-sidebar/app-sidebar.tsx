@@ -18,9 +18,14 @@ import { Suspense, useState } from 'react'
 import { NavbarNewSecretSantaGroupModal } from './app-sidebar-new-secret-santa-group-modal'
 import { AppSidebarSecretSantaGroups } from './app-sidebar-secret-santa-groups'
 import { AppSidebarAvatar } from './app-sidebar-avatar'
+import { usePathname } from 'next/navigation'
+import clsx from 'clsx'
 
 export const AppSidebar = () => {
   const [isCreatingNewGroup, setIsCreatingNewGroup] = useState(false)
+  const pathname = usePathname()
+  const href = '/wishlist'
+  const isOnWishlist = pathname.startsWith(href)
 
   return (
     <>
@@ -38,7 +43,14 @@ export const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/wishlist">
+                  <Link
+                    href={href}
+                    className={clsx(
+                      'hover:bg-primary-foreground hover:text-primary',
+                      isOnWishlist &&
+                        'bg-primary-foreground text-primary pointer-events-none'
+                    )}
+                  >
                     <ScrollText />
                     <span>Lista de Desejos</span>
                   </Link>
