@@ -38,9 +38,15 @@ export default async function Page({ params }: PageProps) {
         <section className="flex w-full flex-col gap-10 md:w-2/3">
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">{slug}</h2>
-            <JoinGroupButton handleJoinGroup={handleJoinGroup}>
-              Entrar no grupo
-            </JoinGroupButton>
+            {!group.isDrawn ? (
+              <JoinGroupButton handleJoinGroup={handleJoinGroup}>
+                Entrar no grupo
+              </JoinGroupButton>
+            ) : (
+              <p>
+                Você não pode entrar num grupo que o sorteio já foi realizado!
+              </p>
+            )}
           </article>
         </section>
       </main>
