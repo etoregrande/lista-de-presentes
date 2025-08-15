@@ -76,14 +76,14 @@ export const EditGroupForm = () => {
                   <Button
                     variant={'outline'}
                     className={cn(
-                      'border-border w-[240px] pl-3 text-left font-normal',
+                      'border-border w-[240px] w-full pl-3 text-left font-normal',
                       !field.value && 'text-muted-foreground'
                     )}
                   >
                     {field.value ? (
                       format(field.value, 'PPP', { locale: ptBR })
                     ) : (
-                      <span>Pick a date</span>
+                      <span>Escolha uma data</span>
                     )}
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
