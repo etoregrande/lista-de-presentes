@@ -1,10 +1,12 @@
 import { User } from '@/generated/prisma'
 
-interface DrawResultProps {
+interface SecretSantaDrawResultProps {
   receiver: Partial<User> | null
 }
 
-export const DrawResult = ({ receiver }: DrawResultProps) => {
+export const SecretSantaDrawResult = ({
+  receiver,
+}: SecretSantaDrawResultProps) => {
   if (!receiver) {
     return <p>O sorteio ainda não foi realizado!</p>
   }

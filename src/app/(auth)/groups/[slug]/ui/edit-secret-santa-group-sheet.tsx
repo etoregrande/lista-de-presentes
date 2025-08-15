@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { GroupHoldDrawButton } from './group-hold-draw-button'
+import { HoldSecretSantaDrawButton } from './hold-secret-santa-draw-button'
 import { Button } from '@/components/ui/button/button'
 import { LoaderCircle, Trash } from 'lucide-react'
 import { EditGroupForm } from './edit-group-form'
@@ -28,7 +28,7 @@ interface GroupEditProps {
   children: ReactNode
 }
 
-export const GroupEditSheet = ({ children }: GroupEditProps) => {
+export const EditSecretSantaGroupSheet = ({ children }: GroupEditProps) => {
   const session = useSession()
   const { id: userId } = session.user
   const { secretSantaGroup } = useSecretSantaGroup()
@@ -100,7 +100,7 @@ export const GroupEditSheet = ({ children }: GroupEditProps) => {
                 <Trash />
               </Button>
             </GroupDeleteButton>
-            <GroupHoldDrawButton />
+            <HoldSecretSantaDrawButton />
             <EditGroupForm />
           </div>
 

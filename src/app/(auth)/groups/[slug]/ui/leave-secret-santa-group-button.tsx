@@ -20,11 +20,13 @@ import { useSecretSantaGroup } from '../context/context'
 import { useSession } from '@/lib/context/session/context'
 import { ReactNode } from 'react'
 
-interface GroupLeaveButtonProps {
+interface LeaveSecretSantaGroupButtonProps {
   children: ReactNode
 }
 
-export const GroupLeaveButton = ({ children }: GroupLeaveButtonProps) => {
+export const LeaveSecretSantaGroupButton = ({
+  children,
+}: LeaveSecretSantaGroupButtonProps) => {
   const { setGroups } = useSecretSantaGroups()
   const { secretSantaGroup } = useSecretSantaGroup()
   const { user } = useSession()

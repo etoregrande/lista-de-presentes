@@ -138,8 +138,8 @@ export const drawSecretSanta = (participants: Partial<User>[]) => {
 
   const shuffledParticipants = shuffleArray([...participants])
 
-  const drawResult: Partial<SecretSantaDraw>[] = shuffledParticipants.map(
-    (participant, i) => {
+  const SecretSantaDrawResult: Partial<SecretSantaDraw>[] =
+    shuffledParticipants.map((participant, i) => {
       const receiver =
         shuffledParticipants[(i + 1) % shuffledParticipants.length]
 
@@ -151,8 +151,7 @@ export const drawSecretSanta = (participants: Partial<User>[]) => {
         giverId: participant.id,
         receiverId: receiver.id,
       }
-    }
-  )
+    })
 
-  return drawResult
+  return SecretSantaDrawResult
 }

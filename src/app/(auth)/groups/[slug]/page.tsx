@@ -8,16 +8,16 @@ import {
   isSecretSantaGroupParticipant,
   listSecretSantaGroupParticipants,
 } from '@/server/secretSantaGroup'
-import { GroupLeaveButton } from './ui/group-leave-button'
-import { DrawResult } from './ui/draw-result'
+import { LeaveSecretSantaGroupButton } from './ui/leave-secret-santa-group-button'
 import { getSecretSantaReceiver } from '@/server/secretSantaDraw'
 import { Button } from '@/components/ui/button/button'
 import { Settings, Trash } from 'lucide-react'
-import { GroupEditSheet } from './ui/group-edit-sheet'
+import { EditSecretSantaGroupSheet } from './ui/edit-secret-santa-group-sheet'
 import { SecretSantaGroupProvider } from './context/provider'
 import { ParticipantList } from './ui/participant/participant-list'
 import { SecretSantaGroupBackground } from './ui/secret-santa-group-background'
 import { ShareSecretSantaGroupButton } from './ui/share-secret-santa-group-button'
+import { SecretSantaDrawResult } from './ui/secret-santa-draw-result'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -41,7 +41,7 @@ export default async function Page({ params }: PageProps) {
   const group = await getSecretSantaGroup(slug)
   const { id: groupId, name: groupName, ownerId } = group
   const isOwner = userId === ownerId
-  const drawResult = await getSecretSantaReceiver(userId, groupId)
+  const SecretSantaDrawReceiver = await getSecretSantaReceiver(userId, groupId)
   const participants = await listSecretSantaGroupParticipants(groupId)
 
   return (
@@ -62,22 +62,22 @@ export default async function Page({ params }: PageProps) {
         </div>
         {isOwner && (
           <div className="flex gap-2">
-            <GroupEditSheet>
+            <EditSecretSantaGroupSheet>
               <Button variant={'secondary'} size={'icontext'}>
                 <Settings />
                 <span className="hidden md:inline">Editar grupo</span>
               </Button>
-            </GroupEditSheet>
+            </EditSecretSantaGroupSheet>
             <ShareSecretSantaGroupButton />
           </div>
         )}
         {!isOwner && (
-          <GroupLeaveButton>
+          <LeaveSecretSantaGroupButton>
             <Button variant={'destructive'} size={'icontext'}>
               <Trash />
               <span className="hidden md:inline">Abandonar grupo</span>
             </Button>
-          </GroupLeaveButton>
+          </LeaveSecretSantaGroupButton>
         )}
       </header>
 
@@ -86,7 +86,7 @@ export default async function Page({ params }: PageProps) {
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Quem eu tirei</h2>
             <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
-              <DrawResult receiver={drawResult} />
+              <SecretSantaDrawResult receiver={SecretSantaDrawReceiver} />
             </div>
           </article>
           <article className="grid w-full gap-2">

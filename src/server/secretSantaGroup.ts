@@ -270,16 +270,16 @@ export const createSecretSantaGroupDraw = async (groupId: string) => {
       },
     })
 
-    const drawResult = drawSecretSanta(participants)
+    const SecretSantaDrawResult = drawSecretSanta(participants)
 
-    if (!drawResult) {
+    if (!SecretSantaDrawResult) {
       return {
         success: false,
         error: 'At least 4 participants are needed to hold a draw',
       }
     }
 
-    const draw = drawResult.map((d) => {
+    const draw = SecretSantaDrawResult.map((d) => {
       if (!d.giverId || !d.receiverId) {
         throw new Error('Draw result must have both giverId and receiverId')
       }

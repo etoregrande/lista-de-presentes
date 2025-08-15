@@ -17,7 +17,7 @@ import { toast } from 'sonner'
 import { holdSecretSantaDrawAction } from '../actions'
 import { useSecretSantaGroup } from '../context/context'
 
-export const GroupHoldDrawButton = () => {
+export const HoldSecretSantaDrawButton = () => {
   const { secretSantaGroup } = useSecretSantaGroup()
   const { id: groupId } = secretSantaGroup
 
