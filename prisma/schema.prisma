@@ -114,8 +114,9 @@ model SecretSantaGroup {
   name                 String    @db.VarChar(255)
   slug                 String    @unique
   priceLimit           Int?
-  eventDate     DateTime?
+  eventDate            DateTime?
   isDrawn              Boolean   @default(false)
+  drawDate             DateTime? 
 
   ownerId      String
   owner        User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
