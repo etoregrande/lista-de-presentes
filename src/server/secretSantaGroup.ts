@@ -297,7 +297,7 @@ export const createSecretSantaGroupDraw = async (groupId: string) => {
       }),
       prisma.secretSantaGroup.update({
         where: { id: groupId },
-        data: { drawDate: new Date() },
+        data: { drawDate: new Date(), isDrawn: true },
       }),
     ])
 
