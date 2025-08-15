@@ -76,7 +76,7 @@ export const EditGroupForm = () => {
                   <Button
                     variant={'outline'}
                     className={cn(
-                      'border-border w-[240px] w-full pl-3 text-left font-normal',
+                      'border-border w-full pl-3 text-left font-normal',
                       !field.value && 'text-muted-foreground'
                     )}
                   >
