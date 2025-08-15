@@ -17,6 +17,7 @@ import { GroupEditSheet } from './ui/group-edit-sheet'
 import { SecretSantaGroupProvider } from './context/provider'
 import { ParticipantList } from './ui/participant/participant-list'
 import { SecretSantaGroupBackground } from './ui/secret-santa-group-background'
+import { ShareSecretSantaGroupButton } from './ui/share-secret-santa-group-button'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -60,12 +61,15 @@ export default async function Page({ params }: PageProps) {
           </h1>
         </div>
         {isOwner && (
-          <GroupEditSheet>
-            <Button variant={'secondary'} size={'icontext'}>
-              <Settings />
-              <span className="hidden md:inline">Editar grupo</span>
-            </Button>
-          </GroupEditSheet>
+          <div className="flex gap-2">
+            <GroupEditSheet>
+              <Button variant={'secondary'} size={'icontext'}>
+                <Settings />
+                <span className="hidden md:inline">Editar grupo</span>
+              </Button>
+            </GroupEditSheet>
+            <ShareSecretSantaGroupButton />
+          </div>
         )}
         {!isOwner && (
           <GroupLeaveButton>
