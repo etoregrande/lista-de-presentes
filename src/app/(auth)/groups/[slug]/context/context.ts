@@ -1,11 +1,13 @@
 'use client'
 
-import { createContext, useContext } from 'react'
+import { createContext, Dispatch, SetStateAction, useContext } from 'react'
 import { SecretSantaGroup, User } from '@/generated/prisma'
 
 interface SecretSantaGroupsContextType {
   secretSantaGroup: SecretSantaGroup
   participants: Partial<User>[]
+  setParticipants: Dispatch<SetStateAction<Partial<User>[]>>
+  isOwner: boolean
 }
 
 export const SecretSantaGroupContext =

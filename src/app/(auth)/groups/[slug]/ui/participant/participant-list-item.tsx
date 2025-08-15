@@ -1,33 +1,59 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button/button'
 import { setAvatarFallbackString } from '@/lib/utils'
+import { UserXIcon as UserXIcon } from 'lucide-react'
+import { ParticipantListItemRemoveButton } from './participant-list-item-remove-button'
+import { useSecretSantaGroup } from '../../context/context'
+import { useSession } from '@/lib/context/session/context'
 
 interface ParticipantProps {
-  userName: string
-  userEmail: string
-  userImage: string
+  participantId: string
+  participantName: string
+  participantEmail: string
+  participantImage: string
 }
 
 export const ParticipantListItem = ({
-  userName,
-  userEmail,
-  userImage,
+  participantId,
+  participantName,
+  participantEmail,
+  participantImage,
 }: ParticipantProps) => {
+  const { isOwner } = useSecretSantaGroup()
+  const { user } = useSession()
+
   return (
-    <div className="flex items-center gap-2">
-      <Avatar className="h-12 w-12">
-        <AvatarImage src={userImage} />
-        <AvatarFallback className="bg-navbar-muted-foreground font-bold">
-          {setAvatarFallbackString(userName)}
-        </AvatarFallback>
-      </Avatar>
-      <div className="min-w-0 flex-1">
-        <p className="truncate" title={userName}>
-          {userName}
-        </p>
-        <p className="text-muted-foreground truncate text-sm" title={userEmail}>
-          {userEmail}
-        </p>
+    <div className="group flex items-center gap-2">
+      <div className="flex w-full items-center gap-2">
+        <Avatar className="h-12 w-12">
+          <AvatarImage src={participantImage} />
+          <AvatarFallback className="bg-navbar-muted-foreground font-bold">
+            {setAvatarFallbackString(participantName)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
+          <p className="truncate" title={participantName}>
+            {participantName}
+          </p>
+          <p
+            className="text-muted-foreground truncate text-sm"
+            title={participantEmail}
+          >
+            {participantEmail}
+          </p>
+        </div>
       </div>
+      {isOwner && user.id != participantId && (
+        <ParticipantListItemRemoveButton participantId={participantId}>
+          <Button
+            variant={'secondary'}
+            size={'icon'}
+            className="md:hidden md:group-hover:flex"
+          >
+            <UserXIcon />
+          </Button>
+        </ParticipantListItemRemoveButton>
+      )}
     </div>
   )
 }

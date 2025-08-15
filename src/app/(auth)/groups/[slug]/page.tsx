@@ -47,7 +47,8 @@ export default async function Page({ params }: PageProps) {
   return (
     <SecretSantaGroupProvider
       secretSantaGroup={group}
-      participants={participants}
+      initialParticipants={participants}
+      isOwner={isOwner}
     >
       <SecretSantaGroupBackground />
       <header className="layout-container flex pt-0 pb-10 md:pt-10">

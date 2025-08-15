@@ -1,21 +1,26 @@
-// GroupProvider.tsx
 'use client'
+
 import { SecretSantaGroup, User } from '@/generated/prisma'
 import { SecretSantaGroupContext } from './context'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 
 export function SecretSantaGroupProvider({
   secretSantaGroup,
-  participants,
+  initialParticipants,
+  isOwner,
   children,
 }: {
   secretSantaGroup: SecretSantaGroup
-  participants: Partial<User>[]
+  initialParticipants: Partial<User>[]
+  isOwner: boolean
   children: ReactNode
 }) {
+  const [participants, setParticipants] =
+    useState<Partial<User>[]>(initialParticipants)
+
   return (
     <SecretSantaGroupContext.Provider
-      value={{ secretSantaGroup, participants }}
+      value={{ secretSantaGroup, participants, setParticipants, isOwner }}
     >
       {children}
     </SecretSantaGroupContext.Provider>

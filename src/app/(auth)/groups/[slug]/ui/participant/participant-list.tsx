@@ -11,9 +11,10 @@ export const ParticipantList = () => {
       {participants.map((participant) => (
         <ParticipantListItem
           key={participant.id}
-          userName={participant.name || 'Usuário sem nome'}
-          userEmail={participant.email || 'sem email'}
-          userImage={participant.image || ''}
+          participantId={participant.id || 'Usuário sem ID'}
+          participantName={participant.name || 'Usuário sem nome'}
+          participantEmail={participant.email || 'sem email'}
+          participantImage={participant.image || ''}
         />
       ))}
     </>

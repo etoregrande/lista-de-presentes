@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button/button'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import clsx from 'clsx'
 import { Copy as CopyIcon, UserPlus as UserPlusIcon } from 'lucide-react'
@@ -27,8 +27,15 @@ export const ShareSecretSantaGroupButton = ({
 }: ShareSecretSantaGroupButtonProps) => {
   const [copied, setCopied] = useState(false)
   const { secretSantaGroup } = useSecretSantaGroup()
+  const [origin, setOrigin] = useState('')
 
-  const sharedUrl = `${window.location.origin}/groups/${secretSantaGroup.slug}/join`
+  useEffect(() => {
+    setOrigin(window.location.origin)
+  }, [])
+
+  const sharedUrl = origin
+    ? `${origin}/groups/${secretSantaGroup.slug}/join`
+    : ''
 
   const handleCopySecretSantaGroupJoinUrl = async () => {
     navigator.clipboard.writeText(sharedUrl)
