@@ -13,18 +13,18 @@ import {
   CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
-import { Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { leaveSecretSantaGroupAction } from '../actions'
 import { useSecretSantaGroup } from '../context/context'
 import { useSession } from '@/lib/context/session/context'
+import { ReactNode } from 'react'
 
 interface GroupLeaveButtonProps {
-  className?: string
+  children: ReactNode
 }
 
-export const GroupLeaveButton = ({ className }: GroupLeaveButtonProps) => {
+export const GroupLeaveButton = ({ children }: GroupLeaveButtonProps) => {
   const { setGroups } = useSecretSantaGroups()
   const { secretSantaGroup } = useSecretSantaGroup()
   const { user } = useSession()
@@ -49,12 +49,7 @@ export const GroupLeaveButton = ({ className }: GroupLeaveButtonProps) => {
 
   return (
     <Credenza>
-      <CredenzaTrigger asChild>
-        <Button variant={'destructive'} className={className}>
-          <Trash />
-          Abandonar grupo
-        </Button>
-      </CredenzaTrigger>
+      <CredenzaTrigger asChild>{children}</CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
           <CredenzaTitle>Sair do grupo</CredenzaTitle>

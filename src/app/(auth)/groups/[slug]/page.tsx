@@ -12,10 +12,11 @@ import { GroupLeaveButton } from './ui/group-leave-button'
 import { DrawResult } from './ui/draw-result'
 import { getSecretSantaReceiver } from '@/server/secretSantaDraw'
 import { Button } from '@/components/ui/button/button'
-import { Settings } from 'lucide-react'
+import { Settings, Trash } from 'lucide-react'
 import { GroupEditSheet } from './ui/group-edit-sheet'
 import { SecretSantaGroupProvider } from './context/provider'
 import { ParticipantList } from './ui/participant/participant-list'
+import { SecretSantaGroupBackground } from './ui/secret-santa-group-background'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -47,7 +48,8 @@ export default async function Page({ params }: PageProps) {
       secretSantaGroup={group}
       participants={participants}
     >
-      <header className="layout-container flex py-10">
+      <SecretSantaGroupBackground />
+      <header className="layout-container flex pt-0 pb-10 md:pt-10">
         <div className="grid w-full grid-cols-[auto_1fr] gap-4">
           <div className="aspect-square w-full rounded-md bg-amber-300"></div>
           <h1 className="truncate text-2xl font-bold">
@@ -65,7 +67,14 @@ export default async function Page({ params }: PageProps) {
             </Button>
           </GroupEditSheet>
         )}
-        {!isOwner && <GroupLeaveButton />}
+        {!isOwner && (
+          <GroupLeaveButton>
+            <Button variant={'destructive'} size={'icontext'}>
+              <Trash />
+              <span className="hidden md:inline">Abandonar grupo</span>
+            </Button>
+          </GroupLeaveButton>
+        )}
       </header>
 
       <main className="layout-container flex flex-col gap-10 md:flex-row">
