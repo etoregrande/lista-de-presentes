@@ -82,7 +82,7 @@ export default async function Page({ params }: PageProps) {
         )}
       </header>
 
-      <main className="layout-container flex flex-col gap-10 md:flex-row">
+      <main className="layout-container flex flex-col gap-10 pb-[60dvh] md:flex-row md:pb-0">
         <section className="flex w-full flex-col gap-10 md:w-2/3">
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Quem eu tirei</h2>
