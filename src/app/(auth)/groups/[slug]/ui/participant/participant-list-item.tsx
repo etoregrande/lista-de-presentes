@@ -19,8 +19,11 @@ export const ParticipantListItem = ({
   participantEmail,
   participantImage,
 }: ParticipantProps) => {
-  const { isOwner } = useSecretSantaGroup()
+  const { isOwner, secretSantaGroup } = useSecretSantaGroup()
   const { user } = useSession()
+
+  const allowRemoveParticipant =
+    isOwner && user.id != participantId && !secretSantaGroup.isDrawn
 
   return (
     <div className="group flex items-center gap-2">
@@ -43,7 +46,7 @@ export const ParticipantListItem = ({
           </p>
         </div>
       </div>
-      {isOwner && user.id != participantId && (
+      {allowRemoveParticipant && (
         <ParticipantListItemRemoveButton participantId={participantId}>
           <Button
             variant={'secondary'}
