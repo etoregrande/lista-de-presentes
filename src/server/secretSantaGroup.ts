@@ -291,11 +291,17 @@ export const createSecretSantaGroupDraw = async (groupId: string) => {
       }
     })
 
-    const createDraw = await prisma.secretSantaDraw.createMany({
-      data: [...draw],
-    })
+    const [createDraw, updateGroup] = await prisma.$transaction([
+      prisma.secretSantaDraw.createMany({
+        data: [...draw],
+      }),
+      prisma.secretSantaGroup.update({
+        where: { id: groupId },
+        data: { drawDate: new Date() },
+      }),
+    ])
 
-    return { success: true, draw: createDraw }
+    return { success: true, draw: createDraw, group: updateGroup }
   } catch (error) {
     console.error('Error holding secret santa draw:', error)
     return { success: false, error: 'Failed to hold secret santa draw' }
