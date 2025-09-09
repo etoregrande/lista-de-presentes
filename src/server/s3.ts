@@ -1,13 +1,21 @@
 import { s3 } from '@/lib/s3'
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 
-export const uploadWishlistImageToS3 = async (
+export const uploadImageToS3 = async (
   file: File,
-  userId: string
+  type: 'wishlist image' | 'user avatar' | 'group avatar',
+  ownerId: string
 ): Promise<string> => {
   const imageBuffer = Buffer.from(await file.arrayBuffer())
 
-  const key = `wishlist-images/${userId}/${Date.now()}`
+  const s3KeyTemplates = {
+    'wishlist image': (ownerId: string) =>
+      `wishlist-images/${ownerId}/${Date.now()}`,
+    'user avatar': (ownerId: string) => `user-avatars/${ownerId}/avatar.jpg`,
+    'group avatar': (ownerId: string) => `group-avatars/${ownerId}/avatar.jpg`,
+  } as const
+
+  const key = s3KeyTemplates[type](ownerId)
 
   const command = new PutObjectCommand({
     Bucket: process.env.BUCKET_NAME,

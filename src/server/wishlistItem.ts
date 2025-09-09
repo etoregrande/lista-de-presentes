@@ -7,7 +7,7 @@ import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { s3 } from '@/lib/s3'
 import { prisma } from '@/lib/prisma'
 import { sanitizeLinkUrl } from '@/lib/utils'
-import { deleteImageFromS3, uploadWishlistImageToS3 } from './s3'
+import { deleteImageFromS3, uploadImageToS3 } from './s3'
 import { Priority, WishlistItem } from '@/generated/prisma'
 
 export const createWishlistItem = async (
@@ -20,7 +20,7 @@ export const createWishlistItem = async (
 
   if (image) {
     try {
-      imageUrl = await uploadWishlistImageToS3(image, userId)
+      imageUrl = await uploadImageToS3(image, 'wishlist image', userId)
     } catch (error) {
       console.error('Error uploading image to S3 =>', error)
       throw new Error('Error handling image on S3')
@@ -64,7 +64,7 @@ export const updateWishlistItem = async (
 
   if (image) {
     try {
-      imageUrl = await uploadWishlistImageToS3(image, userId)
+      imageUrl = await uploadImageToS3(image, 'wishlist image', userId)
 
       const existingItem = await prisma.wishlistItem.findUnique({
         select: { image: true },
