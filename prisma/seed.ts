@@ -3,6 +3,13 @@ import { prisma } from '../src/lib/prisma'
 console.log('🚀 Seed iniciado')
 
 async function main() {
+  const env = process.env.NODE_ENV
+
+  if (env !== 'development' && env !== 'test') {
+    console.log(`⏭️ Seed ignorado no ambiente ${env}`)
+    return
+  }
+
   // Erase previous data (dev only)
   await prisma.account.deleteMany()
   await prisma.user.deleteMany()
