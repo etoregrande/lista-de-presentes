@@ -52,7 +52,7 @@ export default async function Page({ params }: PageProps) {
       isOwner={isOwner}
     >
       <SecretSantaGroupBackground />
-      <header className="layout-container flex w-full items-center gap-4 pt-0 pb-10 md:pt-10">
+      <header className="layout-container flex w-full items-center gap-8 pt-0 pb-10 md:pt-10">
         <div className="min-w-0 flex-1">
           <SecretSantaGroupName truncate={true} />
         </div>
