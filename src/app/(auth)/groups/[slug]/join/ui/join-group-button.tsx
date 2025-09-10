@@ -38,7 +38,9 @@ export const JoinGroupButton = ({
 
   return (
     <>
-      <Button onClick={onClick}>{children}</Button>
+      <Button onClick={onClick} size={'lg'}>
+        {children}
+      </Button>
     </>
   )
 }

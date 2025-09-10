@@ -6,6 +6,9 @@ import {
 import { getSessionOnServer } from '@/server/session'
 import { redirect } from 'next/navigation'
 import { JoinGroupButton } from './ui/join-group-button'
+import Image from 'next/image'
+import { SecretSantaGroupName } from '../ui/secret-santa-group-name'
+import { SecretSantaGroupProvider } from '../context/provider'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -33,23 +36,38 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <>
-      <main className="layout-container flex flex-col gap-10 md:flex-row">
-        <section className="flex w-full flex-col gap-10 md:w-2/3">
-          <article className="grid w-full gap-2">
-            <h2 className="text-lg font-bold">{slug}</h2>
-            {!group.isDrawn ? (
-              <JoinGroupButton handleJoinGroup={handleJoinGroup}>
-                Entrar no grupo
-              </JoinGroupButton>
-            ) : (
-              <p>
-                Você não pode entrar num grupo que o sorteio já foi realizado!
-              </p>
-            )}
-          </article>
-        </section>
+    <SecretSantaGroupProvider
+      secretSantaGroup={group}
+      isOwner={false}
+      initialParticipants={[]}
+    >
+      <main className="layout-container min-h-[calc(100vh-200px)]">
+        {!group.isDrawn ? (
+          <>
+            <section className="h-full w-full">
+              <div className="relative flex h-full flex-col items-center justify-center md:flex-row md:gap-10">
+                <div className="relative aspect-square w-full md:aspect-auto md:h-full md:flex-1">
+                  <Image
+                    src="/assets/secretSanta/joinSecretSanta.svg"
+                    alt=""
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+                <div className="flex w-full min-w-0 flex-col gap-4 md:flex-1">
+                  <SecretSantaGroupName />
+                  <JoinGroupButton handleJoinGroup={handleJoinGroup}>
+                    Entrar no grupo
+                  </JoinGroupButton>
+                </div>
+              </div>
+            </section>
+          </>
+        ) : (
+          <p>Você não pode entrar num grupo que o sorteio já foi realizado!</p>
+        )}
       </main>
-    </>
+    </SecretSantaGroupProvider>
   )
 }
