@@ -22,12 +22,10 @@ export const AppSidebarSecretSantaGroups = () => {
               <Link
                 href={href}
                 className={clsx(
-                  'hover:bg-primary-foreground hover:text-primary',
-                  isActive &&
-                    'bg-primary-foreground text-primary pointer-events-none'
+                  isActive && 'bg-sidebar-accent pointer-events-none'
                 )}
               >
-                {group.name}
+                <span className="truncate">{group.name}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

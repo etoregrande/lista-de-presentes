@@ -30,21 +30,25 @@ export const AppSidebarAvatar = () => {
             setIsOpen={setIsChangingAvatar}
           />
           <DropdownMenu>
-            <DropdownMenuTrigger className="group cursor-pointer focus:outline-1">
-              <div className="flex items-center gap-2">
+            <DropdownMenuTrigger asChild>
+              <div
+                tabIndex={0}
+                className="hover:bg-sidebar-accent focus:bg-sidebar-ring flex min-w-0 cursor-pointer items-center gap-3 py-4 pr-2 pl-3 focus:outline-none"
+              >
                 {user && (
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="border-primary outline-primary size-10 outline-2 outline-offset-2">
                     <AvatarImage src={avatarImage} />
                     <AvatarFallback className="bg-navbar-muted-foreground font-bold">
                       {setAvatarFallbackString(user.name)}
                     </AvatarFallback>
                   </Avatar>
                 )}
-                <p className="text-navbar-foreground truncate rounded-4xl text-sm group-hover:underline">
+                <p className="text-navbar-foreground flex-1 truncate rounded-4xl text-base font-bold">
                   {getDisplayName(user.name)}
                 </p>
               </div>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => setIsChangingAvatar(true)}>
                 Mudar foto

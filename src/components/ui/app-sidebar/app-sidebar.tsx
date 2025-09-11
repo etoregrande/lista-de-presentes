@@ -5,7 +5,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
@@ -13,7 +12,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
-import { Plus, ScrollText } from 'lucide-react'
+import { Gift as GiftIcon, Users as UsersIcon } from 'lucide-react'
 import { Suspense, useState } from 'react'
 import { NavbarNewSecretSantaGroupModal } from './app-sidebar-new-secret-santa-group-modal'
 import { AppSidebarSecretSantaGroups } from './app-sidebar-secret-santa-groups'
@@ -35,39 +34,40 @@ export const AppSidebar = () => {
       />
 
       <Sidebar>
-        <SidebarHeader>
+        <SidebarHeader className="gap-0 p-0">
           <AppSidebarAvatar />
         </SidebarHeader>
         <SidebarContent>
+          <hr className="border-sidebar-border" />
           <SidebarGroup>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild size="lg">
                   <Link
                     href={href}
                     className={clsx(
-                      'hover:bg-primary-foreground hover:text-primary',
-                      isOnWishlist &&
-                        'bg-primary-foreground text-primary pointer-events-none'
+                      isOnWishlist && 'bg-sidebar-accent pointer-events-none'
                     )}
                   >
-                    <ScrollText />
+                    <GiftIcon />
                     <span>Lista de Desejos</span>
                   </Link>
+                </SidebarMenuButton>
+                <SidebarMenuButton asChild size="lg">
+                  <button
+                    className={'cursor-pointer'}
+                    onClick={() => setIsCreatingNewGroup(true)}
+                  >
+                    <UsersIcon />
+                    <span>Novo amigo secreto</span>
+                  </button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
+          <hr className="border-sidebar-border" />
           <SidebarGroup>
-            <SidebarGroupLabel>Amigo secreto</SidebarGroupLabel>
-            <SidebarGroupAction
-              title="Novo amigo secreto"
-              onClick={() => {
-                setIsCreatingNewGroup(true)
-              }}
-            >
-              <Plus /> <span className="sr-only">Novo amigo secreto</span>
-            </SidebarGroupAction>
+            <SidebarGroupLabel>Amigos secretos</SidebarGroupLabel>
             <SidebarMenu>
               <Suspense fallback={<div>Carregando grupos...</div>}>
                 <AppSidebarSecretSantaGroups />
