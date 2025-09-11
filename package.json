@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "prisma generate && next dev",
     "resetdev": "npx prisma migrate reset && npx prisma generate && next dev",
-    "build": "npm ci && npx prisma generate && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint && tsc --noEmit",
     "migrate": "prisma migrate deploy"
@@ -71,6 +71,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
     "kysely-codegen": "^0.18.3",
+    "kysely-ctl": "^0.12.1",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.11.0",
