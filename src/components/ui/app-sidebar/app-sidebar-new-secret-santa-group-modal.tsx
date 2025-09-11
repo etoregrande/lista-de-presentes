@@ -1,3 +1,5 @@
+'use client'
+
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import {
   Credenza,
@@ -20,6 +22,7 @@ import { toast } from 'sonner'
 import { LoaderCircle } from 'lucide-react'
 import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
 import { useSession } from '@/lib/context/session/context'
+import { useSidebar } from '../sidebar'
 
 interface NavbarNewGroupModalProps {
   isOpen: boolean
@@ -30,6 +33,7 @@ export const NavbarNewSecretSantaGroupModal = ({
   isOpen,
   setIsOpen,
 }: NavbarNewGroupModalProps) => {
+  const { isMobile, setOpenMobile } = useSidebar()
   const { setGroups } = useSecretSantaGroups()
   const { user } = useSession()
   const form = useForm<secretSantaGroupFormData>({
@@ -53,11 +57,14 @@ export const NavbarNewSecretSantaGroupModal = ({
 
     if (result.group) {
       setGroups((prev) => [...prev, result.group])
+      if (isMobile) setOpenMobile(false)
       setIsOpen(false)
       reset()
 
       toast.success('Grupo criado com sucesso!')
-      router.push(`/groups/${result.group.slug}`)
+      setTimeout(() => {
+        router.push(`/groups/${result.group.slug}`)
+      }, 100)
       return
     }
   }

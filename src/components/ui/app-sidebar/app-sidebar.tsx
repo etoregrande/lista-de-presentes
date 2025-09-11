@@ -10,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
 import { Gift as GiftIcon, Users as UsersIcon } from 'lucide-react'
@@ -25,6 +26,7 @@ export const AppSidebar = () => {
   const pathname = usePathname()
   const href = '/wishlist'
   const isOnWishlist = pathname.startsWith(href)
+  const { isMobile, setOpenMobile } = useSidebar()
 
   return (
     <>
@@ -48,6 +50,9 @@ export const AppSidebar = () => {
                     className={clsx(
                       isOnWishlist && 'bg-sidebar-accent pointer-events-none'
                     )}
+                    onClick={() => {
+                      if (isMobile) setOpenMobile(false)
+                    }}
                   >
                     <GiftIcon />
                     <span>Lista de Desejos</span>
@@ -56,7 +61,9 @@ export const AppSidebar = () => {
                 <SidebarMenuButton asChild size="lg">
                   <button
                     className={'cursor-pointer'}
-                    onClick={() => setIsCreatingNewGroup(true)}
+                    onClick={() => {
+                      setIsCreatingNewGroup(true)
+                    }}
                   >
                     <UsersIcon />
                     <span>Novo amigo secreto</span>
