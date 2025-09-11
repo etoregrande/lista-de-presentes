@@ -96,7 +96,8 @@ export const AppSidebarAvatarEditModal = ({
               >
                 {selectedImage || userImage ? (
                   <Image
-                    src={selectedImage || userImage!}
+                    key={selectedImage || userImage}
+                    src={selectedImage || `${userImage}?t=${Date.now()}`}
                     alt="Imagem do produto"
                     fill
                     sizes="(max-width: 768px) 100vw, 350px"
