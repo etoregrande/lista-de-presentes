@@ -8,16 +8,15 @@ import {
   SheetTrigger,
   SheetFooter,
 } from '@/components/ui/sheet'
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { LoaderCircle } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import { createWishlistItem } from '@/server/wishlistItem'
-import { redirect } from 'next/navigation'
-import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { WishlistNewItemSheetForm } from './Wishlist-new-item-sheet-form'
+import { useSession } from '@/lib/context/session/context'
 
 interface WishlistNewItemSheetProps {
   children: ReactNode
@@ -32,8 +31,9 @@ export const WishlistNewItemSheet = ({
     handleSubmit,
     reset,
     formState: { isSubmitting },
-  } = useFormContext<WishlistItemFormDataType>()
+  } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const { user } = useSession()
 
   useEffect(() => {
     if (isSheetOpen) {
@@ -41,13 +41,10 @@ export const WishlistNewItemSheet = ({
     }
   }, [isSheetOpen, reset])
 
-  const onSubmit = async (formData: WishlistItemFormDataType) => {
-    const { data: session } = await authClient.getSession()
-    if (!session) redirect('/login')
-
+  const onSubmit = async (formData: WishlistItemFormData) => {
     const newItem: Partial<WishlistItem> | null = await createWishlistItem(
       formData,
-      session.user.id
+      user.id
     )
     if (!newItem) {
       return toast.error('Erro ao criar novo item')

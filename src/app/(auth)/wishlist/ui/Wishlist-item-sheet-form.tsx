@@ -1,4 +1,4 @@
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button/button'
 import { Label } from '@/components/ui/label'
@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { NumericFormat } from 'react-number-format'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 import { FormError } from '@/components/ui/form/form-error'
 import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
@@ -36,7 +36,7 @@ export const WishlistItemSheetForm = ({
     reset,
     control,
     formState: { errors },
-  } = useFormContext<WishlistItemFormDataType>()
+  } = useFormContext<WishlistItemFormData>()
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const image = watch('image')
@@ -73,7 +73,7 @@ export const WishlistItemSheetForm = ({
         link: wishlistItem.link ?? '',
         image: null,
         priority: wishlistItem.priority ?? 'normal',
-        isActive: wishlistItem.is_active ?? true,
+        isActive: wishlistItem.isActive ?? true,
       })
     }
   }, [wishlistItem, reset])

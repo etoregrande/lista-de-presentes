@@ -1,65 +1,45 @@
 'use server'
 
-import 'dotenv/config'
-import { type WishlistItemFormDataType } from '@/types/wishlistItem'
-import { db } from '@/lib/database/db'
+import { type WishlistItemFormData } from '@/types/wishlistItem'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { s3 } from '@/lib/database/s3'
-import { sql } from 'kysely'
+import { s3 } from '@/lib/s3'
+import { prisma } from '@/lib/prisma'
 import { sanitizeLinkUrl } from '@/lib/utils'
 import { deleteImageFromS3, uploadImageToS3 } from './s3'
-import { NewWishlistItem, UpdateWishlistItem, WishlistItem } from '@/types/db'
+import { Priority, WishlistItem } from '@/generated/prisma'
 
 export const createWishlistItem = async (
-  formData: WishlistItemFormDataType,
+  formData: WishlistItemFormData,
   userId: string
-): Promise<Partial<WishlistItem> | null> => {
+) => {
   const { name, isActive, link, priority, description, image, price } = formData
   const sanitizedLink = sanitizeLinkUrl(link)
   let imageUrl: string | null = null
 
   if (image) {
     try {
-      imageUrl = await uploadImageToS3(image, userId)
+      imageUrl = await uploadImageToS3(image, 'wishlist image', userId)
     } catch (error) {
       console.error('Error uploading image to S3 =>', error)
       throw new Error('Error handling image on S3')
     }
   }
 
-  const newWishlistItemData: NewWishlistItem = {
-    name,
-    price: price ?? null,
-    description: description ?? undefined,
-    link: sanitizedLink ?? undefined,
-    priority,
-    is_active: isActive,
-    image: imageUrl ?? null,
-    user_id: userId,
-  }
-
-  if (imageUrl) {
-    newWishlistItemData.image = imageUrl
-  }
-
   try {
-    const newWishlistItem: Partial<WishlistItem> | undefined = await db
-      .insertInto('wishlist_item')
-      .values(newWishlistItemData)
-      .returning([
-        'id',
-        'name',
-        'description',
-        'price',
-        'link',
-        'image',
-        'priority',
-        'user_id',
-        'is_active',
-      ])
-      .executeTakeFirst()
+    const newWishlistItem = await prisma.wishlistItem.create({
+      data: {
+        name,
+        price: price ?? null,
+        description: description ?? undefined,
+        link: sanitizedLink ?? undefined,
+        priority: (priority as Priority) ?? 'normal',
+        isActive: isActive,
+        image: imageUrl ?? null,
+        userId: userId,
+      },
+    })
 
     if (!newWishlistItem) {
       console.error('Error creating wishlist item')
@@ -73,8 +53,8 @@ export const createWishlistItem = async (
   }
 }
 
-export const editWishlistItem = async (
-  formData: WishlistItemFormDataType,
+export const updateWishlistItem = async (
+  formData: WishlistItemFormData,
   wishlistItemId: string,
   userId: string
 ) => {
@@ -84,14 +64,12 @@ export const editWishlistItem = async (
 
   if (image) {
     try {
-      imageUrl = await uploadImageToS3(image, userId)
+      imageUrl = await uploadImageToS3(image, 'wishlist image', userId)
 
-      const existingItem = await db
-        .selectFrom('wishlist_item')
-        .select(['image'])
-        .where('id', '=', wishlistItemId)
-        .where('user_id', '=', userId)
-        .executeTakeFirst()
+      const existingItem = await prisma.wishlistItem.findUnique({
+        select: { image: true },
+        where: { id: wishlistItemId, userId },
+      })
 
       if (existingItem?.image) {
         await deleteImageFromS3(existingItem.image)
@@ -102,36 +80,19 @@ export const editWishlistItem = async (
     }
   }
 
-  const editedWishlistItemData: UpdateWishlistItem = {
-    name,
-    price: price ?? null,
-    description: description ?? null,
-    link: sanitizedLink ?? null,
-    priority,
-    is_active: isActive,
-  }
-
-  if (imageUrl) {
-    editedWishlistItemData.image = imageUrl
-  }
-
   try {
-    const editedWishlistItem = await db
-      .updateTable('wishlist_item')
-      .set(editedWishlistItemData)
-      .where('id', '=', wishlistItemId)
-      .returning([
-        'id',
-        'name',
-        'description',
-        'price',
-        'link',
-        'image',
-        'priority',
-        'user_id',
-        'is_active',
-      ])
-      .executeTakeFirst()
+    const editedWishlistItem = await prisma.wishlistItem.update({
+      where: { id: wishlistItemId, userId },
+      data: {
+        name,
+        price: price ?? null,
+        description: description ?? null,
+        link: sanitizedLink ?? null,
+        priority: (priority as Priority) ?? 'normal',
+        isActive: isActive,
+        image: imageUrl ?? null,
+      },
+    })
 
     if (!editedWishlistItem) {
       throw new Error('Error editing wishlist item')
@@ -146,11 +107,10 @@ export const editWishlistItem = async (
 
 export const deleteWishlistItem = async (wishlistItemId: string) => {
   try {
-    const deletedWishlistItem = await db
-      .deleteFrom('wishlist_item')
-      .where('id', '=', wishlistItemId)
-      .returning(['image'])
-      .executeTakeFirst()
+    const deletedWishlistItem = await prisma.wishlistItem.delete({
+      where: { id: wishlistItemId },
+      select: { image: true },
+    })
 
     if (!deletedWishlistItem) {
       throw new Error('Error deleting wishlist item')
@@ -170,12 +130,10 @@ export const deleteWishlistItem = async (wishlistItemId: string) => {
   }
 }
 
-export const listWishlistItems = async (
-  user_id?: string
-): Promise<WishlistItem[]> => {
+export const listWishlistItems = async (SessionUserId?: string) => {
   let userId
 
-  if (!user_id) {
+  if (!SessionUserId) {
     const session = await auth.api.getSession({
       headers: await headers(),
     })
@@ -186,26 +144,13 @@ export const listWishlistItems = async (
 
     userId = session.user.id
   } else {
-    userId = user_id
+    userId = SessionUserId
   }
 
   try {
-    const wishlistItems = await db
-      .selectFrom('wishlist_item')
-      .selectAll()
-      .where('user_id', '=', userId)
-      .orderBy('is_active', 'asc')
-      .orderBy(
-        sql`
-                CASE 
-                WHEN priority = 'alta' THEN 1
-                WHEN priority = 'normal' THEN 2
-                WHEN priority = 'baixa' THEN 3
-                END
-                `,
-        'desc'
-      )
-      .execute()
+    const wishlistItems = await prisma.wishlistItem.findMany({
+      where: { userId },
+    })
 
     return wishlistItems
   } catch (error) {
@@ -215,36 +160,22 @@ export const listWishlistItems = async (
 }
 
 export const purchaseWishlistItem = async (
-  wishlistItem: Partial<WishlistItem>,
-  isPurchased: boolean
+  wishlistItem: Partial<WishlistItem>
 ) => {
-  if (!wishlistItem.id) throw new Error('Wishlist item ID is required')
+  const { id, isPurchased } = wishlistItem
 
-  const purchasedAt = wishlistItem.purchased_at
-    ? new Date(wishlistItem.purchased_at)
-    : null
+  if (!id || isPurchased === undefined) {
+    throw new Error('Wishlist item ID and isPurchased status are required')
+  }
 
   try {
-    let query = db
-      .updateTable('wishlist_item')
-      .set({
-        is_purchased: isPurchased,
-        purchased_at: isPurchased ? new Date() : null,
-      })
-      .where('id', '=', wishlistItem.id)
-
-    if (purchasedAt === null) {
-      query = query.where('purchased_at', 'is', null)
-    } else {
-      query = query.where('purchased_at', '=', purchasedAt)
-    }
-
-    const updatedWishlistItem = await query.returningAll().executeTakeFirst()
-
-    if (!updatedWishlistItem)
-      throw new Error(
-        'Error updating wishlist item: possible conflict or item not found.'
-      )
+    const updatedWishlistItem = await prisma.wishlistItem.update({
+      where: { id },
+      data: {
+        isPurchased: !isPurchased,
+        purchasedAt: !isPurchased ? new Date() : null,
+      },
+    })
 
     return updatedWishlistItem
   } catch (error) {

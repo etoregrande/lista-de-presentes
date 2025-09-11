@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import clsx from 'clsx'
 import { getDisplayPrice } from '@/lib/utils'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { motion } from 'framer-motion'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 
@@ -17,7 +17,7 @@ export const WishlistSharedItemSheetTrigger = ({
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{
-        opacity: wishlistItem.is_purchased ? 0.4 : 1,
+        opacity: wishlistItem.isPurchased ? 0.4 : 1,
         scale: 1,
       }}
       exit={{ opacity: 0, scale: 0.95 }}
@@ -27,7 +27,7 @@ export const WishlistSharedItemSheetTrigger = ({
       }}
       className={clsx(
         'group hover:bg-primary-foreground flex flex-row gap-4 rounded-xl bg-white outline-6 outline-white transition-[padding] duration-200 ease-in-out hover:outline-[var(--primary-foreground)] md:flex-col md:gap-0',
-        wishlistItem.is_purchased && 'cursor-pointer opacity-50'
+        wishlistItem.isPurchased && 'cursor-pointer opacity-50'
       )}
     >
       <div className="bg-secondary-foreground group-hover:bg-primary-foreground relative aspect-square h-full min-h-20 min-w-20 overflow-hidden rounded-lg">

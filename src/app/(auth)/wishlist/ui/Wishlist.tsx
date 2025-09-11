@@ -1,6 +1,6 @@
 'use client'
 
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { wishlistItemFormSchema } from '@/schemas/wishlistItem'
@@ -8,13 +8,14 @@ import { EmptyWishlist } from './Wishlist-empty'
 import { useState } from 'react'
 import { Session } from '@/lib/auth'
 import { WishlistShareButton } from './Wishlist-share-button'
-import { WishlistItem } from '@/types/db'
 import { Button } from '@/components/ui/button/button'
 import { WishlistNewItemSheet } from './Wishlist-new-item-sheet'
 import { Plus } from 'lucide-react'
 import { WishlistItemSheet } from './Wishlist-item-sheet'
 import { AnimatePresence } from 'framer-motion'
 import { WishlistItemSheetTrigger } from './Wishlist-item-sheet-trigger'
+import type { WishlistItem } from '@/generated/prisma'
+import { SessionProvider } from '@/lib/context/session/provider'
 
 interface WishlistProps {
   userId?: string
@@ -23,10 +24,9 @@ interface WishlistProps {
 }
 
 export function Wishlist({ initialWishlist, session }: WishlistProps) {
-  const [wishlist, setWishlist] =
-    useState<Partial<WishlistItem>[]>(initialWishlist)
+  const [wishlist, setWishlist] = useState(initialWishlist)
   const isEmpty = wishlist.length === 0
-  const formMethods = useForm<WishlistItemFormDataType>({
+  const formMethods = useForm<WishlistItemFormData>({
     resolver: zodResolver(wishlistItemFormSchema),
     defaultValues: {
       isActive: true,
@@ -35,7 +35,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
   })
 
   return (
-    <>
+    <SessionProvider session={session}>
       <div className="flex justify-between gap-4 pb-4">
         <h2 className="block truncate font-bold md:pt-0">
           Sua lista de desejos
@@ -44,7 +44,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
           </span>
         </h2>
         <div className="flex items-start justify-end gap-2">
-          <WishlistShareButton className="" userId={session.user.id} />
+          <WishlistShareButton />
           <FormProvider {...formMethods}>
             <WishlistNewItemSheet setWishlist={setWishlist}>
               <Button
@@ -79,6 +79,6 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
           </AnimatePresence>
         </FormProvider>
       </div>
-    </>
+    </SessionProvider>
   )
 }

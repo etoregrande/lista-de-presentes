@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import psl from 'psl'
+import { nanoid } from 'nanoid'
+import slugify from 'slugify'
+import { SecretSantaDraw, User } from '@/generated/prisma'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -108,4 +111,47 @@ export const isSafeUrl = (url: string): boolean => {
   } catch {
     return false
   }
+}
+
+export function generateSecretSantaGroupSlug(name: string) {
+  const baseSlug = slugify(name, { lower: true, strict: true })
+  const randomCode = nanoid(6)
+  return `${baseSlug}-${randomCode}`
+}
+
+export const shuffleArray = <T>(array: T[]): T[] => {
+  const arrayCopy = [...array]
+
+  for (let i = array.length - 1; i > 0; i--) {
+    const random = Math.floor(Math.random() * (i + 1))
+
+    ;[arrayCopy[i], arrayCopy[random]] = [arrayCopy[random], arrayCopy[i]]
+  }
+
+  return arrayCopy
+}
+
+export const drawSecretSanta = (participants: Partial<User>[]) => {
+  if (participants.length < 4) {
+    return null
+  }
+
+  const shuffledParticipants = shuffleArray([...participants])
+
+  const SecretSantaDrawResult: Partial<SecretSantaDraw>[] =
+    shuffledParticipants.map((participant, i) => {
+      const receiver =
+        shuffledParticipants[(i + 1) % shuffledParticipants.length]
+
+      if (!participant.id || !receiver.id) {
+        throw new Error('All participants must have a userId')
+      }
+
+      return {
+        giverId: participant.id,
+        receiverId: receiver.id,
+      }
+    })
+
+  return SecretSantaDrawResult
 }

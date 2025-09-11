@@ -1,6 +1,6 @@
-import 'dotenv/config'
 import { betterAuth } from 'better-auth'
-import { dialect } from '@/lib/database/db'
+import { prismaAdapter } from 'better-auth/adapters/prisma'
+import { prisma } from '@/lib/prisma'
 import { nextCookies } from 'better-auth/next-js'
 import { sendEmail } from './email'
 import {
@@ -12,10 +12,9 @@ const isPasswordRecoveryEnabled =
   process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true' ? true : false
 
 export const auth = betterAuth({
-  database: {
-    dialect: dialect,
-    type: 'postgres',
-  },
+  database: prismaAdapter(prisma, {
+    provider: 'postgresql',
+  }),
   plugins: [nextCookies()],
   session: {
     cookieCache: {
@@ -30,7 +29,6 @@ export const auth = betterAuth({
     },
   },
   emailVerification: {
-    sendOnSingUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       await sendEmail({

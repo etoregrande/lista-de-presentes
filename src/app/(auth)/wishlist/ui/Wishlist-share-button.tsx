@@ -16,25 +16,25 @@ import {
   CredenzaTitle,
   CredenzaTrigger,
 } from '@/components/ui/credenza'
+import { useSession } from '@/lib/context/session/context'
 
 interface WishlistShareButtonProps {
   className?: string
-  userId: string
 }
 
 export const WishlistShareButton = ({
   className,
-  userId,
 }: WishlistShareButtonProps) => {
   const [copied, setCopied] = useState(false)
   const [sharedUrl, setSharedUrl] = useState('')
+  const { user } = useSession()
 
   useEffect(() => {
-    setSharedUrl(`${window.location.origin}/wishlist/shared/${userId}`)
-  }, [userId])
+    setSharedUrl(`${window.location.origin}/wishlist/shared/${user.id}`)
+  }, [user.id])
 
   const handleCopyWishlist = async () => {
-    const sharedUrl = `${window.location.origin}/wishlist/shared/${userId}`
+    const sharedUrl = `${window.location.origin}/wishlist/shared/${user.id}`
     navigator.clipboard.writeText(sharedUrl)
 
     setCopied(true)

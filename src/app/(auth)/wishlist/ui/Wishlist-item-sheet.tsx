@@ -8,17 +8,16 @@ import {
   SheetTrigger,
   SheetFooter,
 } from '@/components/ui/sheet'
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { useFormContext } from 'react-hook-form'
-import { editWishlistItem } from '@/server/wishlistItem'
-import { authClient } from '@/lib/auth-client'
+import { updateWishlistItem } from '@/server/wishlistItem'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
-import { redirect } from 'next/navigation'
 import { toast } from 'sonner'
 import { getDisplayPrice } from '@/lib/utils'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { WishlistItemSheetForm } from './Wishlist-item-sheet-form'
+import { useSession } from '@/lib/context/session/context'
 
 interface WishlistItemSheetProps {
   children: ReactNode
@@ -34,18 +33,17 @@ export const WishlistItemSheet = ({
   const {
     handleSubmit,
     formState: { isSubmitting },
-  } = useFormContext<WishlistItemFormDataType>()
+  } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
+  const { user } = useSession()
 
-  const onSubmit = async (formData: WishlistItemFormDataType) => {
-    const { data: session } = await authClient.getSession()
-    if (!session) redirect('/login')
+  const onSubmit = async (formData: WishlistItemFormData) => {
     if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
 
-    const updatedItem = await editWishlistItem(
+    const updatedItem = await updateWishlistItem(
       formData,
       wishlistItem.id,
-      session.user.id
+      user.id
     )
 
     setWishlist((prev) =>
@@ -63,41 +61,39 @@ export const WishlistItemSheet = ({
   }
 
   return (
-    <>
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetTrigger>{children}</SheetTrigger>
-        <SheetContent side="right" className="p-0">
-          <SheetHeader className="border-border flex-none border-b p-6 text-left">
-            <SheetTitle>{wishlistItem.name}</SheetTitle>
-            <SheetDescription>
-              <span className="text-sm break-words text-[var(--muted-foreground)]">
-                {wishlistItem.price && wishlistItem.price > 0
-                  ? getDisplayPrice(wishlistItem.price)
-                  : 'Produto sem preço'}
-              </span>
-            </SheetDescription>
-          </SheetHeader>
-          <WishlistItemSheetForm
-            wishlistItem={wishlistItem}
-            setWishlist={setWishlist}
-            setIsSheetOpen={setIsSheetOpen}
-          />
-          <SheetFooter className="flex-none border-t p-6">
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              className="flex-1"
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <LoaderCircle className="animate-spin" />
-              ) : (
-                'Salvar'
-              )}
-            </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-    </>
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+      <SheetTrigger>{children}</SheetTrigger>
+      <SheetContent side="right" className="p-0">
+        <SheetHeader className="border-border flex-none border-b p-6 text-left">
+          <SheetTitle>{wishlistItem.name}</SheetTitle>
+          <SheetDescription>
+            <span className="text-sm break-words text-[var(--muted-foreground)]">
+              {wishlistItem.price && wishlistItem.price > 0
+                ? getDisplayPrice(wishlistItem.price)
+                : 'Produto sem preço'}
+            </span>
+          </SheetDescription>
+        </SheetHeader>
+        <WishlistItemSheetForm
+          wishlistItem={wishlistItem}
+          setWishlist={setWishlist}
+          setIsSheetOpen={setIsSheetOpen}
+        />
+        <SheetFooter className="flex-none border-t p-6">
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            className="flex-1"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              'Salvar'
+            )}
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }

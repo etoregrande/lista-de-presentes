@@ -1,6 +1,9 @@
 import { isSafeUrl } from '@/lib/utils'
 import { z } from 'zod'
 
+export const PriorityEnum = z.enum(['alta', 'normal', 'baixa'])
+export type Priority = z.infer<typeof PriorityEnum>
+
 export const wishlistItemSchema = z.object({
   name: z
     .string()
@@ -42,13 +45,7 @@ export const wishlistItemSchema = z.object({
       message: 'URL inválida ou não permitida',
     })
     .nullable(),
-  priority: z
-    .string()
-    .refine((value) => ['alta', 'normal', 'baixa'].includes(value), {
-      message: 'Prioridade deve ser "alta", "normal", or "baixa"',
-    })
-    .default('normal')
-    .optional(),
+  priority: PriorityEnum.default('normal').optional(),
   isPurchased: z.boolean().optional(),
   purchasedAt: z.date().optional(),
   isActive: z.boolean().optional(),

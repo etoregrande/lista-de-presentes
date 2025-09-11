@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/tooltip'
 import clsx from 'clsx'
 import { getDisplayPrice } from '@/lib/utils'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { motion } from 'framer-motion'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 
@@ -24,7 +24,7 @@ export const WishlistItemSheetTrigger = ({
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{
-        opacity: !wishlistItem.is_active ? 0.4 : 1,
+        opacity: !wishlistItem.isActive ? 0.4 : 1,
         scale: 1,
       }}
       exit={{ opacity: 0, scale: 0.95 }}
@@ -62,7 +62,7 @@ export const WishlistItemSheetTrigger = ({
           )}
         </div>
 
-        {!wishlistItem.is_active && (
+        {!wishlistItem.isActive && (
           <div className="flex gap-1">
             <p className="text-red-500">Invisível</p>
             <TooltipProvider>

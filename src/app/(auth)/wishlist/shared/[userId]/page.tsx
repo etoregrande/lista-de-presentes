@@ -1,7 +1,7 @@
 import { listWishlistItems } from '@/server/wishlistItem'
 import { WishlistShared } from './ui/Wishlist-shared'
 import { getUserById } from '@/lib/repositories/UserRepository'
-import { WishlistItem } from '@/types/db'
+import { WishlistItem } from '@/generated/prisma'
 import { getDisplayName } from '@/lib/utils'
 import { Session } from '@/lib/auth'
 import { getSessionOnServer } from '@/server/session'

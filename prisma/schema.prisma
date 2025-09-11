@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  name          String
+  email         String    @unique
+  emailVerified Boolean
+  image         String?
+  
+  sessions                     Session[]
+  accounts                     Account[]
+  wishlistItems                WishlistItem[] 
+  secretSantaGroups            SecretSantaGroup[]
+  drawGiver                    SecretSantaDraw[] @relation("drawGiver")
+  drawReceiver                 SecretSantaDraw[] @relation("drawReceiver")
+  secretSantaGroupParticipants UserSecretSantaGroup[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  createdAt DateTime
+  updatedAt DateTime
+
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  createdAt             DateTime
+  updatedAt             DateTime
+  
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+model Verification {
+  id         String    @id
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  identifier String
+  value      String
+  expiresAt  DateTime
+
+  @@map("verifications")
+}
+
+enum Priority {
+  alta
+  normal
+  baixa
+}
+
+model WishlistItem {
+  id           String    @id @default(uuid())
+  purchasedAt  DateTime?                   
+  createdAt    DateTime  @default(now())    
+  updatedAt    DateTime  @updatedAt @default(now())   
+
+  name         String    @db.VarChar(255)
+  price        Int?
+  description  String?
+  image        String?
+  link         String?
+  priority     Priority  @default(normal)
+  isActive     Boolean   @default(true)     
+  isPurchased  Boolean   @default(false)    
+
+  userId       String                     
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  groups WishlistItemSecretSantaGroup[]
+
+  @@map("wishlist_items")
+}
+
+model SecretSantaGroup {
+  id                   String    @id @default(uuid())
+  createdAt            DateTime  @default(now())    
+
+  name                 String    @db.VarChar(255)
+  slug                 String    @unique
+  priceLimit           Int?
+  eventDate            DateTime?
+  isDrawn              Boolean   @default(false)
+  drawDate             DateTime? 
+  image                String?
+
+  ownerId      String
+  owner        User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  secretSantaDraws       SecretSantaDraw[]
+  wishlistItems          WishlistItemSecretSantaGroup[]
+  participants           UserSecretSantaGroup[]
+
+  @@unique([ownerId, name])
+
+  @@map("secret_santa_groups")
+}
+
+model SecretSantaDraw {
+  createdAt   DateTime @default(now())
+
+  groupId     String
+  giverId     String
+  receiverId  String
+
+  group       SecretSantaGroup @relation(fields: [groupId], references: [id])
+  giver       User             @relation("drawGiver", fields: [giverId], references: [id])
+  receiver    User             @relation("drawReceiver", fields: [receiverId], references: [id])
+
+  @@id([groupId, giverId])
+  @@unique([groupId, receiverId])
+
+  @@map("secret_santa_draws")
+}
+
+model WishlistItemSecretSantaGroup {
+  wishlistItemId   String
+  secretSantaGroupId String
+
+  wishlistItem     WishlistItem     @relation(fields: [wishlistItemId], references: [id], onDelete: Cascade)
+  secretSantaGroup SecretSantaGroup @relation(fields: [secretSantaGroupId], references: [id], onDelete: Cascade)
+
+  @@id([wishlistItemId, secretSantaGroupId])
+  @@map("wishlist_items_secret_santa_groups")
+}
+
+model UserSecretSantaGroup {
+  userId   String
+  secretSantaGroupId String
+  createdAt          DateTime @default(now())
+
+  user     User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secretSantaGroup SecretSantaGroup @relation(fields: [secretSantaGroupId], references: [id], onDelete: Cascade)
+
+  @@id([userId, secretSantaGroupId])
+  @@map("users_secret_santa_groups")
+}

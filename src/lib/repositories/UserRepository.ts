@@ -1,27 +1,22 @@
-"use server";
-
-import { db } from "@/lib/database/db";
+'use server'
+import { prisma } from '@/lib/prisma'
 
 export async function getUserById(userId?: string) {
-  if (!userId) throw new Error("You must provide a userId");
+  if (!userId) throw new Error('You must provide a userId')
 
-  const user = db
-    .selectFrom("user")
-    .where("id", "=", userId)
-    .selectAll()
-    .executeTakeFirst();
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  })
 
-  return user;
+  return user
 }
 
 export async function getUserByEmail(email?: string) {
-  if (!email) throw new Error("You must provide a email");
+  if (!email) throw new Error('You must provide a email')
 
-  const user = db
-    .selectFrom("user")
-    .where("email", "=", email)
-    .selectAll()
-    .executeTakeFirst();
+  const user = await prisma.user.findUnique({
+    where: { email },
+  })
 
-  return user;
+  return user
 }

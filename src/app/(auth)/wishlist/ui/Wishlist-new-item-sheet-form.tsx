@@ -1,4 +1,4 @@
-import { WishlistItemFormDataType } from '@/types/wishlistItem'
+import { WishlistItemFormData } from '@/types/wishlistItem'
 import { Controller, useFormContext } from 'react-hook-form'
 import Image from 'next/image'
 import { Label } from '@/components/ui/label'
@@ -21,7 +21,7 @@ export const WishlistNewItemSheetForm = () => {
     reset,
     control,
     formState: { errors },
-  } = useFormContext<WishlistItemFormDataType>()
+  } = useFormContext<WishlistItemFormData>()
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const image = watch('image')
 
