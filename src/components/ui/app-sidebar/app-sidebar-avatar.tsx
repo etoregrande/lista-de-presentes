@@ -14,12 +14,14 @@ import { useRouter } from 'next/navigation'
 import { useSession } from '@/lib/context/session/context'
 import { useState } from 'react'
 import { AppSidebarAvatarEditModal } from './app-sidebar-avatar-edit-modal'
+import { useSidebar } from '../sidebar'
 
 export const AppSidebarAvatar = () => {
   const { user } = useSession()
   const router = useRouter()
   const avatarImage = user.image ?? ''
   const [isChangingAvatar, setIsChangingAvatar] = useState(false)
+  const { isMobile } = useSidebar()
 
   return (
     <>
@@ -32,7 +34,7 @@ export const AppSidebarAvatar = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div
-                tabIndex={0}
+                tabIndex={isMobile ? -1 : 0}
                 className="hover:bg-sidebar-accent focus:bg-sidebar-ring flex min-w-0 cursor-pointer items-center gap-3 py-4 pr-2 pl-3 focus:outline-none"
               >
                 {user && (

@@ -54,7 +54,7 @@ export const AppSidebar = () => {
                       if (isMobile) setOpenMobile(false)
                     }}
                   >
-                    <GiftIcon />
+                    <GiftIcon className="-translate-y-[1px]" />
                     <span>Lista de Desejos</span>
                   </Link>
                 </SidebarMenuButton>
@@ -65,7 +65,7 @@ export const AppSidebar = () => {
                       setIsCreatingNewGroup(true)
                     }}
                   >
-                    <UsersIcon />
+                    <UsersIcon className="-translate-y-[1px]" />
                     <span>Novo amigo secreto</span>
                   </button>
                 </SidebarMenuButton>
