@@ -138,7 +138,7 @@ model SecretSantaDraw {
   giverId     String
   receiverId  String
 
-  group       SecretSantaGroup @relation(fields: [groupId], references: [id])
+  group       SecretSantaGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
   giver       User             @relation("drawGiver", fields: [giverId], references: [id])
   receiver    User             @relation("drawReceiver", fields: [receiverId], references: [id])
 
