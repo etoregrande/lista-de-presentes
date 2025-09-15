@@ -37,7 +37,7 @@ export const SecretSantaDrawResult = ({
   return (
     <div
       className={clsx(
-        'absolute h-full w-full rounded-lg transition-all duration-500 ease-in-out transform-3d hover:scale-103',
+        'absolute h-full w-full cursor-pointer rounded-lg transition-all duration-500 ease-in-out transform-3d hover:scale-103',
         revealed && 'rotate-x-180'
       )}
     >
