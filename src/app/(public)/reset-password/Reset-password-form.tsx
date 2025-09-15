@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button/button'
+import { Button } from '@/components/ui/button'
 import { FormError } from '@/components/ui/form/form-error'
 import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { PasswordInput } from '@/components/ui/input'

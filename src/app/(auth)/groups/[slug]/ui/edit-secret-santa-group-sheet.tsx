@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { HoldSecretSantaDrawButton } from './hold-secret-santa-draw-button'
-import { Button } from '@/components/ui/button/button'
+import { Button } from '@/components/ui/button'
 import { LoaderCircle, Trash } from 'lucide-react'
 import { EditGroupForm } from './edit-group-form'
 import { FormProvider, useForm } from 'react-hook-form'

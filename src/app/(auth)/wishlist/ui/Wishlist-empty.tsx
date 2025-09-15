@@ -1,3 +1,5 @@
+'use client'
+
 import { PackageOpen } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 

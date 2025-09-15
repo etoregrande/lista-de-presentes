@@ -21,6 +21,7 @@ export const getSecretSantaReceiver = async (
             name: true,
             email: true,
             image: true,
+            id: true,
           },
         },
       },

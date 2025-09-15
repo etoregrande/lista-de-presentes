@@ -25,7 +25,7 @@ export const AppSidebar = () => {
   const [isCreatingNewGroup, setIsCreatingNewGroup] = useState(false)
   const pathname = usePathname()
   const href = '/wishlist'
-  const isOnWishlist = pathname.startsWith(href)
+  const isOnWishlist = pathname === href
   const { isMobile, setOpenMobile } = useSidebar()
 
   return (

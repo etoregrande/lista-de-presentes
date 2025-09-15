@@ -11,7 +11,7 @@ import {
   CredenzaTitle,
 } from '@/components/ui/credenza'
 import { AppSidebarNewSecretSantaGroupForm } from './app-sidebar-new-secret-santa-group-form'
-import { Button } from '../button/button'
+import { Button } from '../button'
 import { FormProvider, useForm } from 'react-hook-form'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
 import { zodResolver } from '@hookform/resolvers/zod'
