@@ -9,6 +9,8 @@ import { Sprinkles1 } from './assets/sprinkles1'
 import { Sprinkles2 } from './assets/sprinkles2'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { setAvatarFallbackString } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
+import { LoaderCircle as LoaderCircleIcon } from 'lucide-react'
 
 interface SecretSantaDrawResultProps {
   receiver: Partial<User> | null
@@ -17,7 +19,9 @@ interface SecretSantaDrawResultProps {
 export const SecretSantaDrawResult = ({
   receiver,
 }: SecretSantaDrawResultProps) => {
+  const router = useRouter()
   const [revealed, setRevealed] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   if (!receiver) {
     return (
@@ -31,13 +35,20 @@ export const SecretSantaDrawResult = ({
     )
   }
 
-  const { name: receiverName, image } = receiver
+  const { name: receiverName, image, id: receiverId } = receiver
   const receiverImage = image ?? ''
+
+  const navigateToReceiverWishlist = () => {
+    if (!loading) {
+      setLoading(true)
+      router.push(`/wishlist/shared/${receiverId}`)
+    }
+  }
 
   return (
     <div
       className={clsx(
-        'absolute h-full w-full cursor-pointer rounded-lg transition-all duration-500 ease-in-out transform-3d hover:scale-103',
+        'absolute h-full min-h-30 w-full cursor-pointer rounded-lg transition-all duration-500 ease-in-out transform-3d hover:scale-103 md:min-h-40',
         revealed && 'rotate-x-180'
       )}
     >
@@ -56,22 +67,33 @@ export const SecretSantaDrawResult = ({
         </p>
         <Doodle2 className="text-primary h-full w-auto shrink-0" />
       </div>
+
       <div
-        className="bg-muted-background hover:bg-primary/30 absolute flex h-full w-full rotate-x-180 items-center justify-between gap-6 rounded-lg p-8 duration-200 backface-hidden"
-        onClick={() => setRevealed(false)}
+        className="bg-muted-background hover:bg-primary/30 absolute flex h-full w-full rotate-x-180 flex-col justify-center gap-2 rounded-lg px-8 duration-200 backface-hidden md:flex-row md:items-center md:justify-between md:gap-6"
+        onClick={() => navigateToReceiverWishlist()}
       >
-        <div className="flex min-w-0 items-center gap-4">
-          <Avatar className="size-24">
-            <AvatarImage src={receiverImage} />
-            <AvatarFallback className="bg-white font-bold">
-              <p className="min-w-0 truncate text-2xl">
-                {setAvatarFallbackString(receiverName!)}
-              </p>
-            </AvatarFallback>
-          </Avatar>
-          <p className="truncate text-xl font-bold">{receiverName}</p>
-        </div>
-        <p className="font-bold">Esconder</p>
+        {!loading ? (
+          <>
+            <div className="flex min-w-0 items-center gap-4">
+              <Avatar className="size-16 md:size-24">
+                <AvatarImage src={receiverImage} />
+                <AvatarFallback className="bg-white font-bold">
+                  <p className="min-w-0 truncate text-2xl">
+                    {setAvatarFallbackString(receiverName!)}
+                  </p>
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <p className="truncate text-xl font-bold">{receiverName}</p>
+                <p className="text-primary font-bold">Ver lista de presentes</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex w-full items-center justify-center">
+            <LoaderCircleIcon className="text-primary animate-spin pr-1" />
+          </div>
+        )}
       </div>
     </div>
   )

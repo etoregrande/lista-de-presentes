@@ -84,9 +84,9 @@ export default async function Page({ params }: PageProps) {
 
       <main className="layout-container flex flex-col gap-10 pb-[60dvh] md:pb-0">
         <div className="grid gap-10 md:grid-cols-[2fr_1fr]">
-          <article className="flex min-h-10 w-full flex-col gap-2">
+          <article className="flex w-full flex-col gap-2">
             <h2 className="text-lg font-bold">Quem eu tirei</h2>
-            <div className="relative flex min-h-40 w-full items-center justify-center rounded-md">
+            <div className="relative flex min-h-30 w-full items-center justify-center rounded-md md:min-h-40">
               <SecretSantaDrawResult receiver={SecretSantaDrawReceiver} />
             </div>
           </article>
