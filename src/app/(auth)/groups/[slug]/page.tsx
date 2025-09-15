@@ -19,9 +19,6 @@ import { SecretSantaGroupBackground } from './ui/secret-santa-group-background'
 import { ShareSecretSantaGroupButton } from './ui/share-secret-santa-group-button'
 import { SecretSantaDrawResult } from './ui/secret-santa-draw-result'
 import { SecretSantaGroupName } from './ui/secret-santa-group-name'
-import { EmptyWishlist } from '../../wishlist/ui/Wishlist-empty'
-import { listWishlistItems } from '@/server/wishlistItem'
-import { SecretSantaWishlist } from './ui/wishlist/secret-santa-wishlist'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -47,9 +44,9 @@ export default async function Page({ params }: PageProps) {
   const isOwner = userId === ownerId
   const SecretSantaDrawReceiver = await getSecretSantaReceiver(userId, groupId)
   const participants = await listSecretSantaGroupParticipants(groupId)
-  const wishlist = await listWishlistItems(userId, {
-    ...(group.priceLimit && { maxPrice: group.priceLimit }),
-  })
+  // const wishlist = await listWishlistItems(userId, {
+  //   ...(group.priceLimit && { maxPrice: group.priceLimit }),
+  // })
 
   return (
     <SecretSantaGroupProvider
