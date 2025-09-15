@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button/button'
+import { Button } from '@/components/ui/button'
 import { setAvatarFallbackString } from '@/lib/utils'
 import { UserXIcon as UserXIcon } from 'lucide-react'
 import { ParticipantListItemRemoveButton } from './participant-list-item-remove-button'

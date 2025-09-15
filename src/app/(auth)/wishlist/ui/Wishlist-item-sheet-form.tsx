@@ -1,6 +1,6 @@
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button/button'
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import Image from 'next/image'
 import { Textarea } from '@/components/ui/textarea'

@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button/button'
+import { Button } from '@/components/ui/button'
 import { SecretSantaGroup } from '@/generated/prisma'
 import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
 import { useParams, useRouter } from 'next/navigation'

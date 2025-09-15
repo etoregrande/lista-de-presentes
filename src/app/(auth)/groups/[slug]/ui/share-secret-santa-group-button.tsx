@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button/button'
+import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import clsx from 'clsx'

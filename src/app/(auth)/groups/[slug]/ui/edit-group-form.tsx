@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Button } from '@/components/ui/button/button'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { ptBR } from 'date-fns/locale'
 import { addYears, format } from 'date-fns'

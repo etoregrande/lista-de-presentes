@@ -10,7 +10,7 @@ import {
 } from '@/server/secretSantaGroup'
 import { LeaveSecretSantaGroupButton } from './ui/leave-secret-santa-group-button'
 import { getSecretSantaReceiver } from '@/server/secretSantaDraw'
-import { Button } from '@/components/ui/button/button'
+import { Button } from '@/components/ui/button'
 import { Settings, Trash } from 'lucide-react'
 import { EditSecretSantaGroupSheet } from './ui/edit-secret-santa-group-sheet'
 import { SecretSantaGroupProvider } from './context/provider'
@@ -19,6 +19,7 @@ import { SecretSantaGroupBackground } from './ui/secret-santa-group-background'
 import { ShareSecretSantaGroupButton } from './ui/share-secret-santa-group-button'
 import { SecretSantaDrawResult } from './ui/secret-santa-draw-result'
 import { SecretSantaGroupName } from './ui/secret-santa-group-name'
+import { EmptyWishlist } from '../../wishlist/ui/Wishlist-empty'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -83,15 +84,13 @@ export default async function Page({ params }: PageProps) {
         <section className="flex w-full flex-col gap-10 md:w-2/3">
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Quem eu tirei</h2>
-            <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
+            <div className="relative flex min-h-40 w-full items-center justify-center rounded-md">
               <SecretSantaDrawResult receiver={SecretSantaDrawReceiver} />
             </div>
           </article>
           <article className="grid w-full gap-2">
             <h2 className="text-lg font-bold">Minha lista de presentes</h2>
-            <div className="bg-muted flex min-h-40 w-full items-center justify-center rounded-md">
-              <p>Lista de presentes vazia</p>
-            </div>
+            <EmptyWishlist isEmpty={true} />
           </article>
         </section>
         <section className="w-full md:w-1/3">
