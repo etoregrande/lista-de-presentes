@@ -130,7 +130,10 @@ export const deleteWishlistItem = async (wishlistItemId: string) => {
   }
 }
 
-export const listWishlistItems = async (SessionUserId?: string) => {
+export const listWishlistItems = async (
+  SessionUserId?: string,
+  filters?: { maxPrice?: number }
+) => {
   let userId
 
   if (!SessionUserId) {
@@ -149,7 +152,12 @@ export const listWishlistItems = async (SessionUserId?: string) => {
 
   try {
     const wishlistItems = await prisma.wishlistItem.findMany({
-      where: { userId },
+      where: {
+        userId,
+        ...(filters?.maxPrice !== undefined && {
+          price: { lte: filters.maxPrice },
+        }),
+      },
     })
 
     return wishlistItems

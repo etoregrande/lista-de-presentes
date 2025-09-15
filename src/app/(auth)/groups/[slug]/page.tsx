@@ -20,6 +20,8 @@ import { ShareSecretSantaGroupButton } from './ui/share-secret-santa-group-butto
 import { SecretSantaDrawResult } from './ui/secret-santa-draw-result'
 import { SecretSantaGroupName } from './ui/secret-santa-group-name'
 import { EmptyWishlist } from '../../wishlist/ui/Wishlist-empty'
+import { listWishlistItems } from '@/server/wishlistItem'
+import { SecretSantaWishlist } from './ui/wishlist/secret-santa-wishlist'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -45,6 +47,9 @@ export default async function Page({ params }: PageProps) {
   const isOwner = userId === ownerId
   const SecretSantaDrawReceiver = await getSecretSantaReceiver(userId, groupId)
   const participants = await listSecretSantaGroupParticipants(groupId)
+  const wishlist = await listWishlistItems(userId, {
+    ...(group.priceLimit && { maxPrice: group.priceLimit }),
+  })
 
   return (
     <SecretSantaGroupProvider
@@ -80,27 +85,28 @@ export default async function Page({ params }: PageProps) {
         )}
       </header>
 
-      <main className="layout-container flex flex-col gap-10 pb-[60dvh] md:flex-row md:pb-0">
-        <section className="flex w-full flex-col gap-10 md:w-2/3">
-          <article className="grid w-full gap-2">
+      <main className="layout-container flex flex-col gap-10 pb-[60dvh] md:pb-0">
+        <div className="grid gap-10 md:grid-cols-[2fr_1fr]">
+          <article className="flex min-h-10 w-full flex-col gap-2">
             <h2 className="text-lg font-bold">Quem eu tirei</h2>
             <div className="relative flex min-h-40 w-full items-center justify-center rounded-md">
               <SecretSantaDrawResult receiver={SecretSantaDrawReceiver} />
             </div>
           </article>
-          <article className="grid w-full gap-2">
-            <h2 className="text-lg font-bold">Minha lista de presentes</h2>
-            <EmptyWishlist isEmpty={true} />
-          </article>
-        </section>
-        <section className="w-full md:w-1/3">
-          <article className="grid w-full gap-2">
+          <article className="row-span-2 flex min-h-10 w-full flex-col gap-2">
             <h2 className="text-lg font-bold">Participantes</h2>
             <div className="flex w-full flex-col justify-center gap-2 overflow-hidden rounded-md">
               <ParticipantList />
             </div>
           </article>
-        </section>
+          {/* <article className="flex min-h-10 w-full flex-col gap-2">
+            <h2 className="text-lg font-bold">Minha lista de presentes</h2>
+           <EmptyWishlist isEmpty={true} /> 
+            <div className="grid gap-2 md:grid-cols-3 lg:grid-cols-4">
+              <SecretSantaWishlist items={wishlist} maxItems={8} />
+            </div>
+          </article> */}
+        </div>
       </main>
     </SecretSantaGroupProvider>
   )
