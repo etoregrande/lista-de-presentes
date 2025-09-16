@@ -31,8 +31,6 @@ export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
   const { id: groupId } = secretSantaGroup
   const session = useSession()
 
-  const { id: userId } = session.user
-
   const onClick = async () => {
     const response = await deleteSecretSantaGroupAction(userId, groupId)
 
@@ -46,6 +44,9 @@ export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
       toast.error('Erro ao deletar o grupo')
     }
   }
+
+  if (!session) return null
+  const { id: userId } = session.user
 
   return (
     <Credenza>
@@ -62,7 +63,7 @@ export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
-          <p></p>
+          <></>
         </CredenzaBody>
         <CredenzaFooter>
           <CredenzaClose asChild>

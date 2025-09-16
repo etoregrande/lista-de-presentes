@@ -33,13 +33,16 @@ export const WishlistNewItemSheet = ({
     formState: { isSubmitting },
   } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const { user } = useSession()
 
   useEffect(() => {
     if (isSheetOpen) {
       reset()
     }
   }, [isSheetOpen, reset])
+
+  const session = useSession()
+  if (!session) return null
+  const { user } = session
 
   const onSubmit = async (formData: WishlistItemFormData) => {
     const newItem: Partial<WishlistItem> | null = await createWishlistItem(

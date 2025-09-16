@@ -27,14 +27,19 @@ export const WishlistShareButton = ({
 }: WishlistShareButtonProps) => {
   const [copied, setCopied] = useState(false)
   const [sharedUrl, setSharedUrl] = useState('')
-  const { user } = useSession()
+  const session = useSession()
 
   useEffect(() => {
-    setSharedUrl(`${window.location.origin}/wishlist/shared/${user.id}`)
-  }, [user.id])
+    if (!session) return
+    setSharedUrl(
+      `${window.location.origin}/wishlist/shared/${session?.user.id}`
+    )
+  }, [session])
+
+  if (!session) return null
 
   const handleCopyWishlist = async () => {
-    const sharedUrl = `${window.location.origin}/wishlist/shared/${user.id}`
+    const sharedUrl = `${window.location.origin}/wishlist/shared/${session.user.id}`
     navigator.clipboard.writeText(sharedUrl)
 
     setCopied(true)

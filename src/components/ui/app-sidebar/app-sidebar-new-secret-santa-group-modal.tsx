@@ -21,8 +21,8 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { LoaderCircle } from 'lucide-react'
 import { useSecretSantaGroups } from '@/lib/context/secretSantaGroups/context'
-import { useSession } from '@/lib/context/session/context'
 import { useSidebar } from '../sidebar'
+import { useSession } from '@/lib/context/session/context'
 
 interface NavbarNewGroupModalProps {
   isOpen: boolean
@@ -33,9 +33,9 @@ export const NavbarNewSecretSantaGroupModal = ({
   isOpen,
   setIsOpen,
 }: NavbarNewGroupModalProps) => {
+  const session = useSession()
   const { isMobile, setOpenMobile } = useSidebar()
   const { setGroups } = useSecretSantaGroups()
-  const { user } = useSession()
   const form = useForm<secretSantaGroupFormData>({
     resolver: zodResolver(secretSantaGroupFormSchema),
   })
@@ -74,6 +74,9 @@ export const NavbarNewSecretSantaGroupModal = ({
       reset()
     }
   }, [isOpen, reset])
+
+  if (!session) return null
+  const { user } = session
 
   return (
     <>

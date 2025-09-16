@@ -46,10 +46,13 @@ export const AppSidebarAvatarEditModal = ({
       image: null,
     },
   })
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  const session = useSession()
+  if (!session) return null
   const {
     user: { image: userImage, name: userName, id: userId },
-  } = useSession()
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  } = session
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen?.(open)

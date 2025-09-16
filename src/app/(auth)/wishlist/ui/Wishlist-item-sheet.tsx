@@ -35,7 +35,10 @@ export const WishlistItemSheet = ({
     formState: { isSubmitting },
   } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
-  const { user } = useSession()
+
+  const session = useSession()
+  if (!session) return null
+  const { user } = session
 
   const onSubmit = async (formData: WishlistItemFormData) => {
     if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')

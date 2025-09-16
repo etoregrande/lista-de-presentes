@@ -9,6 +9,7 @@ import clsx from 'clsx'
 export const AppSidebarSecretSantaGroups = () => {
   const { isMobile, setOpenMobile } = useSidebar()
   const { groups } = useSecretSantaGroups()
+
   const pathname = usePathname()
 
   return (

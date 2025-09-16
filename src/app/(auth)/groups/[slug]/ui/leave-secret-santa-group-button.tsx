@@ -29,11 +29,14 @@ export const LeaveSecretSantaGroupButton = ({
 }: LeaveSecretSantaGroupButtonProps) => {
   const { setGroups } = useSecretSantaGroups()
   const { secretSantaGroup } = useSecretSantaGroup()
-  const { user } = useSession()
-  const { id: groupId } = secretSantaGroup
-  const { id: userId } = user
-
   const router = useRouter()
+  const { id: groupId } = secretSantaGroup
+
+  const session = useSession()
+  if (!session) return null
+  const {
+    user: { id: userId },
+  } = session
 
   const onClick = async () => {
     const response = await leaveSecretSantaGroupAction(userId, groupId)

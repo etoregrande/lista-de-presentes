@@ -30,7 +30,6 @@ interface GroupEditProps {
 
 export const EditSecretSantaGroupSheet = ({ children }: GroupEditProps) => {
   const session = useSession()
-  const { id: userId } = session.user
   const { secretSantaGroup } = useSecretSantaGroup()
   const { name, eventDate, priceLimit, id: groupId } = secretSantaGroup
 
@@ -66,6 +65,9 @@ export const EditSecretSantaGroupSheet = ({ children }: GroupEditProps) => {
       throw new Error('Erro ao atualizar amigo secreto')
     }
   }
+
+  if (!session) return null
+  const { id: userId } = session.user
 
   return (
     <FormProvider {...formMethods}>

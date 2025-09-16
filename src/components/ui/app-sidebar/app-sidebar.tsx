@@ -20,8 +20,10 @@ import { AppSidebarSecretSantaGroups } from './app-sidebar-secret-santa-groups'
 import { AppSidebarAvatar } from './app-sidebar-avatar'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
+import { useSession } from '@/lib/context/session/context'
 
 export const AppSidebar = () => {
+  const session = useSession()
   const [isCreatingNewGroup, setIsCreatingNewGroup] = useState(false)
   const pathname = usePathname()
   const href = '/wishlist'
@@ -39,52 +41,52 @@ export const AppSidebar = () => {
         <SidebarHeader className="gap-0 p-0">
           <AppSidebarAvatar />
         </SidebarHeader>
-        <SidebarContent>
-          <hr className="border-sidebar-border" />
-          <SidebarGroup>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild size="lg">
-                  <Link
-                    href={href}
-                    className={clsx(
-                      isOnWishlist && 'bg-sidebar-accent pointer-events-none'
-                    )}
-                    onClick={() => {
-                      if (isMobile) setOpenMobile(false)
-                    }}
-                  >
-                    <GiftIcon className="-translate-y-[1px]" />
-                    <span>Lista de Desejos</span>
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuButton asChild size="lg">
-                  <button
-                    className={'cursor-pointer'}
-                    onClick={() => {
-                      setIsCreatingNewGroup(true)
-                    }}
-                  >
-                    <UsersIcon className="-translate-y-[1px]" />
-                    <span>Novo amigo secreto</span>
-                  </button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
-          <hr className="border-sidebar-border" />
-          <SidebarGroup>
-            <SidebarGroupLabel>Amigos secretos</SidebarGroupLabel>
-            <SidebarMenu>
-              <Suspense fallback={<div>Carregando grupos...</div>}>
-                <AppSidebarSecretSantaGroups />
-              </Suspense>
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <p>Footer</p>
-        </SidebarFooter>
+        {session && (
+          <SidebarContent>
+            <hr className="border-sidebar-border" />
+            <SidebarGroup>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild size="lg">
+                    <Link
+                      href={href}
+                      className={clsx(
+                        isOnWishlist && 'bg-sidebar-accent pointer-events-none'
+                      )}
+                      onClick={() => {
+                        if (isMobile) setOpenMobile(false)
+                      }}
+                    >
+                      <GiftIcon className="-translate-y-[1px]" />
+                      <span>Lista de Desejos</span>
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild size="lg">
+                    <button
+                      className={'cursor-pointer'}
+                      onClick={() => {
+                        setIsCreatingNewGroup(true)
+                      }}
+                    >
+                      <UsersIcon className="-translate-y-[1px]" />
+                      <span>Novo amigo secreto</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+            <hr className="border-sidebar-border" />
+            <SidebarGroup>
+              <SidebarGroupLabel>Amigos secretos</SidebarGroupLabel>
+              <SidebarMenu>
+                <Suspense fallback={<div>Carregando grupos...</div>}>
+                  <AppSidebarSecretSantaGroups />
+                </Suspense>
+              </SidebarMenu>
+            </SidebarGroup>
+          </SidebarContent>
+        )}
+        <SidebarFooter></SidebarFooter>
       </Sidebar>
     </>
   )
