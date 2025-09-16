@@ -20,7 +20,10 @@ export const ParticipantListItem = ({
   participantImage,
 }: ParticipantProps) => {
   const { isOwner, secretSantaGroup } = useSecretSantaGroup()
-  const { user } = useSession()
+  const session = useSession()
+
+  if (!session) return null
+  const { user } = session
 
   const allowRemoveParticipant =
     isOwner && user.id != participantId && !secretSantaGroup.isDrawn

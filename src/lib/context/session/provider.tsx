@@ -5,7 +5,7 @@ import { SessionContext } from './context'
 import { ReactNode } from 'react'
 
 interface SessionProviderProps {
-  session: Session
+  session: Session | null
   children: ReactNode
 }
 
