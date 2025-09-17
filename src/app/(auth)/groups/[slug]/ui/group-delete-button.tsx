@@ -17,14 +17,16 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { deleteSecretSantaGroupAction } from '../actions'
 import { useSecretSantaGroup } from '../context/context'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { useSession } from '@/lib/context/session/context'
+import { LoaderCircle as LoaderCircleIcon } from 'lucide-react'
 
 interface GroupDeleteButtonProps {
   children: ReactNode
 }
 export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
   const router = useRouter()
+  const [deleting, setDeleting] = useState(false)
   const { setGroups } = useSecretSantaGroups()
   const { secretSantaGroup } = useSecretSantaGroup()
 
@@ -32,14 +34,17 @@ export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
   const session = useSession()
 
   const onClick = async () => {
+    setDeleting(true)
     const response = await deleteSecretSantaGroupAction(userId, groupId)
 
     if (response.success) {
       toast.success('Grupo deletado com sucesso!')
       setGroups((prev) => prev.filter((group) => group.id !== groupId))
+      setDeleting(false)
 
       router.push('/wishlist')
     } else {
+      setDeleting(false)
       console.error(response.error)
       toast.error('Erro ao deletar o grupo')
     }
@@ -69,8 +74,11 @@ export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
           <CredenzaClose asChild>
             <Button variant={'secondary'}>Cancelar</Button>
           </CredenzaClose>
-          <Button onClick={onClick} variant="destructive">
-            Deletar grupo
+          <Button onClick={onClick} variant="destructive" className="relative">
+            <span className={deleting ? 'invisible' : ''}>Deletar grupo</span>
+            {deleting && (
+              <LoaderCircleIcon className="absolute inset-0 m-auto animate-spin" />
+            )}
           </Button>
         </CredenzaFooter>
       </CredenzaContent>

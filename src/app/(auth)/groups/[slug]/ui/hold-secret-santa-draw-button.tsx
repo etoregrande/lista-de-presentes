@@ -12,16 +12,24 @@ import {
   CredenzaTitle,
   CredenzaTrigger,
 } from '@/components/ui/credenza'
-import { Sparkles } from 'lucide-react'
+import {
+  LoaderCircle as LoaderCircleIcon,
+  Sparkles as SparklesIcon,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { holdSecretSantaDrawAction } from '../actions'
 import { useSecretSantaGroup } from '../context/context'
+import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 export const HoldSecretSantaDrawButton = () => {
+  const pathname = usePathname()
+  const [holdingDraw, setHoldingDraw] = useState(false)
   const { secretSantaGroup } = useSecretSantaGroup()
   const { id: groupId } = secretSantaGroup
 
   const onClick = async () => {
+    setHoldingDraw(true)
     const response = await holdSecretSantaDrawAction(groupId)
 
     if (
@@ -40,14 +48,19 @@ export const HoldSecretSantaDrawButton = () => {
       return
     }
 
-    toast.success('Sorteio realizado com sucesso!')
+    toast.success('Sorteio realizado com sucesso!', {
+      description: 'Atualizando página...',
+    })
+    setTimeout(() => {
+      window.location.href = pathname
+    }, 1500)
   }
 
   return (
     <Credenza>
       <CredenzaTrigger asChild>
         <Button>
-          <Sparkles />
+          <SparklesIcon />
           Realizar sorteio
         </Button>
       </CredenzaTrigger>
@@ -69,7 +82,14 @@ export const HoldSecretSantaDrawButton = () => {
           <CredenzaClose asChild>
             <Button variant={'secondary'}>Cancelar</Button>
           </CredenzaClose>
-          <Button onClick={onClick}>Realizar sorteio!</Button>
+          <Button onClick={onClick} variant="destructive" className="relative">
+            <span className={holdingDraw ? 'invisible' : ''}>
+              Realizar sorteio
+            </span>
+            {holdingDraw && (
+              <LoaderCircleIcon className="absolute inset-0 m-auto animate-spin" />
+            )}
+          </Button>
         </CredenzaFooter>
       </CredenzaContent>
     </Credenza>
