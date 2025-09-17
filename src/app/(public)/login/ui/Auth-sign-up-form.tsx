@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { FormError } from '@/components/ui/form/form-error'
-import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
+import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
@@ -93,23 +93,23 @@ export const AuthSignUpForm = ({ setFormType }: AuthSignUpFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(handleSignUp)} className="flex flex-col gap-4">
-      <FormInputWrapper>
+      <InputWrapper>
         <Label htmlFor="name">Nome e sobrenome</Label>
         <Input {...register('name')} id="name" />
         <FormError message={errors.name?.message} />
-      </FormInputWrapper>
+      </InputWrapper>
 
-      <FormInputWrapper>
+      <InputWrapper>
         <Label htmlFor="email">Email</Label>
         <Input {...register('email')} id="email" type="email" />
         <FormError message={errors.email?.message} />
-      </FormInputWrapper>
+      </InputWrapper>
 
-      <FormInputWrapper>
+      <InputWrapper>
         <Label htmlFor="password">Senha</Label>
         <PasswordInput {...register('password')} id="password" />
         <FormError message={errors.password?.message} />
-      </FormInputWrapper>
+      </InputWrapper>
 
       <div className="flex flex-col gap-2">
         <Button disabled={isSubmitting} className="grid w-full max-w-sm">

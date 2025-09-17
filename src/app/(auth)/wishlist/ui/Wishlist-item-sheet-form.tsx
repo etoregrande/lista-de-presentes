@@ -15,11 +15,11 @@ import { NumericFormat } from 'react-number-format'
 import { WishlistItem } from '@/generated/prisma'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 import { FormError } from '@/components/ui/form/form-error'
-import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
+import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 
 interface WishlistItemSheetFormProps {
   wishlistItem: Partial<WishlistItem>
-  setWishlist: Dispatch<SetStateAction<Partial<WishlistItem>[]>>
+  setWishlist: Dispatch<SetStateAction<WishlistItem[]>>
   setIsSheetOpen: Dispatch<SetStateAction<boolean>>
 }
 
@@ -166,7 +166,7 @@ export const WishlistItemSheetForm = ({
           </Button>
         </div>
 
-        <FormInputWrapper>
+        <InputWrapper>
           <Label
             htmlFor="name"
             className="flex items-center justify-between gap-1"
@@ -176,15 +176,15 @@ export const WishlistItemSheetForm = ({
           </Label>
           <Input {...register('name')} placeholder="" />
           <FormError message={errors.name?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
 
-        <FormInputWrapper>
+        <InputWrapper>
           <Label htmlFor="description">Descrição</Label>
           <Textarea {...register('description')} placeholder="" />
           <FormError message={errors.description?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
 
-        <FormInputWrapper>
+        <InputWrapper>
           <Label htmlFor="price">Preço</Label>
           <Controller
             name="price"
@@ -209,13 +209,13 @@ export const WishlistItemSheetForm = ({
             )}
           />
           <FormError message={errors.price?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
 
-        <FormInputWrapper>
+        <InputWrapper>
           <Label htmlFor="link">Link do produto</Label>
           <Input {...register('link')} inputMode="url" placeholder="" />
           <FormError message={errors.link?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
       </form>
     </div>
   )

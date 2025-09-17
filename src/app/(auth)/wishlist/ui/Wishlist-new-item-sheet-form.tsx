@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { useEffect, useState } from 'react'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 import { FormError } from '@/components/ui/form/form-error'
-import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
+import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 
 export const WishlistNewItemSheetForm = () => {
   const {
@@ -115,7 +115,7 @@ export const WishlistNewItemSheetForm = () => {
           />
         </div>
 
-        <FormInputWrapper>
+        <InputWrapper>
           <Label
             htmlFor="name"
             className="flex items-center justify-between gap-1"
@@ -125,15 +125,15 @@ export const WishlistNewItemSheetForm = () => {
           </Label>
           <Input {...register('name')} placeholder="" />
           <FormError message={errors.name?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
 
-        <FormInputWrapper>
+        <InputWrapper>
           <Label htmlFor="description">Descrição</Label>
           <Textarea {...register('description')} placeholder="" />
           <FormError message={errors.description?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
 
-        <FormInputWrapper>
+        <InputWrapper>
           <Label htmlFor="price">Preço</Label>
           <Controller
             name="price"
@@ -157,13 +157,13 @@ export const WishlistNewItemSheetForm = () => {
             )}
           />
           <FormError message={errors.price?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
 
-        <FormInputWrapper>
+        <InputWrapper>
           <Label htmlFor="link">Link do produto</Label>
           <Input {...register('link')} inputMode="url" placeholder="" />
           <FormError message={errors.price?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
       </form>
     </div>
   )

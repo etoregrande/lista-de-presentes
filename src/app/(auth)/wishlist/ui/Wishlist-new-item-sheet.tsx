@@ -20,7 +20,7 @@ import { useSession } from '@/lib/context/session/context'
 
 interface WishlistNewItemSheetProps {
   children: ReactNode
-  setWishlist: Dispatch<SetStateAction<Partial<WishlistItem>[]>>
+  setWishlist: Dispatch<SetStateAction<WishlistItem[]>>
 }
 
 export const WishlistNewItemSheet = ({
@@ -45,7 +45,7 @@ export const WishlistNewItemSheet = ({
   const { user } = session
 
   const onSubmit = async (formData: WishlistItemFormData) => {
-    const newItem: Partial<WishlistItem> | null = await createWishlistItem(
+    const newItem: WishlistItem | null = await createWishlistItem(
       formData,
       user.id
     )
