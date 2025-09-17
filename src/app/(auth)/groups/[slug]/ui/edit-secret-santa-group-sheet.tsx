@@ -23,12 +23,14 @@ import { useSecretSantaGroup } from '../context/context'
 import { updateSecretSantaGroup } from '@/server/secretSantaGroup'
 import { useSession } from '@/lib/context/session/context'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface GroupEditProps {
   children: ReactNode
 }
 
 export const EditSecretSantaGroupSheet = ({ children }: GroupEditProps) => {
+  const router = useRouter()
   const session = useSession()
   const { secretSantaGroup } = useSecretSantaGroup()
   const { name, eventDate, priceLimit, id: groupId } = secretSantaGroup
@@ -59,6 +61,7 @@ export const EditSecretSantaGroupSheet = ({ children }: GroupEditProps) => {
         })
       }
       toast.success('O grupo foi salvo com sucesso!')
+      router.refresh()
       setIsSheetOpen(false)
     } catch (error) {
       console.error(error)

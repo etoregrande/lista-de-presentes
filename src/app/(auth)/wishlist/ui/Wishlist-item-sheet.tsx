@@ -21,8 +21,8 @@ import { useSession } from '@/lib/context/session/context'
 
 interface WishlistItemSheetProps {
   children: ReactNode
-  wishlistItem: Partial<WishlistItem>
-  setWishlist: Dispatch<SetStateAction<Partial<WishlistItem>[]>>
+  wishlistItem: WishlistItem
+  setWishlist: Dispatch<SetStateAction<WishlistItem[]>>
 }
 
 export const WishlistItemSheet = ({

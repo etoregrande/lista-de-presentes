@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { FormError } from '@/components/ui/form/form-error'
-import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
+import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { PasswordInput } from '@/components/ui/input'
 import { authClient } from '@/lib/auth-client'
 import { resetPasswordFormSchema } from '@/schemas/auth'
@@ -65,11 +65,11 @@ export const ResetPasswordForm = () => {
           Defina sua nova senha
         </p>
       </div>
-      <FormInputWrapper>
+      <InputWrapper>
         <Label htmlFor="password">Senha</Label>
         <PasswordInput {...register('password')} id="password" />
         <FormError message={errors.password?.message} />
-      </FormInputWrapper>
+      </InputWrapper>
 
       <Button disabled={isSubmitting || isSubmitSuccessful}>
         {isSubmitting ? (

@@ -1,7 +1,7 @@
 'use client'
 
 import { Controller, useFormContext } from 'react-hook-form'
-import { FormInputWrapper } from '@/components/ui/form/form-input-wrapper'
+import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { FormError } from '@/components/ui/form/form-error'
@@ -27,7 +27,7 @@ export const EditGroupForm = () => {
   return (
     <>
       <form className="grid gap-5">
-        <FormInputWrapper>
+        <InputWrapper>
           <Label
             htmlFor="name"
             className="flex items-center justify-between gap-1"
@@ -37,8 +37,8 @@ export const EditGroupForm = () => {
           </Label>
           <Input {...register('name')} />
           <FormError message={errors.name?.message} />
-        </FormInputWrapper>
-        <FormInputWrapper>
+        </InputWrapper>
+        <InputWrapper>
           <Label htmlFor="priceLimit">Valor do presente</Label>
           <Controller
             name="priceLimit"
@@ -63,13 +63,13 @@ export const EditGroupForm = () => {
             )}
           />
           <FormError message={errors.priceLimit?.message} />
-        </FormInputWrapper>
+        </InputWrapper>
 
         <Controller
           control={control}
           name="eventDate"
           render={({ field }) => (
-            <FormInputWrapper className="flex w-full flex-col">
+            <InputWrapper className="flex w-full flex-col">
               <Label>Data do sorteio</Label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -102,7 +102,7 @@ export const EditGroupForm = () => {
                   />
                 </PopoverContent>
               </Popover>
-            </FormInputWrapper>
+            </InputWrapper>
           )}
         />
       </form>
