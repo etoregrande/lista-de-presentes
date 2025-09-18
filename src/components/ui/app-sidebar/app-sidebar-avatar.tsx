@@ -9,8 +9,6 @@ import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { getDisplayName, setAvatarFallbackString } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 import { signOut } from '@/server/auth'
-import { Button } from '../button'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { AppSidebarAvatarEditModal } from './app-sidebar-avatar-edit-modal'
 import { useSidebar } from '../sidebar'
@@ -18,23 +16,10 @@ import { useSession } from '@/lib/context/session/context'
 
 export const AppSidebarAvatar = () => {
   const session = useSession()
-  const router = useRouter()
   const { isMobile } = useSidebar()
   const [isChangingAvatar, setIsChangingAvatar] = useState(false)
 
-  if (!session) {
-    return (
-      <Button
-        type="button"
-        variant="link"
-        onClick={() => {
-          router.push('/login')
-        }}
-      >
-        Fazer login
-      </Button>
-    )
-  }
+  if (!session) return null
 
   const { user } = session
   const avatarImage = user.image ?? ''
