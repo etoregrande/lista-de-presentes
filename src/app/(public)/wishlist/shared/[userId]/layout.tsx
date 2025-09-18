@@ -18,32 +18,7 @@ export default async function WishlistLayout({
 
   const initialSecretSantaGroups = session
     ? await listSecretSantaGroups(session.user.id)
-    : [
-        {
-          id: 'group_1',
-          name: 'Natal em Família',
-          createdAt: new Date('2024-12-01T10:00:00Z'),
-          image: null,
-          slug: 'natal-em-familia',
-          priceLimit: 100,
-          eventDate: new Date('2024-12-24T20:00:00Z'),
-          isDrawn: true,
-          drawDate: new Date('2024-12-05T18:00:00Z'),
-          ownerId: 'user_123',
-        },
-        {
-          id: 'group_2',
-          name: 'Amigos do Trabalho',
-          createdAt: new Date('2025-01-10T14:30:00Z'),
-          image: 'https://placekitten.com/200/200',
-          slug: 'amigos-do-trabalho',
-          priceLimit: null,
-          eventDate: null,
-          isDrawn: false,
-          drawDate: null,
-          ownerId: 'user_456',
-        },
-      ]
+    : []
 
   return (
     <SidebarProvider>
