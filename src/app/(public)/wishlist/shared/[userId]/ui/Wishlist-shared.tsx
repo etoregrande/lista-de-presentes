@@ -58,7 +58,6 @@ export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
                 const params = new URLSearchParams(searchParams.toString())
 
                 if (floatValue !== undefined) {
-                  // Atualiza o searchParam em reais
                   params.set('priceLimit', floatValue.toString())
                 } else {
                   params.delete('priceLimit')
