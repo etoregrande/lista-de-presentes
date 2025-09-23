@@ -22,7 +22,7 @@ Você pode testar todas as funcionalidades agora mesmo, em produção:
   - Criar, editar, visualizar e excluir grupos para amigo secreto, com link para compartilhar e adicionar pessoas no grupo;
   - 💡 Regras de sorteio do amigo secreto que impedem um sorteio inválido (Quantidade de pessoas, sorteio pareado, etc)
 
-- 🔐 Sistema de autenticação completo com **BetterAuth**, com cadastro, recuperação de senha, confiormação de cadastro por email, login social e controle de sessões;
+- 🔐 Sistema de autenticação completo com **BetterAuth**, com cadastro, recuperação de senha, confirmação de cadastro por email via **Resend**, login social e controle de sessões;
 - ✅ Validações robustas de formulários com Zod e React Hook Form;
 - 📄 Banco de dados relacional **PostgreSQL** tipado e manipulado com **PrismaORM**;
 - 📷 Armazenamento de imagens em bucket **AWS S3**
