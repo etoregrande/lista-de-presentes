@@ -19,6 +19,9 @@ Você pode testar todas as funcionalidades agora mesmo, em produção:
 
 👉 **Acesse em:** [https://www.presenteio.app/](https://www.presenteio.app/)
 
+ou assista o vídeo demonstração:
+[![Assista ao vídeo](https://img.youtube.com/vi/DjThL95ll70/maxresdefault.jpg)](https://www.youtube.com/watch?v=DjThL95ll70)
+
 ## 🧠 Tecnologias Utilizadas
 
 - [Next.js](https://nextjs.org/)
