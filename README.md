@@ -16,7 +16,7 @@ Você pode testar todas as funcionalidades agora mesmo, em produção:
 
 ## ✨ Principais funcionalidades
 - 🛍️ CRUD completo de produtos:
-  - Criar, editar, visualizar e excluir produtos com nome, descrição, link, preço, imagem e opção para alterar a visibilizade do produto na lista compartilhada;
+  - Criar, editar, visualizar e excluir produtos com nome, descrição, link, preço, imagem e opção para alterar a visibilidade do produto na lista compartilhada;
   - ⬆️ Página específica para compartilhamento dos produtos cadastrados
 - 🛍️ CRUD completo de grupos para amigo secreto:
   - Criar, editar, visualizar e excluir grupos para amigo secreto, com link para compartilhar e adicionar pessoas no grupo;
@@ -28,7 +28,7 @@ Você pode testar todas as funcionalidades agora mesmo, em produção:
 - 📷 Armazenamento de imagens em bucket **AWS S3**
 
 
-## 🧠 Tecnologias Utilizadas
+## 🧠 Tecnologias utilizadas
 - [Next.js](https://nextjs.org/)
 - [React](https://reactjs.org/)
 - [BetterAuth](https://www.better-auth.com/)
