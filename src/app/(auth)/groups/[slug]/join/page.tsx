@@ -44,23 +44,21 @@ export default async function Page({ params }: PageProps) {
       <main className="layout-container min-h-[calc(100vh-200px)]">
         {!group.isDrawn ? (
           <>
-            <section className="h-full w-full">
-              <div className="relative flex h-full flex-col items-center justify-center md:flex-row md:gap-10">
-                <div className="relative aspect-square w-full md:aspect-auto md:h-full md:flex-1">
-                  <Image
-                    src="/assets/secretSanta/joinSecretSanta.svg"
-                    alt=""
-                    fill
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-                <div className="flex w-full min-w-0 flex-col gap-4 md:flex-1">
-                  <SecretSantaGroupName />
-                  <JoinGroupButton handleJoinGroup={handleJoinGroup}>
-                    Entrar no grupo
-                  </JoinGroupButton>
-                </div>
+            <section className="flex h-full w-full flex-col items-center md:justify-center">
+              <Image
+                src="/assets/secretSanta/joinSecretSanta.svg"
+                alt="Join Secret Santa"
+                width={400}
+                height={400}
+                className="max-h-full max-w-full object-contain"
+                priority
+              />
+
+              <div className="flex w-full max-w-100 min-w-0 flex-col gap-4">
+                <SecretSantaGroupName />
+                <JoinGroupButton handleJoinGroup={handleJoinGroup}>
+                  Entrar no grupo
+                </JoinGroupButton>
               </div>
             </section>
           </>
