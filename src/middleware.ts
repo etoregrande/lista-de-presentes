@@ -15,7 +15,9 @@ export async function middleware(request: NextRequest) {
     const callbackPath =
       request.nextUrl.pathname + request.nextUrl.search + request.nextUrl.hash
 
-    loginUrl.searchParams.set('callbackUrl', callbackPath)
+    if (callbackPath !== '/') {
+      loginUrl.searchParams.set('callbackUrl', callbackPath)
+    }
     return NextResponse.redirect(loginUrl)
   }
 
