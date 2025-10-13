@@ -88,6 +88,7 @@ export const AuthLoginForm = ({
     setIsLoggingInWithGoogle(true)
     await authClient.signIn.social({
       provider: 'google',
+      callbackURL: pushToUrl,
     })
   }
 
