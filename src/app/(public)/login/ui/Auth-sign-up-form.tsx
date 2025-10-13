@@ -59,8 +59,9 @@ export const AuthSignUpForm = ({ setFormType }: AuthSignUpFormProps) => {
         },
         onError: (ctx) => {
           const errorCode = ctx.error?.code
+          console.log('====>', errorCode)
 
-          if (errorCode === 'USER_ALREADY_EXISTS') {
+          if (errorCode === 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL') {
             setError('email', {
               message: 'Email já cadastrado',
             })
