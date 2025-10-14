@@ -81,17 +81,22 @@ export const updateWishlistItem = async (
   }
 
   try {
+    const dataToUpdate: any = {
+      name,
+      price: price ?? null,
+      description: description ?? null,
+      link: sanitizedLink ?? null,
+      priority: (priority as Priority) ?? 'normal',
+      isActive,
+    }
+
+    if (imageUrl) {
+      dataToUpdate.image = imageUrl
+    }
+
     const editedWishlistItem = await prisma.wishlistItem.update({
       where: { id: wishlistItemId, userId },
-      data: {
-        name,
-        price: price ?? null,
-        description: description ?? null,
-        link: sanitizedLink ?? null,
-        priority: (priority as Priority) ?? 'normal',
-        isActive: isActive,
-        image: imageUrl ?? null,
-      },
+      data: dataToUpdate,
     })
 
     if (!editedWishlistItem) {
