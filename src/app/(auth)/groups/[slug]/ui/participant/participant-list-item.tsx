@@ -5,18 +5,17 @@ import { UserXIcon as UserXIcon } from 'lucide-react'
 import { ParticipantListItemRemoveButton } from './participant-list-item-remove-button'
 import { useSecretSantaGroup } from '../../context/context'
 import { useSession } from '@/lib/context/session/context'
+import Link from 'next/link'
 
 interface ParticipantProps {
   participantId: string
   participantName: string
-  participantEmail: string
   participantImage: string
 }
 
 export const ParticipantListItem = ({
   participantId,
   participantName,
-  participantEmail,
   participantImage,
 }: ParticipantProps) => {
   const { isOwner, secretSantaGroup } = useSecretSantaGroup()
@@ -37,16 +36,22 @@ export const ParticipantListItem = ({
             {setAvatarFallbackString(participantName)}
           </AvatarFallback>
         </Avatar>
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col justify-center">
           <p className="truncate" title={participantName}>
             {participantName}
           </p>
-          <p
-            className="text-muted-foreground truncate text-sm"
-            title={participantEmail}
-          >
-            {participantEmail}
-          </p>
+          {participantId != user.id ? (
+            <Link
+              href={`/wishlist/shared/${participantId}`}
+              className="text-primary self-start truncate text-sm hover:underline"
+            >
+              Ver lista de desejos
+            </Link>
+          ) : (
+            <p className="text-muted-foreground self-start truncate text-sm">
+              {user.email}
+            </p>
+          )}
         </div>
       </div>
       {allowRemoveParticipant && (
