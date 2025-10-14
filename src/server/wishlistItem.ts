@@ -81,17 +81,19 @@ export const updateWishlistItem = async (
   }
 
   try {
-    const dataToUpdate: any = {
+    const dataToUpdate: Partial<WishlistItem> = {
       name,
       price: price ?? null,
       description: description ?? null,
       link: sanitizedLink ?? null,
       priority: (priority as Priority) ?? 'normal',
-      isActive,
     }
 
     if (imageUrl) {
       dataToUpdate.image = imageUrl
+    }
+    if (typeof isActive === 'boolean') {
+      dataToUpdate.isActive = isActive
     }
 
     const editedWishlistItem = await prisma.wishlistItem.update({
