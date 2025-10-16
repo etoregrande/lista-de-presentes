@@ -13,7 +13,7 @@ export default async function Page() {
   if (!session) redirect('/login')
 
   return (
-    <div className="layout-container w-full py-0 md:py-10">
+    <div className="layout-container w-full py-0 pb-[60dvh] md:py-10 md:pb-[10dvh]">
       <WishlistBackground />
       <Wishlist initialWishlist={wishlistItems} session={session} />
     </div>
