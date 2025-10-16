@@ -11,7 +11,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { setAvatarFallbackString } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { LoaderCircle as LoaderCircleIcon } from 'lucide-react'
-import { useSecretSantaGroup } from '../context/context'
 
 interface SecretSantaDrawResultProps {
   receiver: Partial<User> | null
@@ -21,9 +20,6 @@ export const SecretSantaDrawResult = ({
   receiver,
 }: SecretSantaDrawResultProps) => {
   const router = useRouter()
-  const {
-    secretSantaGroup: { priceLimit },
-  } = useSecretSantaGroup()
   const [revealed, setRevealed] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -44,12 +40,7 @@ export const SecretSantaDrawResult = ({
 
     setLoading(true)
 
-    const params = new URLSearchParams()
-
-    if (priceLimit) params.set('priceLimit', (priceLimit / 100).toString())
-    const searchString = params.toString() ? `?${params.toString()}` : ''
-
-    router.push(`/wishlist/shared/${receiverId}${searchString}`)
+    router.push(`/wishlist/shared/${receiverId}`)
   }
 
   const { name: receiverName, image, id: receiverId } = receiver
