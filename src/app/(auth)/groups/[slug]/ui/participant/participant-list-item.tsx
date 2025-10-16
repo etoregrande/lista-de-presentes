@@ -28,38 +28,36 @@ export const ParticipantListItem = ({
     isOwner && user.id != participantId && !secretSantaGroup.isDrawn
 
   return (
-    <div className="group flex items-center gap-2">
-      <div className="flex w-full items-center gap-2">
-        <Avatar className="h-12 w-12">
-          <AvatarImage src={participantImage} />
-          <AvatarFallback className="bg-navbar-muted-foreground font-bold">
-            {setAvatarFallbackString(participantName)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex min-w-0 flex-1 flex-col justify-center">
-          <p className="truncate" title={participantName}>
-            {participantName}
-          </p>
-          {participantId != user.id ? (
-            <Link
-              href={`/wishlist/shared/${participantId}`}
-              className="text-primary self-start truncate text-sm hover:underline"
-            >
-              Ver lista de desejos
-            </Link>
-          ) : (
-            <p className="text-muted-foreground self-start truncate text-sm">
-              {user.email}
-            </p>
-          )}
-        </div>
+    <div className="group flex w-full items-center gap-2">
+      <Avatar className="h-12 w-12">
+        <AvatarImage src={participantImage} />
+        <AvatarFallback className="bg-navbar-muted-foreground font-bold">
+          {setAvatarFallbackString(participantName)}
+        </AvatarFallback>
+      </Avatar>
+
+      <div className="flex min-w-0 flex-1 flex-col justify-center">
+        <p className="truncate" title={participantName}>
+          {participantName}
+        </p>
+        {participantId != user.id ? (
+          <Link
+            href={`/wishlist/shared/${participantId}`}
+            className="text-primary truncate text-sm hover:underline"
+          >
+            Ver lista de desejos
+          </Link>
+        ) : (
+          <p className="text-muted-foreground truncate text-sm">{user.email}</p>
+        )}
       </div>
+
       {allowRemoveParticipant && (
         <ParticipantListItemRemoveButton participantId={participantId}>
           <Button
-            variant={'secondary'}
-            size={'icon'}
-            className="md:hidden md:group-hover:flex"
+            variant="secondary"
+            size="icon"
+            className="hidden md:group-hover:flex"
           >
             <UserXIcon />
           </Button>
