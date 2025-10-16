@@ -191,6 +191,7 @@ export const WishlistItemSheetForm = ({
             control={control}
             render={({ field }) => (
               <NumericFormat
+                inputMode="decimal"
                 thousandSeparator="."
                 decimalSeparator=","
                 decimalScale={2}
@@ -201,7 +202,9 @@ export const WishlistItemSheetForm = ({
                 onValueChange={(values) => {
                   const { floatValue } = values
                   field.onChange(
-                    floatValue !== undefined ? floatValue * 100 : null
+                    floatValue !== undefined
+                      ? Math.round(floatValue * 100)
+                      : null
                   )
                 }}
                 customInput={Input}
