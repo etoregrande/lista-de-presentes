@@ -212,6 +212,30 @@
   .layout-container {
     @apply mx-auto w-full px-4 sm:max-w-4xl md:px-8 xl:px-0;
   }
+
+  .scrollable {
+    overflow-y: auto;
+  }
+
+  .scrollable::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollable::-webkit-scrollbar-track {
+    background-color: var(--muted);
+    border-radius: 2px;
+  }
+
+  .scrollable::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 2px;
+  }
+
+  .scrollable::-webkit-inner-spin-button,
+  .scrollable::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0; /* Important to remove any default margin */
+  }
 }
 
 body {
@@ -225,4 +249,18 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+body::-webkit-scrollbar {
+  width: 4px;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: var(--muted);
+  border-radius: 4dvb;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 4px;
 }
