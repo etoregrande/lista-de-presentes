@@ -125,7 +125,7 @@ export default async function Page({ params }: PageProps) {
             <h2 className="text-lg font-bold">Participantes</h2>
             <div
               className={cn(
-                'bg-background scrollable w-full space-y-2 overflow-x-hidden rounded-md bg-clip-content',
+                'bg-background scrollable w-full space-y-2 overflow-x-hidden rounded-md',
                 'md:shadow-[0_0_0_8px_theme(colors.background)] md:max-h-104 md:pr-2'
               )}
             >
