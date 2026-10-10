@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test, mock } from 'node:test'
 import { loadModule } from '../helpers/load-module.mjs'
+import { validationModules } from '../helpers/validation-modules.mjs'
 
 function fixture(userId = 'owner') {
   const getSession = mock.fn(async () =>
@@ -60,6 +61,7 @@ function fixture(userId = 'owner') {
   const deleteImageFromS3 = mock.fn(async () => {})
   const send = mock.fn(async () => {})
   const dependencies = {
+    ...validationModules,
     '@/lib/prisma': { prisma: { wishlistItem, user } },
     '@/lib/auth': { auth: { api: { getSession } } },
     'next/headers': { headers: async () => new Headers() },
@@ -92,6 +94,7 @@ function fixture(userId = 'owner') {
 
 const form = {
   name: 'Gift',
+  description: null,
   link: null,
   image: null,
   price: 100,
@@ -124,13 +127,33 @@ test('session helper returns the authenticated user', async () => {
 })
 
 for (const [name, invoke] of [
-  ['create', (f) => f.actions.createWishlistItem({ ...form, image: {} })],
+  [
+    'create',
+    (f) =>
+      f.actions.createWishlistItem({
+        ...form,
+        image: new File(['test image'], 'image.png', { type: 'image/png' }),
+      }),
+  ],
   [
     'edit',
-    (f) => f.actions.updateWishlistItem({ ...form, image: {} }, 'own-item'),
+    (f) =>
+      f.actions.updateWishlistItem(
+        {
+          ...form,
+          image: new File(['test image'], 'image.png', { type: 'image/png' }),
+        },
+        'own-item'
+      ),
   ],
   ['delete', (f) => f.actions.deleteWishlistItem('own-item')],
-  ['avatar', (f) => f.avatar.updateUserAvatar({ image: {} })],
+  [
+    'avatar',
+    (f) =>
+      f.avatar.updateUserAvatar({
+        image: new File(['test image'], 'image.png', { type: 'image/png' }),
+      }),
+  ],
 ]) {
   test(`anonymous ${name} fails before storage or database writes`, async () => {
     const f = fixture(null)
@@ -142,7 +165,11 @@ for (const [name, invoke] of [
 test('creation ignores forged user IDs and uses the session for database and storage', async () => {
   const f = fixture()
   const item = await f.actions.createWishlistItem(
-    { ...form, image: {}, userId: 'other' },
+    {
+      ...form,
+      image: new File(['test image'], 'image.png', { type: 'image/png' }),
+      userId: 'other',
+    },
     'other'
   )
   assert.equal(item.userId, 'owner')
@@ -152,7 +179,14 @@ test('creation ignores forged user IDs and uses the session for database and sto
 test('cross-account edit fails before upload, deletion, or database mutation', async () => {
   const f = fixture()
   await assert.rejects(
-    f.actions.updateWishlistItem({ ...form, image: {} }, 'other-item', 'other'),
+    f.actions.updateWishlistItem(
+      {
+        ...form,
+        image: new File(['test image'], 'image.png', { type: 'image/png' }),
+      },
+      'other-item',
+      'other'
+    ),
     /Wishlist item not found/
   )
   assertNoWrites(f)
@@ -174,7 +208,10 @@ test('owner edit is scoped to the session and uploads only after checking owners
     return 'https://bucket.test/new-image'
   })
   const result = await f.actions.updateWishlistItem(
-    { ...form, image: {} },
+    {
+      ...form,
+      image: new File(['test image'], 'image.png', { type: 'image/png' }),
+    },
     'own-item',
     'other'
   )
@@ -210,7 +247,10 @@ test('owner delete removes its record and image', async () => {
 test('avatar update ignores forged user IDs for storage and database writes', async () => {
   const f = fixture()
   const result = await f.avatar.updateUserAvatar(
-    { image: {}, userId: 'other' },
+    {
+      image: new File(['test image'], 'image.png', { type: 'image/png' }),
+      userId: 'other',
+    },
     'other'
   )
   assert.equal(result.id, 'owner')

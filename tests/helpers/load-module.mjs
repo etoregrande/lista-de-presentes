@@ -38,6 +38,8 @@ export function loadModule(filename, dependencies, globals = {}) {
       },
       console: { error() {} },
       URL,
+      File,
+      Buffer,
       process: { env: { BUCKET_NAME: 'test-bucket' } },
       ...globals,
     },

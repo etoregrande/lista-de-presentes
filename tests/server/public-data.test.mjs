@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test, mock } from 'node:test'
 import { loadModule } from '../helpers/load-module.mjs'
+import { validationModules } from '../helpers/validation-modules.mjs'
 
 const jsxRuntime = {
   jsx: (type, props) => ({ type, props }),
@@ -94,6 +95,7 @@ function fixture(actor = null) {
   }
   const prisma = { wishlistItem, user }
   const actions = loadModule('src/server/wishlistItem.ts', {
+    ...validationModules,
     '@/lib/prisma': { prisma },
     './session': { requireAuthenticatedUserId },
     '@/lib/utils': { sanitizeLinkUrl: (value) => value },
@@ -192,10 +194,7 @@ test('missing public profile returns null', async () => {
 for (const value of ['', '   ', null, undefined, { not: null }]) {
   test(`invalid public user ID ${JSON.stringify(value)} is rejected before querying`, async () => {
     const f = fixture()
-    await assert.rejects(
-      f.actions.listPublicWishlistItems(value),
-      /User ID is required/
-    )
+    await assert.rejects(f.actions.listPublicWishlistItems(value))
     await assert.rejects(
       f.profiles.getPublicUserProfile(value),
       /User ID is required/

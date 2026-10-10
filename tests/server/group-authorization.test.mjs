@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test, mock } from 'node:test'
 import { loadModule } from '../helpers/load-module.mjs'
+import { validationModules } from '../helpers/validation-modules.mjs'
 
 function fixture(actor = 'owner') {
   let currentActor = actor
@@ -82,6 +83,7 @@ function fixture(actor = 'owner') {
   const secretSantaDraw = { createMany: mock.fn(async () => ({ count: 4 })) }
   const transaction = mock.fn(async (queries) => Promise.all(queries))
   const actions = loadModule('src/server/secretSantaGroup.ts', {
+    ...validationModules,
     './session': { requireAuthenticatedUserId },
     '@/lib/prisma': {
       prisma: {

@@ -39,3 +39,12 @@ Você pode testar todas as funcionalidades agora mesmo, em produção:
 - [PrismaORM](https://www.prisma.io/)
 - [PostgreSQL](https://www.postgresql.org/)
 
+
+
+## Validação de dados e imagens
+
+As ações validam os formulários no servidor antes de gravar dados ou enviar imagens ao S3. Nomes têm até 255 caracteres; preços são inteiros em centavos entre 0 e 2.147.483.647. Links aceitam HTTP/HTTPS e rejeitam endereços locais e credenciais na URL.
+
+Uploads aceitam arquivos JPEG, PNG e WebP de até 5 MiB e 16 megapixels no total (incluindo quadros de imagens animadas). O servidor confere assinatura, formato e pixels usando Sharp e reencoda a imagem sem metadados antes do upload. O corpo da ação permite 6 MiB para acomodar o formulário e o overhead multipart.
+
+Execute `npm test` para as regressões e `npm run lint` para ESLint e TypeScript. Os testes de upload usam o decodificador real e um S3 simulado, sem acessar o banco ou enviar arquivos à AWS.

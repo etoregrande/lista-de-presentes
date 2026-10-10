@@ -1,12 +1,13 @@
 import { s3 } from '@/lib/s3'
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
+import { validateImageContent } from '@/lib/validated-image'
 
 export const uploadImageToS3 = async (
   file: File,
   type: 'wishlist image' | 'user avatar' | 'group avatar',
   ownerId: string
 ): Promise<string> => {
-  const imageBuffer = Buffer.from(await file.arrayBuffer())
+  const { body, contentType } = await validateImageContent(file)
 
   const s3KeyTemplates = {
     'wishlist image': (ownerId: string) =>
@@ -20,8 +21,8 @@ export const uploadImageToS3 = async (
   const command = new PutObjectCommand({
     Bucket: process.env.BUCKET_NAME,
     Key: key,
-    Body: imageBuffer,
-    ContentType: file.type,
+    Body: body,
+    ContentType: contentType,
   })
 
   await s3.send(command)

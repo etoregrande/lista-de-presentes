@@ -4,15 +4,17 @@ import { type WishlistItemFormData } from '@/types/wishlistItem'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { s3 } from '@/lib/s3'
 import { prisma } from '@/lib/prisma'
-import { sanitizeLinkUrl } from '@/lib/utils'
+import { wishlistItemFormSchema } from '@/schemas/wishlistItem'
+import { identifierSchema, priceInCentsSchema } from '@/schemas/common'
+import { z } from 'zod'
 import { deleteImageFromS3, uploadImageToS3 } from './s3'
-import { Priority, WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/generated/prisma'
 import { requireAuthenticatedUserId } from './session'
 
 export const createWishlistItem = async (formData: WishlistItemFormData) => {
   const userId = await requireAuthenticatedUserId()
-  const { name, isActive, link, priority, description, image, price } = formData
-  const sanitizedLink = sanitizeLinkUrl(link)
+  const { name, isActive, link, priority, description, image, price } =
+    wishlistItemFormSchema.parse(formData)
   let imageUrl: string | null = null
 
   if (image) {
@@ -30,8 +32,8 @@ export const createWishlistItem = async (formData: WishlistItemFormData) => {
         name,
         price: price ?? null,
         description: description ?? undefined,
-        link: sanitizedLink ?? undefined,
-        priority: (priority as Priority) ?? 'normal',
+        link: link || undefined,
+        priority: priority ?? 'normal',
         isActive: isActive,
         image: imageUrl ?? null,
         userId: userId,
@@ -55,15 +57,15 @@ export const updateWishlistItem = async (
   wishlistItemId: string
 ) => {
   const userId = await requireAuthenticatedUserId()
-  if (!wishlistItemId) throw new Error('Wishlist item ID is required')
+  wishlistItemId = identifierSchema.parse(wishlistItemId)
   const existingItem = await prisma.wishlistItem.findUnique({
     select: { image: true },
     where: { id: wishlistItemId, userId },
   })
   if (!existingItem) throw new Error('Wishlist item not found')
 
-  const { name, description, price, link, image, priority, isActive } = formData
-  const sanitizedLink = sanitizeLinkUrl(link)
+  const { name, description, price, link, image, priority, isActive } =
+    wishlistItemFormSchema.parse(formData)
   let imageUrl: string | null = null
 
   if (image) {
@@ -84,8 +86,8 @@ export const updateWishlistItem = async (
       name,
       price: price ?? null,
       description: description ?? null,
-      link: sanitizedLink ?? null,
-      priority: (priority as Priority) ?? 'normal',
+      link: link || null,
+      priority: priority ?? 'normal',
     }
 
     if (imageUrl) {
@@ -113,7 +115,7 @@ export const updateWishlistItem = async (
 
 export const deleteWishlistItem = async (wishlistItemId: string) => {
   const userId = await requireAuthenticatedUserId()
-  if (!wishlistItemId) throw new Error('Wishlist item ID is required')
+  wishlistItemId = identifierSchema.parse(wishlistItemId)
   try {
     const deletedWishlistItem = await prisma.wishlistItem.delete({
       where: { id: wishlistItemId, userId },
@@ -149,9 +151,7 @@ export const listPublicWishlistItems = async (
   userId: string,
   filters?: WishlistFilters
 ) => {
-  if (typeof userId !== 'string' || !userId.trim()) {
-    throw new Error('User ID is required')
-  }
+  userId = identifierSchema.parse(userId)
   return findWishlistItems(userId, filters, true)
 }
 
@@ -160,13 +160,16 @@ async function findWishlistItems(
   filters: WishlistFilters | undefined,
   publicOnly: boolean
 ) {
+  const validatedFilters = z
+    .object({ maxPrice: priceInCentsSchema.optional() })
+    .parse(filters ?? {})
   try {
     return await prisma.wishlistItem.findMany({
       where: {
         userId,
         ...(publicOnly && { isActive: true }),
-        ...(filters?.maxPrice !== undefined && {
-          price: { lte: filters.maxPrice },
+        ...(validatedFilters.maxPrice !== undefined && {
+          price: { lte: validatedFilters.maxPrice },
         }),
       },
     })
@@ -179,11 +182,12 @@ async function findWishlistItems(
 export const purchaseWishlistItem = async (
   wishlistItem: Partial<WishlistItem>
 ) => {
-  const { id, isPurchased } = wishlistItem
-
-  if (!id || isPurchased === undefined) {
-    throw new Error('Wishlist item ID and isPurchased status are required')
-  }
+  const { id, isPurchased } = z
+    .object({
+      id: identifierSchema,
+      isPurchased: z.boolean(),
+    })
+    .parse(wishlistItem)
 
   try {
     const updatedWishlistItem = await prisma.wishlistItem.update({

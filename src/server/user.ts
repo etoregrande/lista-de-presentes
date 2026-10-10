@@ -4,10 +4,11 @@ import { prisma } from '@/lib/prisma'
 import { AvatarImageFormData } from '@/types/avatarImage'
 import { uploadImageToS3 } from './s3'
 import { requireAuthenticatedUserId } from './session'
+import { avatarImageFormSchema } from '@/schemas/avatarImage'
 
 export const updateUserAvatar = async (formData: AvatarImageFormData) => {
   const userId = await requireAuthenticatedUserId()
-  const { image } = formData
+  const { image } = avatarImageFormSchema.parse(formData)
 
   if (!image) {
     throw new Error('No image provided')

@@ -90,7 +90,8 @@ export const isSafeUrl = (url: string): boolean => {
 
     if (!['http:', 'https:'].includes(parsed.protocol)) return false
 
-    const hostname = parsed.hostname.toLowerCase()
+    const hostname = parsed.hostname.toLowerCase().replace(/\.$/, '')
+    if (parsed.username || parsed.password) return false
 
     if (
       hostname === 'localhost' ||

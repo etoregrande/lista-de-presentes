@@ -5,6 +5,8 @@ import { prisma } from '@/lib/prisma'
 import { drawSecretSanta, generateSecretSantaGroupSlug } from '@/lib/utils'
 import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
 import { requireAuthenticatedUserId } from './session'
+import { secretSantaGroupFormSchema } from '@/schemas/secretSantaGroup'
+import { identifierSchema } from '@/schemas/common'
 
 type FieldError = {
   field: keyof secretSantaGroupFormData | 'root'
@@ -13,7 +15,7 @@ type FieldError = {
 
 async function requireGroupOwner(groupId: string) {
   const userId = await requireAuthenticatedUserId()
-  if (!groupId) throw new Error('Group ID is required')
+  groupId = identifierSchema.parse(groupId)
   const group = await prisma.secretSantaGroup.findUnique({
     where: { id: groupId, ownerId: userId },
   })
@@ -23,7 +25,7 @@ async function requireGroupOwner(groupId: string) {
 
 async function requireGroupParticipant(groupId: string) {
   const userId = await requireAuthenticatedUserId()
-  if (!groupId) throw new Error('Group ID is required')
+  groupId = identifierSchema.parse(groupId)
   const membership = await prisma.userSecretSantaGroup.findUnique({
     where: {
       userId_secretSantaGroupId: { userId, secretSantaGroupId: groupId },
@@ -48,9 +50,7 @@ export const listSecretSantaGroups = async () => {
 
 export const getSecretSantaGroup = async (slug: string) => {
   const userId = await requireAuthenticatedUserId()
-  if (!slug) {
-    throw new Error('Group Slug is required to get a Secret Santa group')
-  }
+  slug = identifierSchema.parse(slug)
   const secretSantaGroup = await prisma.secretSantaGroup.findUnique({
     where: {
       slug,
@@ -66,7 +66,7 @@ export const getSecretSantaGroup = async (slug: string) => {
 
 export const getSecretSantaGroupInvitation = async (slug: string) => {
   await requireAuthenticatedUserId()
-  if (!slug) throw new Error('Group Slug is required')
+  slug = identifierSchema.parse(slug)
   const group = await prisma.secretSantaGroup.findUnique({
     where: { slug },
     select: { name: true, image: true, isDrawn: true },
@@ -79,7 +79,8 @@ export const createSecretSantaGroup = async (
   formData: secretSantaGroupFormData
 ) => {
   const userId = await requireAuthenticatedUserId()
-  const { name, priceLimit, eventDate } = formData
+  const { name, priceLimit, eventDate } =
+    secretSantaGroupFormSchema.parse(formData)
   try {
     const slug = generateSecretSantaGroupSlug(name)
     const newSecretSantaGroup = await prisma.secretSantaGroup.create({
@@ -128,7 +129,8 @@ export const updateSecretSantaGroup = async (
 ) => {
   const { userId: ownerId } = await requireGroupOwner(groupId)
 
-  const { name, eventDate, priceLimit } = formData
+  const { name, eventDate, priceLimit } =
+    secretSantaGroupFormSchema.parse(formData)
 
   try {
     const updatedGroup = await prisma.secretSantaGroup.update({
@@ -205,7 +207,7 @@ export const isSecretSantaGroupParticipant = async (
   slug: string
 ): Promise<boolean> => {
   const userId = await requireAuthenticatedUserId()
-  if (!slug) throw new Error('Slug is required')
+  slug = identifierSchema.parse(slug)
 
   const participant = await prisma.userSecretSantaGroup.findFirst({
     where: {
@@ -221,7 +223,7 @@ export const isSecretSantaGroupParticipant = async (
 
 export const createSecretSantaGroupParticipant = async (slug: string) => {
   const userId = await requireAuthenticatedUserId()
-  if (!slug) throw new Error('Group Slug is required')
+  slug = identifierSchema.parse(slug)
   const group = await prisma.secretSantaGroup.findUnique({
     where: { slug },
     select: { id: true },
@@ -263,7 +265,8 @@ export const removeSecretSantaGroupParticipant = async (
   participantId: string
 ) => {
   const { group } = await requireGroupOwner(groupId)
-  if (!participantId || participantId === group.ownerId)
+  participantId = identifierSchema.parse(participantId)
+  if (participantId === group.ownerId)
     throw new Error('Invalid participant removal')
   return deleteParticipantMembership(participantId, groupId)
 }
