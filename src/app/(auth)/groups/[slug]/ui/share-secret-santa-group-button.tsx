@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useOrigin } from '@/lib/hooks/use-origin'
 import { Input } from '@/components/ui/input'
 import clsx from 'clsx'
 import { Copy as CopyIcon, UserPlus as UserPlusIcon } from 'lucide-react'
@@ -27,11 +28,7 @@ export const ShareSecretSantaGroupButton = ({
 }: ShareSecretSantaGroupButtonProps) => {
   const [copied, setCopied] = useState(false)
   const { secretSantaGroup } = useSecretSantaGroup()
-  const [origin, setOrigin] = useState('')
-
-  useEffect(() => {
-    setOrigin(window.location.origin)
-  }, [])
+  const origin = useOrigin()
 
   const sharedUrl = origin
     ? `${origin}/groups/${secretSantaGroup.slug}/join`
@@ -67,7 +64,7 @@ export const ShareSecretSantaGroupButton = ({
               <Input
                 name="url"
                 placeholder="Carregando..."
-                defaultValue={sharedUrl}
+                value={sharedUrl}
                 disabled={copied}
                 readOnly
                 className={clsx(

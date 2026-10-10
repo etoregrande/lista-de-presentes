@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useOrigin } from '@/lib/hooks/use-origin'
 import { Input } from '@/components/ui/input'
 import clsx from 'clsx'
 import { Copy, Share } from 'lucide-react'
@@ -26,15 +27,10 @@ export const WishlistShareButton = ({
   className,
 }: WishlistShareButtonProps) => {
   const [copied, setCopied] = useState(false)
-  const [sharedUrl, setSharedUrl] = useState('')
+  const origin = useOrigin()
   const session = useSession()
-
-  useEffect(() => {
-    if (!session) return
-    setSharedUrl(
-      `${window.location.origin}/wishlist/shared/${session?.user.id}`
-    )
-  }, [session])
+  const sharedUrl =
+    origin && session ? `${origin}/wishlist/shared/${session.user.id}` : ''
 
   if (!session) return null
 
@@ -71,7 +67,7 @@ export const WishlistShareButton = ({
               <Input
                 name="url"
                 placeholder="Carregando..."
-                defaultValue={sharedUrl}
+                value={sharedUrl}
                 disabled={copied}
                 readOnly
                 className={clsx(

@@ -7,7 +7,8 @@
     "resetdev": "npx prisma migrate reset && npx prisma generate && next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint && tsc --noEmit",
+    "lint": "eslint . && npm run typecheck",
+    "typecheck": "tsc --noEmit",
     "migrate": "prisma migrate deploy"
   },
   "dependencies": {
@@ -67,7 +68,7 @@
     "@types/psl": "^1.11.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^10",
+    "eslint": "9.39.5",
     "eslint-config-next": "16.4.0",
     "kysely-codegen": "^0.20.0",
     "kysely-ctl": "^0.21.0",
@@ -77,6 +78,6 @@
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "6.0.2"
   }
 }

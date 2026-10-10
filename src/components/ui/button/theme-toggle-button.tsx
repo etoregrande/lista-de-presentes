@@ -1,31 +1,34 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { Switch } from '@/components/ui/switch'
 import { Moon, Sun } from 'lucide-react'
 
-export function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark')
-        ? 'dark'
-        : 'light'
-    }
-    return 'light'
+const subscribe = (onChange: () => void) => {
+  const observer = new MutationObserver(onChange)
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
   })
+  return () => observer.disconnect()
+}
+const getSnapshot = () => document.documentElement.classList.contains('dark')
+const getServerSnapshot = () => false
+
+export function ThemeToggle() {
+  const isDark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const theme = isDark ? 'dark' : 'light'
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light'
     document.documentElement.classList.toggle('dark', nextTheme === 'dark')
     localStorage.setItem('theme', nextTheme)
-    setTheme(nextTheme)
   }
 
   useEffect(() => {
     const saved = localStorage.getItem('theme') as 'light' | 'dark' | null
     if (saved) {
       document.documentElement.classList.toggle('dark', saved === 'dark')
-      setTheme(saved)
     }
   }, [])
 

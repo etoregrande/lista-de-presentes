@@ -38,28 +38,29 @@ export const WishlistItemSheetForm = ({
     formState: { errors },
   } = useFormContext<WishlistItemFormData>()
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [preview, setPreview] = useState<{ file: File; url: string } | null>(
+    null
+  )
   const image = watch('image')
+  const selectedImage = preview && preview.file === image ? preview.url : null
 
   useEffect(() => {
+    if (!(image instanceof File)) return
+
+    let cancelled = false
     let url: string | null = null
+    trigger('image').then((isValid) => {
+      if (cancelled) return
+      if (isValid) {
+        url = URL.createObjectURL(image)
+        setPreview({ file: image, url })
+      } else {
+        setPreview(null)
+      }
+    })
 
-    if (image instanceof File) {
-      // trigger zod validation for image
-      trigger('image').then((isValid) => {
-        if (isValid) {
-          url = URL.createObjectURL(image)
-          setSelectedImage(url)
-        } else {
-          setSelectedImage(null)
-        }
-      })
-    } else {
-      setSelectedImage(null)
-    }
-
-    // revokes the URL before running useEffect again or when component is unmounted
     return () => {
+      cancelled = true
       if (url) URL.revokeObjectURL(url)
     }
   }, [image, trigger])

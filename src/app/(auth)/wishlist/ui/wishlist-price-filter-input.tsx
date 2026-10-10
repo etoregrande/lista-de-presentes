@@ -3,7 +3,6 @@
 import { Input } from '@/components/ui/input'
 import { WishlistItem } from '@/generated/prisma'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
 interface WishlistPriceFilterInputProps {
   wishlist: WishlistItem[]
@@ -17,25 +16,15 @@ export function WishlistPriceFilterInput({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [priceLimit, setPriceLimit] = useState<number | ''>('')
-
-  useEffect(() => {
-    const priceParam = searchParams.get('priceLimit')
-    if (priceParam) {
-      setPriceLimit(Number(priceParam))
-    } else {
-      setPriceLimit('')
-    }
-  }, [searchParams])
+  const priceParam = searchParams.get('priceLimit')
+  const priceLimit = priceParam ? Number(priceParam) : ''
 
   const handleSearch = (value: number | '') => {
-    setPriceLimit(value)
-
     const params = new URLSearchParams(searchParams.toString())
     if (value !== '') {
-      params.set('price', value.toString())
+      params.set('priceLimit', value.toString())
     } else {
-      params.delete('price')
+      params.delete('priceLimit')
     }
     router.replace(`${pathname}?${params.toString()}`)
 
