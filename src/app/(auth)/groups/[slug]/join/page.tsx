@@ -1,5 +1,5 @@
 import {
-  getSecretSantaGroup,
+  getSecretSantaGroupInvitation,
   isSecretSantaGroupParticipant,
   createSecretSantaGroupParticipant,
 } from '@/server/secretSantaGroup'
@@ -7,8 +7,7 @@ import { getSessionOnServer } from '@/server/session'
 import { redirect } from 'next/navigation'
 import { JoinGroupButton } from './ui/join-group-button'
 import Image from 'next/image'
-import { SecretSantaGroupName } from '../ui/secret-santa-group-name'
-import { SecretSantaGroupProvider } from '../context/provider'
+import { SecretSantaGroupHeading } from '../ui/secret-santa-group-name'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -20,27 +19,20 @@ export default async function Page({ params }: PageProps) {
   if (!session)
     redirect(`/login?callbackUrl=/groups/${encodeURIComponent(slug)}/join`)
 
-  const isParticipant = await isSecretSantaGroupParticipant(
-    slug,
-    session.user.id
-  )
+  const isParticipant = await isSecretSantaGroupParticipant(slug)
   if (isParticipant) {
     redirect(`/groups/${slug}`)
   }
 
-  const group = await getSecretSantaGroup(slug)
+  const group = await getSecretSantaGroupInvitation(slug)
 
   async function handleJoinGroup() {
     'use server'
-    return await createSecretSantaGroupParticipant(session!.user.id, group.id)
+    return await createSecretSantaGroupParticipant(slug)
   }
 
   return (
-    <SecretSantaGroupProvider
-      secretSantaGroup={group}
-      isOwner={false}
-      initialParticipants={[]}
-    >
+    <>
       <main className="layout-container min-h-[calc(100vh-200px)]">
         {!group.isDrawn ? (
           <>
@@ -55,7 +47,7 @@ export default async function Page({ params }: PageProps) {
               />
 
               <div className="flex w-full max-w-100 min-w-0 flex-col gap-4">
-                <SecretSantaGroupName />
+                <SecretSantaGroupHeading group={group} />
                 <JoinGroupButton handleJoinGroup={handleJoinGroup}>
                   Entrar no grupo
                 </JoinGroupButton>
@@ -66,6 +58,6 @@ export default async function Page({ params }: PageProps) {
           <p>Você não pode entrar num grupo que o sorteio já foi realizado!</p>
         )}
       </main>
-    </SecretSantaGroupProvider>
+    </>
   )
 }

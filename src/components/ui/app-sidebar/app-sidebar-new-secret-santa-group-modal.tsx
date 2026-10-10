@@ -48,24 +48,29 @@ export const NavbarNewSecretSantaGroupModal = ({
   const router = useRouter()
 
   const onSubmit = async (data: secretSantaGroupFormData) => {
-    const result = await createSecretSantaGroup(data, user.id)
+    try {
+      const result = await createSecretSantaGroup(data)
 
-    if (!result.success) {
-      setError(result.error!.field, { message: result.error!.message })
-      return toast.error('Erro ao criar novo grupo')
-    }
+      if (!result.success) {
+        setError(result.error!.field, { message: result.error!.message })
+        return toast.error('Erro ao criar novo grupo')
+      }
 
-    if (result.group) {
-      setGroups((prev) => [...prev, result.group])
-      if (isMobile) setOpenMobile(false)
-      setIsOpen(false)
-      reset()
+      if (result.group) {
+        setGroups((prev) => [...prev, result.group])
+        if (isMobile) setOpenMobile(false)
+        setIsOpen(false)
+        reset()
 
-      toast.success('Grupo criado com sucesso!')
-      setTimeout(() => {
-        router.push(`/groups/${result.group.slug}`)
-      }, 100)
-      return
+        toast.success('Grupo criado com sucesso!')
+        setTimeout(() => {
+          router.push(`/groups/${result.group.slug}`)
+        }, 100)
+        return
+      }
+    } catch {
+      setError('root', { message: 'Verifique sua sessão e tente novamente' })
+      toast.error('Erro ao criar novo grupo')
     }
   }
 
@@ -76,7 +81,6 @@ export const NavbarNewSecretSantaGroupModal = ({
   }, [isOpen, reset])
 
   if (!session) return null
-  const { user } = session
 
   return (
     <>

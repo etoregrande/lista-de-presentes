@@ -24,15 +24,21 @@ export const JoinGroupButton = ({
   const { slug } = useParams()
 
   const onClick = async () => {
-    const response = await handleJoinGroup()
+    try {
+      const response = await handleJoinGroup()
 
-    if (response.success) {
-      toast.success('Você entrou no grupo!')
-      setGroups((prev) => [...prev, response.secretSantaGroup])
+      if (response.success) {
+        toast.success('Você entrou no grupo!')
+        setGroups((prev) => [...prev, response.secretSantaGroup])
 
-      router.push(`/groups/${slug}`)
-    } else {
-      toast.error('Erro ao entrar no grupo')
+        router.push(`/groups/${slug}`)
+      } else {
+        toast.error('Erro ao entrar no grupo')
+      }
+    } catch {
+      toast.error(
+        'Erro ao entrar no grupo. Verifique sua sessão e tente novamente'
+      )
     }
   }
 

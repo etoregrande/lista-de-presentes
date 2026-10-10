@@ -39,12 +39,14 @@ export const HoldSecretSantaDrawButton = () => {
         'Você precisa de pelo menos 4 pessoas para realizar o sorteio'
       )
       console.error('Failed to hold draw:', response.error)
+      setHoldingDraw(false)
       return
     }
 
     if (!response.success) {
       toast.error(response.error || 'Erro ao realizar o sorteio')
       console.error('Failed to hold draw:', response.error)
+      setHoldingDraw(false)
       return
     }
 

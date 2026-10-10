@@ -13,7 +13,7 @@ import {
 import { ReactNode, useState } from 'react'
 import { useSecretSantaGroup } from '../../context/context'
 import { toast } from 'sonner'
-import { leaveSecretSantaGroupAction } from '../../actions'
+import { removeSecretSantaGroupParticipantAction } from '../../actions'
 
 interface ParticipantListItemRemoveButtonProps {
   children: ReactNode
@@ -29,9 +29,9 @@ export const ParticipantListItemRemoveButton = ({
   const [isOpen, setIsOpen] = useState(false)
 
   const onClick = async () => {
-    const response = await leaveSecretSantaGroupAction(
-      participantId,
-      secretSantaGroup.id
+    const response = await removeSecretSantaGroupParticipantAction(
+      secretSantaGroup.id,
+      participantId
     )
 
     if (response.success) {

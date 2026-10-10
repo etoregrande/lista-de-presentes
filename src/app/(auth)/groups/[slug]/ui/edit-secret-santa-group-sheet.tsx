@@ -53,24 +53,24 @@ export const EditSecretSantaGroupSheet = ({ children }: GroupEditProps) => {
 
   const onSubmit = async (formData: secretSantaGroupFormData) => {
     try {
-      const response = await updateSecretSantaGroup(userId, groupId, formData)
+      const response = await updateSecretSantaGroup(groupId, formData)
 
       if (!response.success) {
         toast.error('Erro', {
           description: 'Falha ao atualizar amigo secreto',
         })
+        return
       }
       toast.success('O grupo foi salvo com sucesso!')
       router.refresh()
       setIsSheetOpen(false)
     } catch (error) {
       console.error(error)
-      throw new Error('Erro ao atualizar amigo secreto')
+      toast.error('Erro ao atualizar amigo secreto')
     }
   }
 
   if (!session) return null
-  const { id: userId } = session.user
 
   return (
     <FormProvider {...formMethods}>

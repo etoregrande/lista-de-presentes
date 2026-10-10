@@ -37,10 +37,7 @@ export default async function Page({ params }: PageProps) {
   if (!session) redirect('/login')
 
   const { slug } = await params
-  const isParticipant = await isSecretSantaGroupParticipant(
-    slug,
-    session.user.id
-  )
+  const isParticipant = await isSecretSantaGroupParticipant(slug)
 
   if (!isParticipant) {
     redirect('/wishlist')

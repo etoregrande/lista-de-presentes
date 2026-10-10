@@ -34,12 +34,9 @@ export const LeaveSecretSantaGroupButton = ({
 
   const session = useSession()
   if (!session) return null
-  const {
-    user: { id: userId },
-  } = session
 
   const onClick = async () => {
-    const response = await leaveSecretSantaGroupAction(userId, groupId)
+    const response = await leaveSecretSantaGroupAction(groupId)
 
     if (!response.success) {
       toast.error('Erro ao abandonar o grupo')

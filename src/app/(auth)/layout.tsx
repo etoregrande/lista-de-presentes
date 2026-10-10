@@ -21,7 +21,7 @@ export default async function WishlistLayout({
     redirect(`/login`)
   }
 
-  const initialSecretSantaGroups = await listSecretSantaGroups(session.user.id)
+  const initialSecretSantaGroups = await listSecretSantaGroups()
 
   return (
     <SidebarProvider>

@@ -3,23 +3,41 @@
 import {
   createSecretSantaGroupDraw,
   deleteSecretSantaGroup,
-  deleteSecretSantaGroupParticipant,
+  leaveSecretSantaGroup,
+  removeSecretSantaGroupParticipant,
 } from '@/server/secretSantaGroup'
 
-export async function deleteSecretSantaGroupAction(
-  userId: string,
-  groupId: string
-) {
-  return await deleteSecretSantaGroup(userId, groupId)
+export async function deleteSecretSantaGroupAction(groupId: string) {
+  try {
+    return await deleteSecretSantaGroup(groupId)
+  } catch {
+    return { success: false, error: 'Unable to delete group' }
+  }
 }
 
 export async function holdSecretSantaDrawAction(groupId: string) {
-  return await createSecretSantaGroupDraw(groupId)
+  try {
+    return await createSecretSantaGroupDraw(groupId)
+  } catch {
+    return { success: false, error: 'Unable to hold draw' }
+  }
 }
 
-export async function leaveSecretSantaGroupAction(
-  userId: string,
-  groupId: string
+export async function leaveSecretSantaGroupAction(groupId: string) {
+  try {
+    return await leaveSecretSantaGroup(groupId)
+  } catch {
+    return { success: false, error: 'Unable to leave group' }
+  }
+}
+
+export async function removeSecretSantaGroupParticipantAction(
+  groupId: string,
+  participantId: string
 ) {
-  return await deleteSecretSantaGroupParticipant(userId, groupId)
+  try {
+    return await removeSecretSantaGroupParticipant(groupId, participantId)
+  } catch {
+    return { success: false, error: 'Unable to remove participant' }
+  }
 }

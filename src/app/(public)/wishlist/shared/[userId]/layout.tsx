@@ -15,9 +15,7 @@ export default async function WishlistLayout({
 }>) {
   const session = await getSessionOnServer()
 
-  const initialSecretSantaGroups = session
-    ? await listSecretSantaGroups(session.user.id)
-    : []
+  const initialSecretSantaGroups = session ? await listSecretSantaGroups() : []
 
   return (
     <SidebarProvider>

@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useSecretSantaGroup } from '../context/context'
 import clsx from 'clsx'
+import type { SecretSantaGroup } from '@/generated/prisma'
 
 interface SecretSantaGroupNameProps {
   truncate?: boolean
@@ -12,6 +13,17 @@ export const SecretSantaGroupName = ({
   truncate,
 }: SecretSantaGroupNameProps) => {
   const { secretSantaGroup } = useSecretSantaGroup()
+  return (
+    <SecretSantaGroupHeading group={secretSantaGroup} truncate={truncate} />
+  )
+}
+
+export const SecretSantaGroupHeading = ({
+  group: secretSantaGroup,
+  truncate,
+}: SecretSantaGroupNameProps & {
+  group: Pick<SecretSantaGroup, 'name' | 'image'>
+}) => {
   const shouldTruncate = secretSantaGroup.name.length > 100 || truncate
 
   return (

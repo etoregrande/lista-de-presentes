@@ -35,7 +35,7 @@ export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
 
   const onClick = async () => {
     setDeleting(true)
-    const response = await deleteSecretSantaGroupAction(userId, groupId)
+    const response = await deleteSecretSantaGroupAction(groupId)
 
     if (response.success) {
       toast.success('Grupo deletado com sucesso!')
@@ -51,7 +51,6 @@ export const GroupDeleteButton = ({ children }: GroupDeleteButtonProps) => {
   }
 
   if (!session) return null
-  const { id: userId } = session.user
 
   return (
     <Credenza>
