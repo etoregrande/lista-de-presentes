@@ -4,7 +4,7 @@ import { loadModule } from './load-module.mjs'
 
 // Real validation schemas, shared by action tests; only unrelated utility
 // dependencies are stubbed. URL validation still uses the real domain parser.
-const utils = loadModule('src/lib/utils.ts', {
+export const utils = loadModule('src/lib/utils.ts', {
   clsx: { clsx() {} },
   'tailwind-merge': { twMerge() {} },
   psl,

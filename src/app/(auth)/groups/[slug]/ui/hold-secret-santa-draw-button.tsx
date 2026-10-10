@@ -61,7 +61,7 @@ export const HoldSecretSantaDrawButton = () => {
   return (
     <Credenza>
       <CredenzaTrigger asChild>
-        <Button>
+        <Button disabled={secretSantaGroup.isDrawn}>
           <SparklesIcon />
           Realizar sorteio
         </Button>

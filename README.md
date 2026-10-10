@@ -48,3 +48,5 @@ As ações validam os formulários no servidor antes de gravar dados ou enviar i
 Uploads aceitam arquivos JPEG, PNG e WebP de até 5 MiB e 16 megapixels no total (incluindo quadros de imagens animadas). O servidor confere assinatura, formato e pixels usando Sharp e reencoda a imagem sem metadados antes do upload. O corpo da ação permite 6 MiB para acomodar o formulário e o overhead multipart.
 
 Execute `npm test` para as regressões e `npm run lint` para ESLint e TypeScript. Os testes de upload usam o decodificador real e um S3 simulado, sem acessar o banco ou enviar arquivos à AWS.
+
+Para os testes de transação e concorrência de grupos, execute `npm run test:integration`. O comando inicia um PostgreSQL temporário, aplica as migrations apenas nele e encerra/remove a instância ao terminar. Requer os binários do PostgreSQL; o caminho padrão é `/Library/PostgreSQL/17/bin`, configurável por `POSTGRES_BIN_DIR`.

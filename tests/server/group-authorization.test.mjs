@@ -44,7 +44,8 @@ function fixture(actor = 'owner') {
       assert.equal(where.id, group.id)
       assert.equal(where.ownerId, currentActor)
       assert.equal(currentActor, group.ownerId)
-      return { ...group, ...data }
+      Object.assign(group, data)
+      return { ...group }
     }),
     delete: mock.fn(async ({ where }) => {
       assert.equal(where.id, group.id)
@@ -81,7 +82,17 @@ function fixture(actor = 'owner') {
     findMany: mock.fn(async () => [...members].map((id) => ({ id }))),
   }
   const secretSantaDraw = { createMany: mock.fn(async () => ({ count: 4 })) }
-  const transaction = mock.fn(async (queries) => Promise.all(queries))
+  const queryRaw = mock.fn(async (_query, id) =>
+    id === group.id ? [{ ...group }] : []
+  )
+  const tx = {
+    secretSantaGroup,
+    userSecretSantaGroup,
+    user,
+    secretSantaDraw,
+    $queryRaw: queryRaw,
+  }
+  const transaction = mock.fn(async (callback) => callback(tx))
   const actions = loadModule('src/server/secretSantaGroup.ts', {
     ...validationModules,
     './session': { requireAuthenticatedUserId },
@@ -190,7 +201,8 @@ test('creation ignores forged actor and owner IDs', async () => {
   assert.equal(result.success, true)
   assert.equal(result.group.ownerId, 'outsider')
   assert.equal(
-    f.userSecretSantaGroup.create.mock.calls[0].arguments[0].data.userId,
+    f.secretSantaGroup.create.mock.calls[0].arguments[0].data.participants
+      .create.userId,
     'outsider'
   )
 })

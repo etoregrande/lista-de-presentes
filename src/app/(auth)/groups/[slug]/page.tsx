@@ -79,7 +79,16 @@ export default async function Page({ params }: PageProps) {
           {!isOwner && (
             <div className="flex-shrink-0">
               <LeaveSecretSantaGroupButton>
-                <Button variant={'destructive'} size={'icontext'}>
+                <Button
+                  variant={'destructive'}
+                  size={'icontext'}
+                  disabled={group.isDrawn}
+                  title={
+                    group.isDrawn
+                      ? 'Não é possível sair após o sorteio'
+                      : undefined
+                  }
+                >
                   <TrashIcon />
                   <span className="hidden md:inline">Abandonar grupo</span>
                 </Button>

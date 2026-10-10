@@ -209,7 +209,7 @@ export const WishlistItemSheetForm = ({
                 fixedDecimalScale
                 prefix="R$ "
                 allowNegative={false}
-                value={field.value ? field.value / 100 : ''}
+                value={field.value != null ? field.value / 100 : ''}
                 onValueChange={(values) => {
                   const { floatValue } = values
                   field.onChange(

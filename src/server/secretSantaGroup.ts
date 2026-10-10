@@ -7,6 +7,7 @@ import { secretSantaGroupFormData } from '@/types/secretSantaGroup'
 import { requireAuthenticatedUserId } from './session'
 import { secretSantaGroupFormSchema } from '@/schemas/secretSantaGroup'
 import { identifierSchema } from '@/schemas/common'
+import type { Prisma } from '@/generated/prisma'
 
 type FieldError = {
   field: keyof secretSantaGroupFormData | 'root'
@@ -90,17 +91,9 @@ export const createSecretSantaGroup = async (
         eventDate: eventDate ? new Date(eventDate) : null,
         ownerId: userId,
         slug,
+        participants: { create: { userId } },
       },
     })
-
-    if (newSecretSantaGroup) {
-      await prisma.userSecretSantaGroup.create({
-        data: {
-          userId,
-          secretSantaGroupId: newSecretSantaGroup.id,
-        },
-      })
-    }
 
     return { success: true, group: newSecretSantaGroup }
   } catch (error) {
@@ -232,17 +225,15 @@ export const createSecretSantaGroupParticipant = async (slug: string) => {
   const groupId = group.id
 
   try {
-    const joinedGroup = await prisma.userSecretSantaGroup.create({
-      data: {
-        userId,
-        secretSantaGroupId: groupId,
-      },
-      include: {
-        secretSantaGroup: true,
-      },
+    return await prisma.$transaction(async (tx) => {
+      const lockedGroup = await lockGroup(tx, groupId)
+      requireUndrawnGroup(lockedGroup)
+      const joinedGroup = await tx.userSecretSantaGroup.create({
+        data: { userId, secretSantaGroupId: groupId },
+        include: { secretSantaGroup: true },
+      })
+      return { success: true, secretSantaGroup: joinedGroup.secretSantaGroup }
     })
-
-    return { success: true, secretSantaGroup: joinedGroup.secretSantaGroup }
   } catch (error) {
     console.error('Error creating participant:', error)
     throw new Error('Failed to join secret santa group')
@@ -257,7 +248,7 @@ export const leaveSecretSantaGroup = async (groupId: string) => {
   })
   if (!group || group.ownerId === userId)
     throw new Error('The owner must delete the group instead of leaving it')
-  return deleteParticipantMembership(userId, groupId)
+  return deleteParticipantMembership(userId, groupId, false)
 }
 
 export const removeSecretSantaGroupParticipant = async (
@@ -268,77 +259,95 @@ export const removeSecretSantaGroupParticipant = async (
   participantId = identifierSchema.parse(participantId)
   if (participantId === group.ownerId)
     throw new Error('Invalid participant removal')
-  return deleteParticipantMembership(participantId, groupId)
+  return deleteParticipantMembership(
+    participantId,
+    groupId,
+    true,
+    group.ownerId
+  )
 }
 
-async function deleteParticipantMembership(userId: string, groupId: string) {
-  try {
-    const leftGroup = await prisma.userSecretSantaGroup.delete({
-      where: {
-        userId_secretSantaGroupId: {
-          userId,
-          secretSantaGroupId: groupId,
-        },
-      },
-      select: {
-        secretSantaGroupId: true,
-      },
-    })
+type LockedGroup = { id: string; ownerId: string; isDrawn: boolean }
 
+async function lockGroup(tx: Prisma.TransactionClient, groupId: string) {
+  const groups = await tx.$queryRaw<LockedGroup[]>`
+    SELECT "id", "ownerId", "isDrawn"
+    FROM "secret_santa_groups"
+    WHERE "id" = ${groupId}
+    FOR UPDATE
+  `
+  if (!groups[0]) throw new Error('Group not found or access denied')
+  return groups[0]
+}
+
+function requireUndrawnGroup(group: LockedGroup) {
+  if (group.isDrawn) throw new Error('Group draw already completed')
+}
+
+async function deleteParticipantMembership(
+  userId: string,
+  groupId: string,
+  ownerRemoval: boolean,
+  ownerId?: string
+) {
+  return prisma.$transaction(async (tx) => {
+    const group = await lockGroup(tx, groupId)
+    requireUndrawnGroup(group)
+    if (ownerRemoval && group.ownerId !== ownerId) {
+      throw new Error('Group not found or access denied')
+    }
+    if (userId === group.ownerId) throw new Error('Invalid participant removal')
+    const leftGroup = await tx.userSecretSantaGroup.delete({
+      where: {
+        userId_secretSantaGroupId: { userId, secretSantaGroupId: groupId },
+      },
+      select: { secretSantaGroupId: true },
+    })
     return { success: true, groupId: leftGroup.secretSantaGroupId }
-  } catch (error) {
-    console.error('Error deleting participant group:', error)
-    throw new Error('Failed to join secret santa group')
-  }
+  })
 }
 
 export const createSecretSantaGroupDraw = async (groupId: string) => {
   const { userId } = await requireGroupOwner(groupId)
 
   try {
-    const participants = await prisma.user.findMany({
-      where: {
-        secretSantaGroupParticipants: {
-          some: { secretSantaGroupId: groupId },
+    return await prisma.$transaction(async (tx) => {
+      const group = await lockGroup(tx, groupId)
+      if (group.ownerId !== userId)
+        throw new Error('Group not found or access denied')
+      if (group.isDrawn)
+        return { success: false, error: 'Draw already completed' }
+      const participants = await tx.user.findMany({
+        where: {
+          secretSantaGroupParticipants: {
+            some: { secretSantaGroupId: groupId },
+          },
         },
-      },
-      select: {
-        id: true,
-      },
-    })
-
-    const SecretSantaDrawResult = drawSecretSanta(participants)
-
-    if (!SecretSantaDrawResult) {
-      return {
-        success: false,
-        error: 'At least 4 participants are needed to hold a draw',
-      }
-    }
-
-    const draw = SecretSantaDrawResult.map((d) => {
-      if (!d.giverId || !d.receiverId) {
-        throw new Error('Draw result must have both giverId and receiverId')
-      }
-      return {
-        ...d,
-        groupId,
-        giverId: d.giverId,
-        receiverId: d.receiverId,
-      }
-    })
-
-    const [createDraw, updateGroup] = await prisma.$transaction([
-      prisma.secretSantaDraw.createMany({
-        data: [...draw],
-      }),
-      prisma.secretSantaGroup.update({
-        where: { id: groupId, ownerId: userId },
+        select: { id: true },
+      })
+      const result = drawSecretSanta(participants)
+      if (!result)
+        return {
+          success: false,
+          error: 'At least 4 participants are needed to hold a draw',
+        }
+      const draw = result.map((assignment) => {
+        if (!assignment.giverId || !assignment.receiverId) {
+          throw new Error('Draw result must have both giverId and receiverId')
+        }
+        return {
+          groupId,
+          giverId: assignment.giverId,
+          receiverId: assignment.receiverId,
+        }
+      })
+      const createDraw = await tx.secretSantaDraw.createMany({ data: draw })
+      const updatedGroup = await tx.secretSantaGroup.update({
+        where: { id: groupId, ownerId: userId, isDrawn: false },
         data: { drawDate: new Date(), isDrawn: true },
-      }),
-    ])
-
-    return { success: true, draw: createDraw, group: updateGroup }
+      })
+      return { success: true, draw: createDraw, group: updatedGroup }
+    })
   } catch (error) {
     console.error('Error holding secret santa draw:', error)
     return { success: false, error: 'Failed to hold secret santa draw' }

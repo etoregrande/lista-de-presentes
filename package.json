@@ -10,6 +10,7 @@
     "lint": "eslint . && npm run typecheck",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/server/*.test.mjs",
+    "test:integration": "node scripts/test-postgres.mjs",
     "migrate": "prisma migrate deploy"
   },
   "dependencies": {

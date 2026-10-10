@@ -32,7 +32,7 @@ export const WishlistNewItemSheetForm = () => {
     reset({
       name: '',
       description: '',
-      price: 0,
+      price: null,
       link: '',
       image: null,
       priority: 'normal',
@@ -141,16 +141,19 @@ export const WishlistNewItemSheetForm = () => {
             control={control}
             render={({ field }) => (
               <NumericFormat
+                inputMode="decimal"
                 thousandSeparator="."
                 decimalSeparator=","
                 decimalScale={2}
                 prefix="R$ "
                 allowNegative={false}
-                value={field.value ? field.value / 100 : ''}
+                value={field.value != null ? field.value / 100 : ''}
                 onValueChange={(values) => {
                   const { floatValue } = values
                   field.onChange(
-                    floatValue !== undefined ? floatValue * 100 : null
+                    floatValue !== undefined
+                      ? Math.round(floatValue * 100)
+                      : null
                   )
                 }}
                 customInput={Input}
