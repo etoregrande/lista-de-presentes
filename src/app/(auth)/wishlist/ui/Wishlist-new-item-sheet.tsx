@@ -42,21 +42,21 @@ export const WishlistNewItemSheet = ({
 
   const session = useSession()
   if (!session) return null
-  const { user } = session
 
   const onSubmit = async (formData: WishlistItemFormData) => {
-    const newItem: WishlistItem | null = await createWishlistItem(
-      formData,
-      user.id
-    )
-    if (!newItem) {
-      return toast.error('Erro ao criar novo item')
+    try {
+      const newItem = await createWishlistItem(formData)
+      if (!newItem) {
+        toast.error('Erro ao criar novo item')
+        return
+      }
+      setWishlist((prev) => [...prev, newItem])
+      setIsSheetOpen(false)
+      reset()
+      toast.success('Item criado com sucesso!')
+    } catch {
+      toast.error('Erro ao criar item. Verifique sua sessão e tente novamente')
     }
-    setWishlist((prev) => [...prev, newItem])
-
-    setIsSheetOpen(false)
-    reset()
-    toast.success('Item editado com sucesso!')
   }
 
   return (

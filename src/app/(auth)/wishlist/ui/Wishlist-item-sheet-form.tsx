@@ -83,16 +83,26 @@ export const WishlistItemSheetForm = ({
     if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
     setIsDeleting(true)
 
-    await deleteWishlistItem(wishlistItem.id)
-
-    setIsSheetOpen(false)
-    setIsDeleting(false)
-
-    setTimeout(() => {
-      setWishlist((prev) => prev.filter((item) => item.id !== wishlistItem.id))
-    }, 300)
-
-    toast.success('Item deletado com sucesso!')
+    try {
+      const result = await deleteWishlistItem(wishlistItem.id)
+      if (result === null) {
+        toast.error('Erro ao deletar item')
+        return
+      }
+      setIsSheetOpen(false)
+      setTimeout(() => {
+        setWishlist((prev) =>
+          prev.filter((item) => item.id !== wishlistItem.id)
+        )
+      }, 300)
+      toast.success('Item deletado com sucesso!')
+    } catch {
+      toast.error(
+        'Erro ao deletar item. Verifique sua sessão e tente novamente'
+      )
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   return (

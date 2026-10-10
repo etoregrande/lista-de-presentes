@@ -9,11 +9,10 @@ import { prisma } from '@/lib/prisma'
 import { sanitizeLinkUrl } from '@/lib/utils'
 import { deleteImageFromS3, uploadImageToS3 } from './s3'
 import { Priority, WishlistItem } from '@/generated/prisma'
+import { requireAuthenticatedUserId } from './session'
 
-export const createWishlistItem = async (
-  formData: WishlistItemFormData,
-  userId: string
-) => {
+export const createWishlistItem = async (formData: WishlistItemFormData) => {
+  const userId = await requireAuthenticatedUserId()
   const { name, isActive, link, priority, description, image, price } = formData
   const sanitizedLink = sanitizeLinkUrl(link)
   let imageUrl: string | null = null
@@ -55,9 +54,16 @@ export const createWishlistItem = async (
 
 export const updateWishlistItem = async (
   formData: WishlistItemFormData,
-  wishlistItemId: string,
-  userId: string
+  wishlistItemId: string
 ) => {
+  const userId = await requireAuthenticatedUserId()
+  if (!wishlistItemId) throw new Error('Wishlist item ID is required')
+  const existingItem = await prisma.wishlistItem.findUnique({
+    select: { image: true },
+    where: { id: wishlistItemId, userId },
+  })
+  if (!existingItem) throw new Error('Wishlist item not found')
+
   const { name, description, price, link, image, priority, isActive } = formData
   const sanitizedLink = sanitizeLinkUrl(link)
   let imageUrl: string | null = null
@@ -66,12 +72,7 @@ export const updateWishlistItem = async (
     try {
       imageUrl = await uploadImageToS3(image, 'wishlist image', userId)
 
-      const existingItem = await prisma.wishlistItem.findUnique({
-        select: { image: true },
-        where: { id: wishlistItemId, userId },
-      })
-
-      if (existingItem?.image) {
+      if (existingItem.image) {
         await deleteImageFromS3(existingItem.image)
       }
     } catch (error) {
@@ -113,9 +114,11 @@ export const updateWishlistItem = async (
 }
 
 export const deleteWishlistItem = async (wishlistItemId: string) => {
+  const userId = await requireAuthenticatedUserId()
+  if (!wishlistItemId) throw new Error('Wishlist item ID is required')
   try {
     const deletedWishlistItem = await prisma.wishlistItem.delete({
-      where: { id: wishlistItemId },
+      where: { id: wishlistItemId, userId },
       select: { image: true },
     })
 

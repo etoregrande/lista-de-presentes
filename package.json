@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint . && npm run typecheck",
     "typecheck": "tsc --noEmit",
+    "test": "node --test tests/server/*.test.mjs",
     "migrate": "prisma migrate deploy"
   },
   "dependencies": {

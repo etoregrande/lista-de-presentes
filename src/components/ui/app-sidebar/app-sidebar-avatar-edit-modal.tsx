@@ -51,7 +51,7 @@ export const AppSidebarAvatarEditModal = ({
   const session = useSession()
   if (!session) return null
   const {
-    user: { image: userImage, name: userName, id: userId },
+    user: { image: userImage, name: userName },
   } = session
 
   const handleOpenChange = (open: boolean) => {
@@ -66,7 +66,7 @@ export const AppSidebarAvatarEditModal = ({
 
   const onSubmit = async (formData: AvatarImageFormData) => {
     try {
-      const updatedUser = await updateUserAvatar(formData, userId)
+      const updatedUser = await updateUserAvatar(formData)
 
       if (updatedUser) {
         toast.success('Foto de perfil atualizada com sucesso!')

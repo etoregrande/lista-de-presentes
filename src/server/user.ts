@@ -3,11 +3,10 @@
 import { prisma } from '@/lib/prisma'
 import { AvatarImageFormData } from '@/types/avatarImage'
 import { uploadImageToS3 } from './s3'
+import { requireAuthenticatedUserId } from './session'
 
-export const updateUserAvatar = async (
-  formData: AvatarImageFormData,
-  userId: string
-) => {
+export const updateUserAvatar = async (formData: AvatarImageFormData) => {
+  const userId = await requireAuthenticatedUserId()
   const { image } = formData
 
   if (!image) {

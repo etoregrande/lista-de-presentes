@@ -38,29 +38,24 @@ export const WishlistItemSheet = ({
 
   const session = useSession()
   if (!session) return null
-  const { user } = session
 
   const onSubmit = async (formData: WishlistItemFormData) => {
     if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
 
-    const updatedItem = await updateWishlistItem(
-      formData,
-      wishlistItem.id,
-      user.id
-    )
-
-    setWishlist((prev) =>
-      prev.map((item) =>
-        item.id === wishlistItem.id
-          ? {
-              ...(updatedItem as WishlistItem),
-            }
-          : item
+    try {
+      const updatedItem = await updateWishlistItem(formData, wishlistItem.id)
+      if (!updatedItem) {
+        toast.error('Erro ao editar item')
+        return
+      }
+      setWishlist((prev) =>
+        prev.map((item) => (item.id === wishlistItem.id ? updatedItem : item))
       )
-    )
-
-    setIsSheetOpen(false)
-    toast.success('Item editado com sucesso!')
+      setIsSheetOpen(false)
+      toast.success('Item editado com sucesso!')
+    } catch {
+      toast.error('Erro ao editar item. Verifique sua sessão e tente novamente')
+    }
   }
 
   return (

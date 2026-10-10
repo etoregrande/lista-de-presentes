@@ -17,6 +17,14 @@ export const getSessionOnServer = async (): Promise<Session | null> => {
   }
 }
 
+export const requireAuthenticatedUserId = async (): Promise<string> => {
+  const session = await getSessionOnServer()
+  if (!session) {
+    throw new Error('Authentication required')
+  }
+  return session.user.id
+}
+
 export const getServerUserId = async (request: NextRequest) => {
   const session = await auth.api.getSession({
     headers: request.headers,
