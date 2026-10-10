@@ -4,6 +4,7 @@ import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
+import { getSafeAuthCallbackPath } from '@/lib/auth-callback'
 import { signUpFormSchema } from '@/schemas/auth'
 import { SignUpFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,7 +31,7 @@ export const AuthSignUpForm = ({ setFormType }: AuthSignUpFormProps) => {
     resolver: zodResolver(signUpFormSchema),
   })
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || undefined
+  const callbackUrl = getSafeAuthCallbackPath(searchParams.get('callbackUrl'))
 
   const isPasswordRecoveryEnabled =
     process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true'

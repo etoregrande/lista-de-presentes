@@ -9,7 +9,7 @@ const testDirectory = dirname(fileURLToPath(import.meta.url))
 
 // Run the real action modules with explicit dependency doubles. No database,
 // auth provider, or S3 connection is created by these tests.
-export function loadModule(filename, dependencies) {
+export function loadModule(filename, dependencies, globals = {}) {
   const source = readFileSync(
     resolve(testDirectory, '../../', filename),
     'utf8'
@@ -39,6 +39,7 @@ export function loadModule(filename, dependencies) {
       console: { error() {} },
       URL,
       process: { env: { BUCKET_NAME: 'test-bucket' } },
+      ...globals,
     },
     { filename }
   )

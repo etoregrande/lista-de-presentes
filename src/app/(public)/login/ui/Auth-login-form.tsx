@@ -6,6 +6,7 @@ import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Input, PasswordInput } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
+import { getSafeAuthCallbackPath } from '@/lib/auth-callback'
 import { signInFormSchema } from '@/schemas/auth'
 import { SignInFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -37,12 +38,7 @@ export const AuthLoginForm = ({
     resolver: zodResolver(signInFormSchema),
   })
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || undefined
-
-  let pushToUrl = '/wishlist'
-  if (callbackUrl) {
-    pushToUrl = callbackUrl
-  }
+  const callbackUrl = getSafeAuthCallbackPath(searchParams.get('callbackUrl'))
 
   const isPasswordRecoveryEnabled =
     process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true'
@@ -60,7 +56,7 @@ export const AuthLoginForm = ({
       },
       {
         onSuccess: async () => {
-          router.push(pushToUrl)
+          router.push(callbackUrl)
         },
         onError: (ctx) => {
           const errorCode = ctx.error?.code
@@ -88,7 +84,7 @@ export const AuthLoginForm = ({
     setIsLoggingInWithGoogle(true)
     await authClient.signIn.social({
       provider: 'google',
-      callbackURL: pushToUrl,
+      callbackURL: callbackUrl,
     })
   }
 
