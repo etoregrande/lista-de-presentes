@@ -1,8 +1,6 @@
 'use server'
 
 import { type WishlistItemFormData } from '@/types/wishlistItem'
-import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { s3 } from '@/lib/s3'
 import { prisma } from '@/lib/prisma'
@@ -140,37 +138,38 @@ export const deleteWishlistItem = async (wishlistItemId: string) => {
   }
 }
 
-export const listWishlistItems = async (
-  SessionUserId?: string,
-  filters?: { maxPrice?: number }
+type WishlistFilters = { maxPrice?: number }
+
+export const listWishlistItems = async (filters?: WishlistFilters) => {
+  const userId = await requireAuthenticatedUserId()
+  return findWishlistItems(userId, filters, false)
+}
+
+export const listPublicWishlistItems = async (
+  userId: string,
+  filters?: WishlistFilters
 ) => {
-  let userId
-
-  if (!SessionUserId) {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    })
-
-    if (!session) {
-      throw new Error('Unable to get session')
-    }
-
-    userId = session.user.id
-  } else {
-    userId = SessionUserId
+  if (typeof userId !== 'string' || !userId.trim()) {
+    throw new Error('User ID is required')
   }
+  return findWishlistItems(userId, filters, true)
+}
 
+async function findWishlistItems(
+  userId: string,
+  filters: WishlistFilters | undefined,
+  publicOnly: boolean
+) {
   try {
-    const wishlistItems = await prisma.wishlistItem.findMany({
+    return await prisma.wishlistItem.findMany({
       where: {
         userId,
+        ...(publicOnly && { isActive: true }),
         ...(filters?.maxPrice !== undefined && {
           price: { lte: filters.maxPrice },
         }),
       },
     })
-
-    return wishlistItems
   } catch (error) {
     console.error('Database Error:', error)
     throw new Error('Failed to fetch Wishlist items.')
@@ -188,7 +187,7 @@ export const purchaseWishlistItem = async (
 
   try {
     const updatedWishlistItem = await prisma.wishlistItem.update({
-      where: { id },
+      where: { id, isActive: true },
       data: {
         isPurchased: !isPurchased,
         purchasedAt: !isPurchased ? new Date() : null,

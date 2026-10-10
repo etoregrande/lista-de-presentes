@@ -1,6 +1,6 @@
-import { listWishlistItems } from '@/server/wishlistItem'
+import { listPublicWishlistItems } from '@/server/wishlistItem'
 import { WishlistShared } from './ui/Wishlist-shared'
-import { getUserById } from '@/lib/repositories/UserRepository'
+import { getPublicUserProfile } from '@/lib/repositories/UserRepository'
 import { WishlistItem } from '@/generated/prisma'
 import { getDisplayName, setAvatarFallbackString } from '@/lib/utils'
 import { Session } from '@/lib/auth'
@@ -17,8 +17,8 @@ export default async function SharedWishlistPage({
   params,
 }: SharedWishlistParams) {
   const { userId } = await params
-  const wishlistItems: WishlistItem[] = await listWishlistItems(userId)
-  const wishlistOwner = await getUserById(userId)
+  const wishlistItems: WishlistItem[] = await listPublicWishlistItems(userId)
+  const wishlistOwner = await getPublicUserProfile(userId)
   const session: Session | null = await getSessionOnServer()
   const isOwner = session?.user.id === userId
 

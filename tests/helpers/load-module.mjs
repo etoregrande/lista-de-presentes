@@ -20,6 +20,7 @@ export function loadModule(filename, dependencies) {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2020,
+      jsx: ts.JsxEmit.ReactJSX,
     },
   })
   assert.equal(diagnostics.length, 0)

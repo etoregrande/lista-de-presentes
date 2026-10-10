@@ -16,6 +16,7 @@ function fixture(userId = 'owner') {
       {
         id: 'own-item',
         userId: 'owner',
+        isActive: true,
         image: 'https://bucket.test/old-image',
       },
     ],
@@ -24,6 +25,7 @@ function fixture(userId = 'owner') {
       {
         id: 'other-item',
         userId: 'other',
+        isActive: true,
         image: 'https://bucket.test/other-image',
       },
     ],
@@ -36,7 +38,11 @@ function fixture(userId = 'owner') {
     }),
     update: mock.fn(async ({ where, data }) => {
       const item = records.get(where.id)
-      if (!item || (where.userId !== undefined && item.userId !== where.userId))
+      if (
+        !item ||
+        (where.userId !== undefined && item.userId !== where.userId) ||
+        (where.isActive !== undefined && item.isActive !== where.isActive)
+      )
         throw new Error('Not found')
       return { ...item, ...data }
     }),

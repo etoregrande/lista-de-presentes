@@ -1,22 +1,13 @@
 'use server'
+
 import { prisma } from '@/lib/prisma'
 
-export async function getUserById(userId?: string) {
-  if (!userId) throw new Error('You must provide a userId')
-
-  const user = await prisma.user.findUnique({
+export async function getPublicUserProfile(userId: string) {
+  if (typeof userId !== 'string' || !userId.trim()) {
+    throw new Error('User ID is required')
+  }
+  return prisma.user.findUnique({
     where: { id: userId },
+    select: { id: true, name: true, image: true },
   })
-
-  return user
-}
-
-export async function getUserByEmail(email?: string) {
-  if (!email) throw new Error('You must provide a email')
-
-  const user = await prisma.user.findUnique({
-    where: { email },
-  })
-
-  return user
 }

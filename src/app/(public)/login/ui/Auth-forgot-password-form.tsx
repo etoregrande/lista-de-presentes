@@ -6,7 +6,6 @@ import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
-import { getUserByEmail } from '@/lib/repositories/UserRepository'
 import { forgotPasswordFormSchema } from '@/schemas/auth'
 import { ForgotPasswordFormData } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -27,7 +26,6 @@ export const AuthForgotPasswordForm = ({
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordFormSchema),
@@ -36,18 +34,14 @@ export const AuthForgotPasswordForm = ({
   const onSubmit: SubmitHandler<ForgotPasswordFormData> = async (
     formData: ForgotPasswordFormData
   ) => {
-    const user = await getUserByEmail(formData.email)
-    if (!user) {
-      setError('email', { message: 'Email não cadastrado' })
-      return null
-    }
-
     await authClient.requestPasswordReset({
       email: formData.email,
       redirectTo: '/reset-password',
     })
 
-    toast.success(`Um link de recuperação foi enviado para ${formData.email}`)
+    toast.success(
+      `Se ${formData.email} estiver cadastrado, você receberá um link de recuperação`
+    )
   }
 
   return (
