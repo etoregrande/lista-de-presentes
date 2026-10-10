@@ -14,7 +14,6 @@ export default async function WishlistLayout({
   children: React.ReactNode
 }>) {
   const session = await getSessionOnServer()
-  console.log(session)
 
   const initialSecretSantaGroups = session
     ? await listSecretSantaGroups(session.user.id)
