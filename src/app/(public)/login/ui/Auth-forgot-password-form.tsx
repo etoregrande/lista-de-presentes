@@ -26,6 +26,8 @@ export const AuthForgotPasswordForm = ({
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordFormSchema),
@@ -34,14 +36,28 @@ export const AuthForgotPasswordForm = ({
   const onSubmit: SubmitHandler<ForgotPasswordFormData> = async (
     formData: ForgotPasswordFormData
   ) => {
-    await authClient.requestPasswordReset({
-      email: formData.email,
-      redirectTo: '/reset-password',
-    })
-
-    toast.success(
-      `Se ${formData.email} estiver cadastrado, você receberá um link de recuperação`
-    )
+    clearErrors('root')
+    try {
+      const { error } = await authClient.requestPasswordReset({
+        email: formData.email,
+        redirectTo: '/reset-password',
+      })
+      if (error) {
+        const message =
+          'Não foi possível solicitar a recuperação. Tente novamente mais tarde'
+        setError('root', { message })
+        toast.error(message)
+        return
+      }
+      toast.success(
+        `Se ${formData.email} estiver cadastrado, você receberá um link de recuperação`
+      )
+    } catch {
+      const message =
+        'Não foi possível solicitar a recuperação. Verifique sua conexão e tente novamente'
+      setError('root', { message })
+      toast.error(message)
+    }
   }
 
   return (
@@ -52,6 +68,8 @@ export const AuthForgotPasswordForm = ({
           <Input {...register('email')} id="email" type="email" />
           <FormError message={errors.email?.message} />
         </InputWrapper>
+
+        <FormError message={errors.root?.message} />
 
         <div className="flex flex-col gap-2">
           <Button disabled={isSubmitting}>

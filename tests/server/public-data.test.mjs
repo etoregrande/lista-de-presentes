@@ -286,6 +286,7 @@ test('recovery submits both known and unknown emails without a lookup and acknow
       'react-hook-form': {
         useForm: () => ({
           register: () => ({}),
+          clearErrors() {},
           handleSubmit: (callback) => {
             submit = callback
             return callback
