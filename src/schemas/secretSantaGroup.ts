@@ -9,14 +9,14 @@ export const secretSantaGroupSchema = z.object({
     ),
   priceLimit: z
     .number({
-      invalid_type_error: 'O preço deve ser um número',
+      error: 'O preço deve ser um número',
     })
     .int()
     .min(0, 'O preço não pode ser negativo')
     .nullish(),
   eventDate: z
     .date({
-      invalid_type_error: 'Data inválida',
+      error: 'Data inválida',
     })
     .nullish(),
 })

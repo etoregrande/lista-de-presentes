@@ -42,7 +42,7 @@ export const AuthForgotPasswordForm = ({
       return null
     }
 
-    await authClient.forgetPassword({
+    await authClient.requestPasswordReset({
       email: formData.email,
       redirectTo: '/reset-password',
     })
