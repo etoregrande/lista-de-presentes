@@ -3,7 +3,7 @@
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { wishlistItemFormSchema } from '@/schemas/wishlistItem'
+import { wishlistItemBrowserFormSchema } from '@/schemas/wishlistItem'
 import { EmptyWishlist } from './Wishlist-empty'
 import { useMemo, useState } from 'react'
 import { Session } from '@/lib/auth'
@@ -32,7 +32,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
   const [wishlist, setWishlist] = useState(initialWishlist)
   const searchParams = useSearchParams()
   const formMethods = useForm<WishlistItemFormData>({
-    resolver: zodResolver(wishlistItemFormSchema),
+    resolver: zodResolver(wishlistItemBrowserFormSchema),
     defaultValues: {
       isActive: true,
       image: null,

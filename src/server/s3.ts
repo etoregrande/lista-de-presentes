@@ -7,7 +7,13 @@ export const uploadImageToS3 = async (
   type: 'wishlist image' | 'user avatar' | 'group avatar',
   ownerId: string
 ): Promise<string> => {
-  const { body, contentType } = await validateImageContent(file)
+  const { body, contentType } = await validateImageContent(file).catch(
+    (cause: unknown) => {
+      throw Object.assign(new Error('Image validation failed', { cause }), {
+        name: 'ImageValidationError',
+      })
+    }
+  )
 
   const s3KeyTemplates = {
     'wishlist image': (ownerId: string) =>
@@ -25,7 +31,13 @@ export const uploadImageToS3 = async (
     ContentType: contentType,
   })
 
-  await s3.send(command)
+  try {
+    await s3.send(command)
+  } catch (cause) {
+    throw Object.assign(new Error('Image upload failed', { cause }), {
+      name: 'ImageUploadError',
+    })
+  }
 
   return `https://${process.env.BUCKET_NAME}.s3.${process.env.BUCKET_REGION}.amazonaws.com/${key}`
 }

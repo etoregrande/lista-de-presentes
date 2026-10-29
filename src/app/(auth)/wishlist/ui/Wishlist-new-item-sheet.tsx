@@ -11,7 +11,7 @@ import {
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { LoaderCircle } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
-import { createWishlistItem } from '@/server/wishlistItem'
+import { createWishlistItemWithFeedback } from '@/server/wishlistItem'
 import { toast } from 'sonner'
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { WishlistItem } from '@/generated/prisma'
@@ -29,6 +29,7 @@ export const WishlistNewItemSheet = ({
 }: WishlistNewItemSheetProps) => {
   const {
     handleSubmit,
+    setError,
     reset,
     formState: { isSubmitting },
   } = useFormContext<WishlistItemFormData>()
@@ -45,7 +46,12 @@ export const WishlistNewItemSheet = ({
 
   const onSubmit = async (formData: WishlistItemFormData) => {
     try {
-      const newItem = await createWishlistItem(formData)
+      const newItem = await createWishlistItemWithFeedback(formData)
+      if (newItem && 'imageError' in newItem) {
+        setError('image', { type: 'server', message: newItem.imageError })
+        toast.error(newItem.imageError)
+        return
+      }
       if (!newItem) {
         toast.error('Erro ao criar novo item')
         return

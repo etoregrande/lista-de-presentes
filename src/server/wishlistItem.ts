@@ -22,7 +22,7 @@ export const createWishlistItem = async (formData: WishlistItemFormData) => {
       imageUrl = await uploadImageToS3(image, 'wishlist image', userId)
     } catch (error) {
       console.error('Error uploading image to S3 =>', error)
-      throw new Error('Error handling image on S3')
+      throw error
     }
   }
 
@@ -77,7 +77,7 @@ export const updateWishlistItem = async (
       }
     } catch (error) {
       console.error('Error uploading image to S3 =>', error)
-      throw new Error('Error handling images on S3')
+      throw error
     }
   }
 
@@ -202,4 +202,42 @@ export const purchaseWishlistItem = async (
   } catch (error) {
     console.error('Error patching wishlist item =>', error)
   }
+}
+
+// Return expected image failures explicitly; production actions redact thrown errors.
+async function withImageFeedback<T>(save: () => Promise<T>) {
+  try {
+    return await save()
+  } catch (error) {
+    if (error && typeof error === 'object' && 'name' in error) {
+      if (error.name === 'ImageValidationError') {
+        return {
+          imageErrorCode: 'INVALID_IMAGE' as const,
+          imageError:
+            'Não foi possível processar a imagem. Use outro arquivo JPG, PNG ou WEBP válido de até 5 MB e 16 megapixels.',
+        }
+      }
+      if (error.name === 'ImageUploadError') {
+        return {
+          imageErrorCode: 'IMAGE_UPLOAD_FAILED' as const,
+          imageError:
+            'Não foi possível enviar a imagem ao armazenamento. Aguarde um momento e tente novamente.',
+        }
+      }
+    }
+    throw error
+  }
+}
+
+export async function createWishlistItemWithFeedback(
+  formData: WishlistItemFormData
+) {
+  return withImageFeedback(() => createWishlistItem(formData))
+}
+
+export async function updateWishlistItemWithFeedback(
+  formData: WishlistItemFormData,
+  wishlistItemId: string
+) {
+  return withImageFeedback(() => updateWishlistItem(formData, wishlistItemId))
 }

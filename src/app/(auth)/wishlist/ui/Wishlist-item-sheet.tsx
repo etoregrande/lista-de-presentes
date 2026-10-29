@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sheet'
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { useFormContext } from 'react-hook-form'
-import { updateWishlistItem } from '@/server/wishlistItem'
+import { updateWishlistItemWithFeedback } from '@/server/wishlistItem'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
 import { toast } from 'sonner'
@@ -32,6 +32,7 @@ export const WishlistItemSheet = ({
 }: WishlistItemSheetProps) => {
   const {
     handleSubmit,
+    setError,
     formState: { isSubmitting },
   } = useFormContext<WishlistItemFormData>()
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
@@ -43,7 +44,15 @@ export const WishlistItemSheet = ({
     if (!wishlistItem.id) throw new Error('Unable to get wishlist item id')
 
     try {
-      const updatedItem = await updateWishlistItem(formData, wishlistItem.id)
+      const updatedItem = await updateWishlistItemWithFeedback(
+        formData,
+        wishlistItem.id
+      )
+      if (updatedItem && 'imageError' in updatedItem) {
+        setError('image', { type: 'server', message: updatedItem.imageError })
+        toast.error(updatedItem.imageError)
+        return
+      }
       if (!updatedItem) {
         toast.error('Erro ao editar item')
         return

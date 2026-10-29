@@ -1,7 +1,11 @@
 import sharp from 'sharp'
-import { imageFileSchema, MAX_IMAGE_BYTES } from '@/schemas/image'
+import {
+  imageFileSchema,
+  MAX_IMAGE_BYTES,
+  MAX_IMAGE_PIXELS,
+} from '@/schemas/image'
 
-export const MAX_IMAGE_PIXELS = 16_000_000
+export { MAX_IMAGE_PIXELS } from '@/schemas/image'
 
 /** Decode and re-encode uploads so corrupt files and non-image payloads never reach S3. */
 export async function validateImageContent(file: File) {
@@ -45,9 +49,10 @@ export async function validateImageContent(file: File) {
     const body = await image.toBuffer()
     if (body.length > MAX_IMAGE_BYTES) throw new Error('Image is too large')
     return { body, contentType }
-  } catch {
+  } catch (cause) {
     throw new Error(
-      'Imagem inválida, corrompida ou grande demais. Use JPG, PNG ou WEBP de até 16 megapixels'
+      'Imagem inválida, corrompida ou grande demais. Use JPG, PNG ou WEBP de até 16 megapixels',
+      { cause }
     )
   }
 }

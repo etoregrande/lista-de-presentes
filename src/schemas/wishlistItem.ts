@@ -1,6 +1,6 @@
 import { isSafeUrl } from '@/lib/utils'
 import { z } from 'zod'
-import { imageFileSchema } from './image'
+import { imageFileSchema, imageFileBrowserSchema } from './image'
 import { priceInCentsSchema } from './common'
 
 export const PriorityEnum = z.enum(['alta', 'normal', 'baixa'])
@@ -41,4 +41,8 @@ export const wishlistItemSchema = z.object({
 export const wishlistItemFormSchema = wishlistItemSchema.omit({
   isPurchased: true,
   purchasedAt: true,
+})
+
+export const wishlistItemBrowserFormSchema = wishlistItemFormSchema.extend({
+  image: imageFileBrowserSchema.nullish(),
 })
