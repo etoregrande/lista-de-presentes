@@ -13,6 +13,7 @@ import { LoaderCircle } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import { createWishlistItemWithFeedback } from '@/server/wishlistItem'
 import { toast } from 'sonner'
+import { getWishlistSaveError } from '@/lib/wishlist-save-error'
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { WishlistItem } from '@/generated/prisma'
 import { WishlistNewItemSheetForm } from './Wishlist-new-item-sheet-form'
@@ -60,8 +61,10 @@ export const WishlistNewItemSheet = ({
       setIsSheetOpen(false)
       reset()
       toast.success('Item criado com sucesso!')
-    } catch {
-      toast.error('Erro ao criar item. Verifique sua sessão e tente novamente')
+    } catch (error) {
+      const failure = getWishlistSaveError(error)
+      console.error('[wishlist-save-failed]', { code: failure.code })
+      toast.error(failure.message, { duration: 12000 })
     }
   }
 

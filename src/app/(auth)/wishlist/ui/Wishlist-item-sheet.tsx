@@ -14,6 +14,7 @@ import { updateWishlistItemWithFeedback } from '@/server/wishlistItem'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import { getWishlistSaveError } from '@/lib/wishlist-save-error'
 import { getDisplayPrice } from '@/lib/utils'
 import { WishlistItem } from '@/generated/prisma'
 import { WishlistItemSheetForm } from './Wishlist-item-sheet-form'
@@ -62,8 +63,10 @@ export const WishlistItemSheet = ({
       )
       setIsSheetOpen(false)
       toast.success('Item editado com sucesso!')
-    } catch {
-      toast.error('Erro ao editar item. Verifique sua sessão e tente novamente')
+    } catch (error) {
+      const failure = getWishlistSaveError(error)
+      console.error('[wishlist-save-failed]', { code: failure.code })
+      toast.error(failure.message, { duration: 12000 })
     }
   }
 
