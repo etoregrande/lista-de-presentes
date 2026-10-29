@@ -11,11 +11,7 @@ export const wishlistItemSchema = z.object({
     .string()
     .trim()
     .max(255, 'Máximo de 255 caracteres')
-    .min(1, 'Nome é obrigatório')
-    .transform(
-      (name) => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
-    )
-    .refine((name) => name.length <= 255, 'Máximo de 255 caracteres'),
+    .min(1, 'Nome é obrigatório'),
   description: z.string().nullable(),
   price: priceInCentsSchema.nullish(),
   image: imageFileSchema.nullish(),

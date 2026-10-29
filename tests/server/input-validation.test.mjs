@@ -187,7 +187,7 @@ test('validated names and URLs are normalized and unknown fields are discarded b
     userId: 'other',
     isPurchased: true,
   })
-  assert.equal(result.name, 'Gift')
+  assert.equal(result.name, 'gIFT')
   assert.equal(result.link, 'https://example.com/gift')
   assert.equal(result.userId, 'owner')
   assert.equal(result.isPurchased, undefined)
