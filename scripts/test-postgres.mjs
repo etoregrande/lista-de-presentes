@@ -59,7 +59,7 @@ try {
   })
   run(
     process.execPath,
-    ['--test', 'tests/integration/group-transactions.test.mjs'],
+    ['--test', 'tests/integration/*.test.mjs'],
     { ...process.env, TEST_DATABASE_URL: databaseUrl }
   )
 } catch (error) {

@@ -7,6 +7,15 @@ datasource db {
   provider = "postgresql"
 }
 
+// Server-only credentials. Never returned by user or wishlist queries.
+model IntegrationCredential {
+  provider  String   @id
+  encrypted String
+  updatedAt DateTime @updatedAt
+
+  @@map("integration_credentials")
+}
+
 model User {
   id            String    @id
   createdAt     DateTime  @default(now())

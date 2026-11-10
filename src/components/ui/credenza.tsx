@@ -88,7 +88,11 @@ const CredenzaClose = ({ className, children, ...props }: CredenzaProps) => {
   )
 }
 
-const CredenzaContent = ({ className, children, ...props }: CredenzaProps) => {
+const CredenzaContent = ({
+  className,
+  children,
+  ...props
+}: CredenzaProps & { onCloseAutoFocus?: (event: Event) => void }) => {
   const { isMobile } = useCredenzaContext()
   const BaseContent = isMobile ? DrawerContent : DialogContent
 

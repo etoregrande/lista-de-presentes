@@ -5,6 +5,7 @@ import { getSessionOnServer } from '@/server/session'
 import { Session } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { WishlistBackground } from './ui/Wishlist-background'
+import { isIntegrationAdmin } from '@/lib/mercadolivre/oauth'
 
 export default async function Page() {
   const wishlistItems = await listWishlistItems()
@@ -15,7 +16,11 @@ export default async function Page() {
   return (
     <div className="layout-container w-full py-0 pb-[60dvh] md:py-10 md:pb-[10dvh]">
       <WishlistBackground />
-      <Wishlist initialWishlist={wishlistItems} session={session} />
+      <Wishlist
+        initialWishlist={wishlistItems}
+        session={session}
+        integrationAdmin={isIntegrationAdmin(session.user.email)}
+      />
     </div>
   )
 }

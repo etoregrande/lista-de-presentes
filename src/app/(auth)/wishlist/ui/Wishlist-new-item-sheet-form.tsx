@@ -18,7 +18,6 @@ export const WishlistNewItemSheetForm = () => {
     watch,
     setValue,
     trigger,
-    reset,
     control,
     formState: { errors },
   } = useFormContext<WishlistItemFormData>()
@@ -27,18 +26,6 @@ export const WishlistNewItemSheetForm = () => {
   )
   const image = watch('image')
   const selectedImage = preview && preview.file === image ? preview.url : null
-
-  useEffect(() => {
-    reset({
-      name: '',
-      description: '',
-      price: null,
-      link: '',
-      image: null,
-      priority: 'normal',
-      isActive: true,
-    })
-  }, [reset])
 
   useEffect(() => {
     if (!(image instanceof File)) return
@@ -166,7 +153,7 @@ export const WishlistNewItemSheetForm = () => {
         <InputWrapper>
           <Label htmlFor="link">Link do produto</Label>
           <Input {...register('link')} inputMode="url" placeholder="" />
-          <FormError message={errors.price?.message} />
+          <FormError message={errors.link?.message} />
         </InputWrapper>
       </form>
     </div>

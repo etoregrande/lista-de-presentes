@@ -26,9 +26,14 @@ interface WishlistProps {
   userId?: string
   initialWishlist: WishlistItem[]
   session: Session
+  integrationAdmin?: boolean
 }
 
-export function Wishlist({ initialWishlist, session }: WishlistProps) {
+export function Wishlist({
+  initialWishlist,
+  session,
+  integrationAdmin = false,
+}: WishlistProps) {
   const [wishlist, setWishlist] = useState(initialWishlist)
   const searchParams = useSearchParams()
   const formMethods = useForm<WishlistItemFormData>({
@@ -58,6 +63,29 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
             Todos os seus items cadastrados
           </span>
         </h2>
+
+        {integrationAdmin && (
+          <div className="text-muted-foreground space-y-2 text-sm">
+            {searchParams.get('mercadolivre') === 'connected' && (
+              <p role="status">
+                Mercado Livre conectado. Agora você pode testar a importação de
+                produtos.
+              </p>
+            )}
+            {searchParams.get('mercadolivre') === 'error' && (
+              <p role="alert" className="text-destructive">
+                Não foi possível conectar o Mercado Livre. Confira a
+                configuração e tente novamente.
+              </p>
+            )}
+            <a
+              href="/api/integrations/mercadolivre/connect"
+              className="underline"
+            >
+              Conectar ou renovar acesso ao Mercado Livre
+            </a>
+          </div>
+        )}
 
         <section className="flex flex-col gap-4">
           <div className="flex items-end justify-between gap-6">
@@ -95,6 +123,7 @@ export function Wishlist({ initialWishlist, session }: WishlistProps) {
               <FormProvider {...formMethods}>
                 <WishlistNewItemSheet setWishlist={setWishlist}>
                   <Button
+                    aria-label="Novo item"
                     className="flex items-center gap-2 px-2 md:px-4 md:py-2"
                     size="icontext"
                   >
