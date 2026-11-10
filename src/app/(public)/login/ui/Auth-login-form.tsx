@@ -81,11 +81,22 @@ export const AuthLoginForm = ({
   }
 
   const handleSignInWithGmail = async () => {
+    if (isLoggingInWithGoogle) return
     setIsLoggingInWithGoogle(true)
-    await authClient.signIn.social({
-      provider: 'google',
-      callbackURL: callbackUrl,
-    })
+    try {
+      const { data, error } = await authClient.signIn.social(
+        { provider: 'google', callbackURL: callbackUrl },
+        { timeout: 15000, retry: 0 }
+      )
+      if (error || !data?.url) throw new Error('GOOGLE_SIGN_IN_FAILED')
+    } catch {
+      toast.error('Não foi possível abrir o login com Google', {
+        description:
+          'Tente novamente. Se continuar, recarregue a página ou tente uma janela anônima.',
+      })
+    } finally {
+      setIsLoggingInWithGoogle(false)
+    }
   }
 
   return (
@@ -125,6 +136,8 @@ export const AuthLoginForm = ({
             variant="outline"
             onClick={handleSignInWithGmail}
             disabled={isLoggingInWithGoogle}
+            aria-label="Entrar com o Google"
+            aria-busy={isLoggingInWithGoogle}
             className="border-border"
           >
             {isLoggingInWithGoogle ? (
