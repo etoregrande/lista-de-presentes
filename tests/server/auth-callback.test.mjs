@@ -85,7 +85,7 @@ function findElements(node, type) {
 function formFixture(kind, callback) {
   const push = mock.fn()
   const email = mock.fn(async (_body, options) => options.onSuccess())
-  const social = mock.fn(async () => ({}))
+  const social = mock.fn(async () => ({ data: { url: 'https://accounts.google.com/' }, error: null }))
   const jsx = (type, props) => ({ type, props })
   const dependencies = {
     '@/lib/auth-client': {

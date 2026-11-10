@@ -4,6 +4,22 @@ import * as cheerio from 'cheerio'
 import { loadModule } from '../helpers/load-module.mjs'
 
 const extraction = loadModule('src/lib/product-import/extract.ts', { cheerio })
+test('restricted item endpoints fall back to the exact selected catalogue offer', async () => {
+  const f = fixture({
+    '/products/MLB2127526398': { name: 'Régua', buy_box_winner: null },
+    '/products/MLB2127526398/items': { results: [
+      { item_id: 'MLB5096699185', price: 35.08, currency_id: 'BRL' },
+      { item_id: 'MLB5467833647', price: 33.99, currency_id: 'BRL' },
+    ] },
+  })
+  const draft = await f.importMercadoLivre('https://www.mercadolivre.com.br/regua/p/MLB2127526398#polycard_client=recommendations&wid=MLB5467833647')
+  assert.equal(draft.price, 3399)
+  const missing = await f.importMercadoLivre('https://www.mercadolivre.com.br/regua/p/MLB2127526398#wid=MLB999')
+  assert.equal(missing.price, null)
+  const unspecified = await f.importMercadoLivre('https://www.mercadolivre.com.br/regua/p/MLB2127526398')
+  assert.equal(unspecified.price, null)
+})
+
 function fixture(responses) {
   return loadModule(
     'src/lib/product-import/mercadolivre.ts',

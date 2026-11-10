@@ -70,5 +70,13 @@ export async function importMercadoLivre(link: string) {
   }
   if (!ids.itemId && draft.price === null)
     draft.price = priceInCents(winner.price, winner.currency_id)
+  // Some tokens can read catalogue offers while direct item prices return 403.
+  // Match the selected/winning item exactly; never substitute another seller.
+  if (draft.price === null && ids.productId && itemId) {
+    const offers = await get(`/products/${ids.productId}/items`)
+    const results = Array.isArray(offers?.results) ? offers.results : []
+    const offer = record(results.find((value) => record(value).item_id === itemId))
+    draft.price = priceInCents(offer.price, offer.currency_id)
+  }
   return draft
 }
