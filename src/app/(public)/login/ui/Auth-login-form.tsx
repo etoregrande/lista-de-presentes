@@ -22,7 +22,6 @@ export function AuthLoginForm({
   const callbackUrl = getSafeAuthCallbackPath(searchParams.get('callbackUrl'))
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
-  const [otpFocused, setOtpFocused] = useState(false)
   const [requestedEmail, setRequestedEmail] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -114,36 +113,17 @@ export function AuthLoginForm({
           <>
             <InputWrapper>
               <Label htmlFor="otp">Código de acesso</Label>
-              <div className="relative grid grid-cols-6 gap-2">
-                {Array.from({ length: 6 }, (_, index) => (
-                  <span
-                    key={index}
-                    aria-hidden="true"
-                    className={`border-input bg-background/50 flex h-12 items-center justify-center rounded-md border text-xl font-semibold tabular-nums transition-colors ${otpFocused && index === Math.min(otp.length, 5) ? 'border-primary ring-primary/20 ring-2' : ''}`}
-                  >
-                    {otp[index] || ''}
-                  </span>
-                ))}
-                <Input
-                  id="otp"
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  value={otp}
-                  onChange={(event) =>
-                    setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))
-                  }
-                  onFocus={() => setOtpFocused(true)}
-                  onBlur={() => setOtpFocused(false)}
-                  onClick={(event) =>
-                    event.currentTarget.setSelectionRange(
-                      otp.length,
-                      otp.length
-                    )
-                  }
-                  className="absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
-                />
-              </div>
+              <Input
+                id="otp"
+                name="otp"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                value={otp}
+                onChange={(event) =>
+                  setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))
+                }
+              />
             </InputWrapper>
           </>
         ) : (
