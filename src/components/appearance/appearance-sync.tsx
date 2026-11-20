@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useTheme } from 'next-themes'
-import { isPalette, setPalette } from '@/lib/appearance'
+import { isAppearanceTheme, isPalette, setPalette } from '@/lib/appearance'
 
 export function AppearanceSync({
   palette,
@@ -18,7 +18,7 @@ export function AppearanceSync({
     if (appliedPreference.current === preference) return
     appliedPreference.current = preference
     setPalette(palette && isPalette(palette) ? palette : 'cherry')
-    setTheme(theme && ['light', 'dark', 'system'].includes(theme) ? theme : 'system')
+    setTheme(theme && isAppearanceTheme(theme) ? theme : 'system')
   }, [palette, theme, setTheme])
   return null
 }

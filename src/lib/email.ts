@@ -1,7 +1,6 @@
 import { Resend } from 'resend'
 import { createElement } from 'react'
 import { render } from '@react-email/render'
-import { spawn } from 'node:child_process'
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -44,13 +43,6 @@ export async function sendEmail<T extends Record<string, unknown>>({
       }),
     })
     if (!response.ok) throw new Error(`Mailpit send failed: ${response.status}`)
-    if (process.env.APP_ENV === 'local' && process.env.MAIL_PREVIEW_OPEN === 'true') {
-      const uiUrl = process.env.MAILPIT_UI_URL || 'http://127.0.0.1:8025'
-      const command = process.platform === 'darwin' ? 'open' : 'xdg-open'
-      const child = spawn(command, [uiUrl], { detached: true, stdio: 'ignore' })
-      child.on('error', (error) => console.warn('Could not open Mailpit:', error))
-      child.unref()
-    }
     return
   }
 

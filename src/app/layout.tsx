@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
+import { palettes } from '@/lib/appearance'
 import {
   CircleCheck,
   CircleX,
@@ -29,6 +30,7 @@ const fraunces = localFont({
   display: 'swap',
   weight: '600 900',
 })
+const paletteNames = JSON.stringify(palettes.map(({ value }) => value))
 
 export default function RootLayout({
   children,
@@ -41,7 +43,7 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var p=localStorage.getItem('presenteio-palette');if(['coral','violet','blue','terracotta','cherry','sage','plum'].includes(p))document.documentElement.dataset.palette=p}catch(e){}",
+              `try{var p=localStorage.getItem('presenteio-palette');if(${paletteNames}.includes(p))document.documentElement.dataset.palette=p}catch(e){}`,
           }}
         />
       </head>

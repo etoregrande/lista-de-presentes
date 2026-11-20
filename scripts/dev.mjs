@@ -9,8 +9,8 @@ const env = {
   SEED_DEMO_DATA: 'true',
   MAIL_TRANSPORT: 'mailpit',
   MAILPIT_API_URL: process.env.MAILPIT_API_URL || 'http://127.0.0.1:8025',
-  MAILPIT_UI_URL: process.env.MAILPIT_UI_URL || 'http://127.0.0.1:8025',
-  MAIL_PREVIEW_OPEN: 'true',
+  NEXT_PUBLIC_MAILPIT_UI_URL:
+    process.env.MAILPIT_UI_URL || 'http://127.0.0.1:8025',
   BETTER_AUTH_URL: `http://localhost:${port}`,
   DATABASE_URL: 'postgresql://presenteio:presenteio_dev@127.0.0.1:5434/presenteio_dev',
 }

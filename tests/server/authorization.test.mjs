@@ -176,6 +176,24 @@ test('creation ignores forged user IDs and uses the session for database and sto
   assert.equal(f.uploadImageToS3.mock.calls[0].arguments[2], 'owner')
 })
 
+test('failed item creation removes its uploaded image', async () => {
+  const f = fixture()
+  f.wishlistItem.create.mock.mockImplementation(async () => {
+    throw new Error('Database unavailable')
+  })
+
+  const result = await f.actions.createWishlistItem({
+    ...form,
+    image: new File(['test image'], 'image.png', { type: 'image/png' }),
+  })
+
+  assert.equal(result, null)
+  assert.equal(
+    f.deleteImageFromS3.mock.calls[0].arguments[0],
+    'https://bucket.test/new-image'
+  )
+})
+
 test('cross-account edit fails before upload, deletion, or database mutation', async () => {
   const f = fixture()
   await assert.rejects(
@@ -223,6 +241,47 @@ test('owner edit is scoped to the session and uploads only after checking owners
   assert.equal(f.uploadImageToS3.mock.calls[0].arguments[2], 'owner')
 })
 
+test('editing an image deletes the old image only after the database update', async () => {
+  const f = fixture()
+  f.wishlistItem.update.mock.mockImplementation(async () => {
+    assert.equal(f.deleteImageFromS3.mock.callCount(), 0)
+    return { id: 'own-item', userId: 'owner' }
+  })
+
+  const result = await f.actions.updateWishlistItem(
+    {
+      ...form,
+      image: new File(['test image'], 'image.png', { type: 'image/png' }),
+    },
+    'own-item'
+  )
+
+  assert.equal(result.id, 'own-item')
+  assert.equal(f.deleteImageFromS3.mock.calls[0].arguments[0], 'https://bucket.test/old-image')
+})
+
+test('failed image edit preserves the old image and removes the new upload', async () => {
+  const f = fixture()
+  f.wishlistItem.update.mock.mockImplementation(async () => {
+    throw new Error('Database unavailable')
+  })
+
+  const result = await f.actions.updateWishlistItem(
+    {
+      ...form,
+      image: new File(['test image'], 'image.png', { type: 'image/png' }),
+    },
+    'own-item'
+  )
+
+  assert.equal(result, null)
+  assert.equal(f.records.get('own-item').image, 'https://bucket.test/old-image')
+  assert.deepEqual(
+    f.deleteImageFromS3.mock.calls.map(({ arguments: [url] }) => url),
+    ['https://bucket.test/new-image']
+  )
+})
+
 test('cross-account delete preserves the record and never deletes its image', async () => {
   const f = fixture()
   assert.equal(await f.actions.deleteWishlistItem('other-item'), null)
@@ -238,10 +297,20 @@ test('owner delete removes its record and image', async () => {
   const f = fixture()
   assert.equal(await f.actions.deleteWishlistItem('own-item'), undefined)
   assert.equal(f.records.has('own-item'), false)
-  assert.equal(f.send.mock.callCount(), 1)
-  const command = f.send.mock.calls[0].arguments[0]
-  assert.equal(command.input.Bucket, 'test-bucket')
-  assert.equal(command.input.Key, 'old-image')
+  assert.equal(
+    f.deleteImageFromS3.mock.calls[0].arguments[0],
+    'https://bucket.test/old-image'
+  )
+})
+
+test('failed image cleanup does not report a deleted item as present', async () => {
+  const f = fixture()
+  f.deleteImageFromS3.mock.mockImplementation(async () => {
+    throw new Error('S3 unavailable')
+  })
+
+  assert.equal(await f.actions.deleteWishlistItem('own-item'), undefined)
+  assert.equal(f.records.has('own-item'), false)
 })
 
 test('avatar update ignores forged user IDs for storage and database writes', async () => {

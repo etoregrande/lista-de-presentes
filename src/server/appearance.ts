@@ -2,10 +2,14 @@
 
 import { prisma } from '@/lib/prisma'
 import { requireAuthenticatedUserId } from '@/server/session'
-import { isPalette, type AppearanceTheme } from '@/lib/appearance'
+import {
+  isAppearanceTheme,
+  isPalette,
+  type AppearanceTheme,
+} from '@/lib/appearance'
 
 export async function saveAppearance(palette: string, theme: AppearanceTheme) {
-  if (!isPalette(palette) || !['light', 'dark', 'system'].includes(theme)) {
+  if (!isPalette(palette) || !isAppearanceTheme(theme)) {
     throw new Error('Invalid appearance preference')
   }
   const id = await requireAuthenticatedUserId()

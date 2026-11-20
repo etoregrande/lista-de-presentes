@@ -166,6 +166,16 @@ export function AuthLoginForm({
           </Button>
           {requestedEmail && (
             <>
+              {process.env.NEXT_PUBLIC_MAILPIT_UI_URL && (
+                <a
+                  href={process.env.NEXT_PUBLIC_MAILPIT_UI_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary text-center text-sm underline underline-offset-4"
+                >
+                  Abrir caixa de emails local
+                </a>
+              )}
               <Button
                 type="button"
                 variant="outline"

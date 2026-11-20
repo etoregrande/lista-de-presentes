@@ -25,10 +25,15 @@ export const palettes = [
 ] as const
 
 export type PaletteName = (typeof palettes)[number]['value']
-export type AppearanceTheme = 'light' | 'dark' | 'system'
+export const appearanceThemes = ['light', 'dark', 'system'] as const
+export type AppearanceTheme = (typeof appearanceThemes)[number]
 
 export function isPalette(value: string): value is PaletteName {
   return palettes.some((palette) => palette.value === value)
+}
+
+export function isAppearanceTheme(value: string): value is AppearanceTheme {
+  return appearanceThemes.some((theme) => theme === value)
 }
 
 export function readPalette(): PaletteName {
