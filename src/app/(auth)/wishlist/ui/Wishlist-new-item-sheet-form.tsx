@@ -35,7 +35,7 @@ export const WishlistNewItemSheetForm = ({
       <form className="grid gap-6 p-5 md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] md:gap-8 md:p-8">
         <div className="space-y-4">
           <CredenzaHeader className="p-0 pr-12 text-left md:pr-0">
-            <CredenzaTitle className="text-2xl leading-tight break-words md:text-3xl">
+            <CredenzaTitle className="line-clamp-3 text-2xl leading-tight break-words md:text-3xl">
               {currentName?.trim() || 'Novo item'}
             </CredenzaTitle>
             <CredenzaDescription>

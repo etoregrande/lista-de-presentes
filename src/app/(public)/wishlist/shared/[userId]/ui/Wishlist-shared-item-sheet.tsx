@@ -68,7 +68,7 @@ export const WishlistSharedItemSheet = ({
         <CredenzaTrigger asChild>{children}</CredenzaTrigger>
         <ProductDialogSurface>
           <CredenzaHeader className="border-border flex-none border-b px-6 py-5 text-left md:px-8">
-            <CredenzaTitle className="max-w-[calc(100%-2rem)] truncate text-xl font-black">
+            <CredenzaTitle className="line-clamp-3 max-w-[calc(100%-2rem)] text-xl font-black">
               {wishlistItem.name}
             </CredenzaTitle>
             <CredenzaDescription>
