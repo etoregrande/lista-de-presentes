@@ -1,8 +1,6 @@
 'use server'
 
 import { type WishlistItemFormData } from '@/types/wishlistItem'
-import { DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { getS3Client } from '@/lib/s3'
 import { prisma } from '@/lib/prisma'
 import { wishlistItemFormSchema } from '@/schemas/wishlistItem'
 import { identifierSchema, priceInCentsSchema } from '@/schemas/common'
@@ -10,6 +8,15 @@ import { z } from 'zod'
 import { deleteImageFromS3, uploadImageToS3 } from './s3'
 import { WishlistItem } from '@/generated/prisma'
 import { requireAuthenticatedUserId } from './session'
+
+async function removeFailedUpload(imageUrl: string | null) {
+  if (!imageUrl) return
+  try {
+    await deleteImageFromS3(imageUrl)
+  } catch (error) {
+    console.error('Error cleaning up new wishlist image =>', error)
+  }
+}
 
 export const createWishlistItem = async (formData: WishlistItemFormData) => {
   const userId = await requireAuthenticatedUserId()
@@ -48,6 +55,7 @@ export const createWishlistItem = async (formData: WishlistItemFormData) => {
     return newWishlistItem
   } catch (error) {
     console.error('Error creating wishlist item =>', error)
+    await removeFailedUpload(imageUrl)
     return null
   }
 }
@@ -71,10 +79,6 @@ export const updateWishlistItem = async (
   if (image) {
     try {
       imageUrl = await uploadImageToS3(image, 'wishlist image', userId)
-
-      if (existingItem.image) {
-        await deleteImageFromS3(existingItem.image)
-      }
     } catch (error) {
       console.error('Error uploading image to S3 =>', error)
       throw error
@@ -106,9 +110,18 @@ export const updateWishlistItem = async (
       throw new Error('Error editing wishlist item')
     }
 
+    if (imageUrl && existingItem.image) {
+      try {
+        await deleteImageFromS3(existingItem.image)
+      } catch (error) {
+        console.error('Error deleting previous wishlist image =>', error)
+      }
+    }
+
     return editedWishlistItem
   } catch (error) {
-    console.error('Error creating wishlist item =>', error)
+    await removeFailedUpload(imageUrl)
+    console.error('Error updating wishlist item =>', error)
     return null
   }
 }
@@ -116,27 +129,24 @@ export const updateWishlistItem = async (
 export const deleteWishlistItem = async (wishlistItemId: string) => {
   const userId = await requireAuthenticatedUserId()
   wishlistItemId = identifierSchema.parse(wishlistItemId)
+  let imageUrl: string | null
   try {
     const deletedWishlistItem = await prisma.wishlistItem.delete({
       where: { id: wishlistItemId, userId },
       select: { image: true },
     })
-
-    if (!deletedWishlistItem) {
-      throw new Error('Error deleting wishlist item')
-    }
-    if (deletedWishlistItem.image) {
-      const imageKey = new URL(deletedWishlistItem.image).pathname.slice(1)
-      const deleteParams = {
-        Bucket: process.env.BUCKET_NAME,
-        Key: imageKey,
-      }
-      await getS3Client().send(new DeleteObjectCommand(deleteParams))
-    }
-    return
+    imageUrl = deletedWishlistItem.image
   } catch (error) {
     console.error('Error deleting wishlist item =>', error)
     return null
+  }
+
+  if (imageUrl) {
+    try {
+      await deleteImageFromS3(imageUrl)
+    } catch (error) {
+      console.error('Error deleting wishlist image =>', error)
+    }
   }
 }
 

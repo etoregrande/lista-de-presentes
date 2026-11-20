@@ -14,7 +14,9 @@ import { Label } from '@/components/ui/label'
 import { FormError } from '@/components/ui/form/form-error'
 import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 
-export function AuthLoginForm() {
+export function AuthLoginForm({
+  onRequestedEmailChange,
+}: { onRequestedEmailChange?: (email: string | null) => void } = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = getSafeAuthCallbackPath(searchParams.get('callbackUrl'))
@@ -34,9 +36,13 @@ export function AuthLoginForm() {
     setError('')
     setBusy(true)
     try {
-      const result = await authClient.emailOtp.sendVerificationOtp({ email: parsed.data.email, type: 'sign-in' })
+      const result = await authClient.emailOtp.sendVerificationOtp({
+        email: parsed.data.email,
+        type: 'sign-in',
+      })
       if (result.error) throw result.error
       setRequestedEmail(parsed.data.email)
+      onRequestedEmailChange?.(parsed.data.email)
       setOtp('')
       toast.success('Enviamos um código de acesso para seu email')
     } catch {
@@ -54,16 +60,23 @@ export function AuthLoginForm() {
     setError('')
     setBusy(true)
     try {
-      const result = await authClient.signIn.emailOtp({ email: requestedEmail, otp: parsed.data.otp })
+      const result = await authClient.signIn.emailOtp({
+        email: requestedEmail,
+        otp: parsed.data.otp,
+      })
       if (result.error) throw result.error
       if (!result.data?.user.name?.trim()) {
-        router.push(`/complete-profile?callbackUrl=${encodeURIComponent(callbackUrl)}`)
+        router.push(
+          `/complete-profile?callbackUrl=${encodeURIComponent(callbackUrl)}`
+        )
       } else {
         router.push(callbackUrl)
       }
       router.refresh()
     } catch {
-      setError('Código inválido ou expirado. Confira o email ou solicite outro.')
+      setError(
+        'Código inválido ou expirado. Confira o email ou solicite outro.'
+      )
     } finally {
       setBusy(false)
     }
@@ -77,7 +90,8 @@ export function AuthLoginForm() {
         { provider: 'google', callbackURL: callbackUrl },
         { timeout: 15000, retry: 0 }
       )
-      if (result.error || !result.data?.url) throw new Error('Google sign in failed')
+      if (result.error || !result.data?.url)
+        throw new Error('Google sign in failed')
     } catch {
       toast.error('Não foi possível abrir o login com Google')
     } finally {
@@ -87,10 +101,12 @@ export function AuthLoginForm() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-4">
-      <form onSubmit={requestedEmail ? confirmCode : requestCode} className="flex flex-col gap-4">
+      <form
+        onSubmit={requestedEmail ? confirmCode : requestCode}
+        className="flex flex-col gap-4"
+      >
         {requestedEmail ? (
           <>
-            <p>Enviamos um código para <strong>{requestedEmail}</strong>.</p>
             <InputWrapper>
               <Label htmlFor="otp">Código de acesso</Label>
               <div className="relative grid grid-cols-6 gap-2">
@@ -109,10 +125,17 @@ export function AuthLoginForm() {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   value={otp}
-                  onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(event) =>
+                    setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))
+                  }
                   onFocus={() => setOtpFocused(true)}
                   onBlur={() => setOtpFocused(false)}
-                  onClick={(event) => event.currentTarget.setSelectionRange(otp.length, otp.length)}
+                  onClick={(event) =>
+                    event.currentTarget.setSelectionRange(
+                      otp.length,
+                      otp.length
+                    )
+                  }
                   className="absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
                 />
               </div>
@@ -121,25 +144,88 @@ export function AuthLoginForm() {
         ) : (
           <InputWrapper>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} />
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
           </InputWrapper>
         )}
         <FormError message={error} />
         <div className="flex flex-col gap-2">
           <Button type="submit" disabled={busy}>
-            {busy ? <LoaderCircle className="animate-spin" /> : requestedEmail ? 'Entrar' : 'Enviar código'}
+            {busy ? (
+              <LoaderCircle className="animate-spin" />
+            ) : requestedEmail ? (
+              'Entrar'
+            ) : (
+              'Enviar código'
+            )}
           </Button>
           {requestedEmail && (
             <>
-              <Button type="button" variant="outline" disabled={busy} onClick={() => { setRequestedEmail(null); setOtp(''); setError('') }}>Voltar</Button>
-              <Button type="button" variant="ghost" className="text-muted-foreground" disabled={busy} onClick={() => { void requestCode() }}>Enviar outro código</Button>
+              {process.env.NEXT_PUBLIC_MAILPIT_UI_URL && (
+                <a
+                  href={process.env.NEXT_PUBLIC_MAILPIT_UI_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary text-center text-sm underline underline-offset-4"
+                >
+                  Abrir caixa de emails local
+                </a>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                disabled={busy}
+                onClick={() => {
+                  setRequestedEmail(null)
+                  onRequestedEmailChange?.(null)
+                  setOtp('')
+                  setError('')
+                }}
+              >
+                Voltar
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-muted-foreground"
+                disabled={busy}
+                onClick={() => {
+                  void requestCode()
+                }}
+              >
+                Enviar outro código
+              </Button>
             </>
           )}
         </div>
       </form>
       {socialEnabled && !requestedEmail && (
-        <Button type="button" variant="outline" onClick={signInGoogle} disabled={socialBusy} aria-label="Entrar com o Google" aria-busy={socialBusy}>
-          {socialBusy ? <LoaderCircle className="animate-spin" /> : <><Image src="/assets/icons/google.svg" alt="Ícone do Google" width={20} height={20} /> Entrar com o Google</>}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={signInGoogle}
+          disabled={socialBusy}
+          aria-label="Entrar com o Google"
+          aria-busy={socialBusy}
+        >
+          {socialBusy ? (
+            <LoaderCircle className="animate-spin" />
+          ) : (
+            <>
+              <Image
+                src="/assets/icons/google.svg"
+                alt="Ícone do Google"
+                width={20}
+                height={20}
+              />{' '}
+              Entrar com o Google
+            </>
+          )}
         </Button>
       )}
     </div>

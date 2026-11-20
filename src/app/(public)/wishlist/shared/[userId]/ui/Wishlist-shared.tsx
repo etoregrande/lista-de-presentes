@@ -41,7 +41,7 @@ export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
     <>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
-          <InputWrapper>
+          <InputWrapper className="w-full py-1">
             <Label htmlFor="priceLimit">Valor do presente</Label>
             <NumericFormat
               name="priceLimit"
@@ -71,7 +71,7 @@ export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
           {isEmpty ? (
             <EmptyWishlist isEmpty={true} />
           ) : (
-            <div className="mb-10 grid grid-cols-1 gap-2 sm:grid-cols-1 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+            <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               <AnimatePresence initial={false}>
                 {notPurchasedWishlist
                   .slice()
@@ -99,7 +99,7 @@ export function WishlistShared({ initialWishlist }: WishlistSharedProps) {
                   Os presentes que já foram comprados
                 </p>
               </div>
-              <div className="md: mb:gap-4 grid grid-cols-1 gap-2 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 <AnimatePresence initial={false}>
                   {purchasedWishlist
                     .slice()

@@ -8,11 +8,20 @@ import { Textarea } from '@/components/ui/textarea'
 import { NumericFormat } from 'react-number-format'
 import { Switch } from '@/components/ui/switch'
 import { useEffect, useState } from 'react'
-import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
+import { WishlistItemPlaceholder } from '@/components/ui/wishlist-item-placeholder'
 import { FormError } from '@/components/ui/form/form-error'
 import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
+import {
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
-export const WishlistNewItemSheetForm = () => {
+export const WishlistNewItemSheetForm = ({
+  importMessage,
+}: {
+  importMessage: string
+}) => {
   const {
     register,
     watch,
@@ -25,6 +34,7 @@ export const WishlistNewItemSheetForm = () => {
     null
   )
   const image = watch('image')
+  const currentName = watch('name')
   const selectedImage = preview && preview.file === image ? preview.url : null
 
   useEffect(() => {
@@ -49,112 +59,140 @@ export const WishlistNewItemSheetForm = () => {
   }, [image, trigger])
 
   return (
-    <div className="flex-1 overflow-y-auto">
-      <form className="space-y-8 p-6">
-        <div>
-          <AspectRatio ratio={16 / 9} className="rounded-md bg-muted">
-            <Label
-              htmlFor="image"
-              className="relative block h-full w-full cursor-pointer"
+    <div className="product-dialog-body min-h-0 flex-1 overflow-y-auto">
+      <form className="grid gap-6 p-5 md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] md:gap-8 md:p-8">
+        <div className="space-y-4">
+          <DialogHeader className="pr-12 text-left md:pr-0">
+            <DialogTitle className="text-2xl leading-tight break-words md:text-3xl">
+              {currentName?.trim() || 'Novo item'}
+            </DialogTitle>
+            <DialogDescription>
+              {importMessage || 'Adicione informações ao seu novo item'}
+            </DialogDescription>
+          </DialogHeader>
+          <div>
+            <AspectRatio
+              ratio={16 / 9}
+              className="bg-muted max-h-64 rounded-2xl"
             >
-              <Image
-                src={selectedImage ?? placeholder}
-                alt="Imagem do produto"
-                fill
-                sizes="(max-width: 768px) 100vw, 350px"
-                className="rounded-md object-cover"
-                priority
-              />
+              <Label
+                htmlFor="image"
+                className="group relative block h-full w-full cursor-pointer"
+              >
+                {selectedImage ? (
+                  <Image src={selectedImage} alt="Imagem do produto" fill sizes="(max-width: 768px) 100vw, 350px" className="rounded-2xl object-cover" />
+                ) : (
+                  <WishlistItemPlaceholder className="absolute inset-0 m-auto size-[58%]" />
+                )}
 
-              <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/40 p-12 text-center text-sm font-medium text-white transition-[background-color,color] md:text-base lg:bg-transparent lg:text-transparent lg:hover:bg-black/60 lg:hover:text-white">
-                Alterar a imagem
-              </div>
-              <Input
-                id="image"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                {...register('image')}
-                onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  setValue('image', file)
-                }}
-                className="hidden"
-              />
-            </Label>
-          </AspectRatio>
-          <FormError message={errors.image?.message} />
-        </div>
-        <div className="flew-row flex items-center justify-between">
-          <Controller
-            control={control}
-            name="isActive"
-            render={({ field }) => (
-              <div className="flex h-full items-center space-x-2">
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  id="isActive"
+                <div className="absolute inset-x-0 bottom-0 bg-black/60 px-4 py-2 text-center text-sm font-medium text-white transition-opacity lg:opacity-0 lg:group-focus-within:opacity-100 lg:group-hover:opacity-100">
+                  Alterar a imagem
+                </div>
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  {...register('image')}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    setValue('image', file)
+                  }}
+                  className="hidden"
                 />
-                <Label htmlFor="isActive">
-                  {watch('isActive') ? 'Produto visível' : 'Produto invisível'}
-                </Label>
-              </div>
+              </Label>
+            </AspectRatio>
+            <FormError message={errors.image?.message} />
+          </div>
+          <div className="border-border bg-muted/50 space-y-3 rounded-2xl border p-4">
+            <Controller
+              control={control}
+              name="isActive"
+              render={({ field }) => (
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    id="isActive"
+                  />
+                  <Label htmlFor="isActive">
+                    {watch('isActive')
+                      ? 'Produto visível'
+                      : 'Produto invisível'}
+                  </Label>
+                </div>
+              )}
+            />
+            {!watch('isActive') && (
+              <p role="status" className="text-muted-foreground text-sm">
+                Este produto não vai aparecer na sua lista compartilhada.
+              </p>
             )}
-          />
+          </div>
         </div>
+        <div className="space-y-5 md:pt-11">
+          <InputWrapper>
+            <Label
+              htmlFor="name"
+              className="flex items-center justify-between gap-1"
+            >
+              Nome
+              <span className="text-muted-foreground text-xs">obrigatório</span>
+            </Label>
+            <Input id="name" {...register('name')} placeholder="" />
+            <FormError message={errors.name?.message} />
+          </InputWrapper>
 
-        <InputWrapper>
-          <Label
-            htmlFor="name"
-            className="flex items-center justify-between gap-1"
-          >
-            Nome
-            <span className="text-muted-foreground text-xs">obrigatório</span>
-          </Label>
-          <Input {...register('name')} placeholder="" />
-          <FormError message={errors.name?.message} />
-        </InputWrapper>
+          <InputWrapper>
+            <Label htmlFor="description">Descrição</Label>
+            <Textarea
+              id="description"
+              {...register('description')}
+              placeholder=""
+            />
+            <FormError message={errors.description?.message} />
+          </InputWrapper>
 
-        <InputWrapper>
-          <Label htmlFor="description">Descrição</Label>
-          <Textarea {...register('description')} placeholder="" />
-          <FormError message={errors.description?.message} />
-        </InputWrapper>
+          <InputWrapper>
+            <Label htmlFor="price">Preço</Label>
+            <Controller
+              name="price"
+              control={control}
+              render={({ field }) => (
+                <NumericFormat
+                  inputMode="decimal"
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  decimalScale={2}
+                  prefix="R$ "
+                  allowNegative={false}
+                  value={field.value != null ? field.value / 100 : ''}
+                  onValueChange={(values) => {
+                    const { floatValue } = values
+                    field.onChange(
+                      floatValue !== undefined
+                        ? Math.round(floatValue * 100)
+                        : null
+                    )
+                  }}
+                  customInput={Input}
+                  id="price"
+                />
+              )}
+            />
+            <FormError message={errors.price?.message} />
+          </InputWrapper>
 
-        <InputWrapper>
-          <Label htmlFor="price">Preço</Label>
-          <Controller
-            name="price"
-            control={control}
-            render={({ field }) => (
-              <NumericFormat
-                inputMode="decimal"
-                thousandSeparator="."
-                decimalSeparator=","
-                decimalScale={2}
-                prefix="R$ "
-                allowNegative={false}
-                value={field.value != null ? field.value / 100 : ''}
-                onValueChange={(values) => {
-                  const { floatValue } = values
-                  field.onChange(
-                    floatValue !== undefined
-                      ? Math.round(floatValue * 100)
-                      : null
-                  )
-                }}
-                customInput={Input}
-              />
-            )}
-          />
-          <FormError message={errors.price?.message} />
-        </InputWrapper>
-
-        <InputWrapper>
-          <Label htmlFor="link">Link do produto</Label>
-          <Input {...register('link')} inputMode="url" placeholder="" />
-          <FormError message={errors.link?.message} />
-        </InputWrapper>
+          <InputWrapper>
+            <Label htmlFor="link">Link do produto</Label>
+            <Input
+              id="link"
+              {...register('link')}
+              inputMode="url"
+              placeholder=""
+            />
+            <FormError message={errors.link?.message} />
+          </InputWrapper>
+        </div>
       </form>
     </div>
   )

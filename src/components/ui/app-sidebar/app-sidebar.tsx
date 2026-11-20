@@ -23,9 +23,7 @@ import { NavbarNewSecretSantaGroupModal } from './app-sidebar-new-secret-santa-g
 import { AppSidebarSecretSantaGroups } from './app-sidebar-secret-santa-groups'
 import { AppSidebarAvatar } from './app-sidebar-avatar'
 import { usePathname, useRouter } from 'next/navigation'
-import clsx from 'clsx'
 import { useSession } from '@/lib/context/session/context'
-import Image from 'next/image'
 import { Button } from '../button'
 
 interface LoggedInContentProps {
@@ -39,43 +37,55 @@ const LoggedInContent = ({ setIsCreatingNewGroup }: LoggedInContentProps) => {
   const { isMobile, setOpenMobile } = useSidebar()
 
   return (
-    <SidebarContent>
-      <hr className="border-sidebar-border" />
-      <SidebarGroup>
-        <SidebarMenu>
+    <SidebarContent className="px-3 pt-2 pb-5">
+      <SidebarGroup className="p-1">
+        <SidebarMenu className="gap-1.5">
           <SidebarMenuItem>
-            <SidebarMenuButton asChild size="lg">
+            <SidebarMenuButton
+              asChild
+              size="lg"
+              isActive={isOnWishlist}
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-secondary-foreground data-[active=true]:bg-secondary data-[active=true]:text-secondary-foreground h-11 gap-3 rounded-xl px-3.5 shadow-sm"
+            >
               <Link
                 href={href}
-                className={clsx(
-                  isOnWishlist && 'bg-sidebar-accent pointer-events-none'
-                )}
                 onClick={() => {
                   if (isMobile) setOpenMobile(false)
                 }}
               >
-                <GiftIcon className="-translate-y-[1px]" />
-                <span>Lista de Desejos</span>
+                <GiftIcon aria-hidden="true" />
+                <span style={{ fontFamily: 'var(--font-fraunces), serif' }}>
+                  Lista de Desejos
+                </span>
               </Link>
             </SidebarMenuButton>
-            <SidebarMenuButton asChild size="lg">
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              size="lg"
+              className="border-primary/25 bg-primary/10 text-sidebar-foreground hover:bg-primary/20 h-11 gap-3 rounded-xl border px-3.5"
+            >
               <button
-                className={'cursor-pointer'}
+                className="cursor-pointer"
                 onClick={() => {
                   setIsCreatingNewGroup(true)
                 }}
               >
-                <UsersIcon className="-translate-y-[1px]" />
-                <span>Novo amigo secreto</span>
+                <UsersIcon aria-hidden="true" />
+                <span style={{ fontFamily: 'var(--font-fraunces), serif' }}>
+                  Novo amigo secreto
+                </span>
               </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroup>
-      <hr className="border-sidebar-border" />
-      <SidebarGroup>
-        <SidebarGroupLabel>Amigos secretos</SidebarGroupLabel>
-        <SidebarMenu>
+      <SidebarGroup className="border-sidebar-border mt-4 border-t px-1 pt-4 pb-1">
+        <SidebarGroupLabel className="text-sidebar-foreground/65 h-8 px-3 text-xs font-bold tracking-[0.12em] uppercase">
+          Amigos secretos
+        </SidebarGroupLabel>
+        <SidebarMenu className="gap-0.5">
           <Suspense fallback={<div>Carregando grupos...</div>}>
             <AppSidebarSecretSantaGroups />
           </Suspense>
@@ -107,13 +117,13 @@ const LoggedOffContent = () => {
   return (
     <SidebarContent>
       <SidebarGroup className="relative flex h-full flex-col items-center justify-center">
-        <Image
-          src="/assets/login/login.svg"
-          alt="Usuário fazendo login"
-          width={192}
-          height={192}
-          className="relative"
-        />
+        <div className="mb-6 grid size-36 rotate-[-8deg] place-items-center rounded-[2.5rem] bg-[image:var(--gradient)] shadow-lg">
+          <GiftIcon
+            className="text-primary size-20"
+            strokeWidth={1.3}
+            aria-hidden="true"
+          />
+        </div>
         <Button
           onClick={redirectToLogin}
           disabled={isRedirecting}
@@ -143,7 +153,7 @@ export const AppSidebar = () => {
         setIsOpen={setIsCreatingNewGroup}
       />
 
-      <Sidebar>
+      <Sidebar className="border-sidebar-border border-r">
         <SidebarHeader className="gap-0 p-0">
           <AppSidebarAvatar />
         </SidebarHeader>

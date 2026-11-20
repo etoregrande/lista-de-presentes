@@ -3,7 +3,7 @@
 import { WishlistItem } from '@/generated/prisma'
 import clsx from 'clsx'
 import Image from 'next/image'
-import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
+import { WishlistItemPlaceholder } from '@/components/ui/wishlist-item-placeholder'
 import { getDisplayPrice } from '@/lib/utils'
 
 interface SecretSantaWishlistItemProps {
@@ -19,18 +19,12 @@ export const SecretSantaWishlistItem = ({
         'group flex min-w-0 flex-row gap-4 rounded-xl bg-card transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0'
       )}
     >
-      <div className="bg-secondary-foreground relative aspect-square h-full min-h-22 min-w-22 overflow-hidden rounded-lg">
-        <Image
-          src={wishlistItem.image ?? placeholder}
-          fill
-          alt="Imagem do produto"
-          sizes="(max-width: 768px) 100vw, 350px"
-          className={clsx(
-            'transition-transform duration-200 ease-in-out',
-            wishlistItem.image && 'object-cover'
-          )}
-          priority
-        />
+      <div className="bg-secondary/50 relative aspect-square h-full min-h-22 min-w-22 overflow-hidden rounded-lg">
+        {wishlistItem.image ? (
+          <Image src={wishlistItem.image} fill alt="Imagem do produto" sizes="(max-width: 768px) 100vw, 350px" className="object-cover transition-transform duration-200 ease-in-out" priority />
+        ) : (
+          <WishlistItemPlaceholder className="absolute inset-0 m-auto size-[68%]" />
+        )}
       </div>
 
       <div className="flex w-full min-w-0 flex-row justify-between gap-4 overflow-hidden py-2 transition-all duration-200 ease-in-out md:min-h-15">

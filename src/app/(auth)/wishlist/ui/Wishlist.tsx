@@ -56,13 +56,19 @@ export function Wishlist({
 
   return (
     <SessionProvider session={session}>
-      <div className="flex flex-col gap-8">
-        <h2 className="block truncate text-2xl font-extrabold md:pt-0">
-          Sua lista de desejos
-          <span className="block truncate text-base font-normal text-muted-foreground">
-            Todos os seus items cadastrados
-          </span>
-        </h2>
+      <div className="flex flex-col gap-7 md:gap-9">
+        <header className="surface-panel relative overflow-hidden bg-[image:var(--gradient)] p-5 md:p-10">
+          <span
+            aria-hidden="true"
+            className="absolute -top-24 -right-16 hidden size-64 rounded-full border-[42px] border-white/25 md:block"
+          />
+          <h1 className="page-heading relative text-2xl md:text-4xl">
+            Sua lista de desejos
+            <span className="text-foreground/75 mt-1 block font-sans text-sm font-medium tracking-normal md:mt-2 md:text-base">
+              Todos os seus items cadastrados
+            </span>
+          </h1>
+        </header>
 
         {integrationAdmin && (
           <div className="text-muted-foreground space-y-2 text-sm">
@@ -87,8 +93,8 @@ export function Wishlist({
           </div>
         )}
 
-        <section className="flex flex-col gap-4">
-          <div className="flex items-end justify-between gap-6">
+        <section className="flex flex-col gap-5">
+          <div className="flex flex-wrap items-end justify-between gap-4 py-1">
             <InputWrapper>
               <Label htmlFor="priceLimit">Valor do presente</Label>
               <NumericFormat
@@ -137,7 +143,10 @@ export function Wishlist({
 
           <EmptyWishlist isEmpty={isEmpty} />
 
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-1 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+          <div
+            id="wishlist-items"
+            className="grid scroll-mt-24 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          >
             <FormProvider {...formMethods}>
               <AnimatePresence initial={false}>
                 {filteredWishlist

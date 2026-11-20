@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { setAvatarFallbackString } from '@/lib/utils'
-import { UserXIcon as UserXIcon } from 'lucide-react'
+import { ArrowUpRight, UserXIcon as UserXIcon } from 'lucide-react'
 import { ParticipantListItemRemoveButton } from './participant-list-item-remove-button'
 import { useSecretSantaGroup } from '../../context/context'
 import { useSession } from '@/lib/context/session/context'
@@ -27,37 +27,54 @@ export const ParticipantListItem = ({
   const allowRemoveParticipant =
     isOwner && user.id != participantId && !secretSantaGroup.isDrawn
 
-  return (
-    <div className="group flex w-full items-center gap-2">
-      <Avatar className="h-12 w-12">
+  const content = (
+    <>
+      <Avatar className="border-primary/20 size-12 border">
         <AvatarImage src={participantImage} />
-        <AvatarFallback className="bg-navbar-muted-foreground font-bold">
+        <AvatarFallback className="bg-accent text-accent-foreground font-bold">
           {setAvatarFallbackString(participantName)}
         </AvatarFallback>
       </Avatar>
-
-      <div className="flex min-w-0 flex-1 flex-col justify-center">
-        <p className="truncate" title={participantName}>
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-semibold" title={participantName}>
           {participantName}
         </p>
-        {participantId != user.id ? (
-          <Link
-            href={`/wishlist/shared/${participantId}`}
-            className="text-primary truncate text-sm hover:underline"
-          >
-            Ver lista de desejos
-          </Link>
-        ) : (
+        {participantId === user.id && (
           <p className="text-muted-foreground truncate text-sm">{user.email}</p>
         )}
       </div>
+      {participantId !== user.id && (
+        <ArrowUpRight
+          className="text-primary size-5 shrink-0"
+          aria-hidden="true"
+        />
+      )}
+    </>
+  )
+
+  return (
+    <div className="group flex w-full items-center gap-2">
+      {participantId !== user.id ? (
+        <Link
+          href={`/wishlist/shared/${participantId}`}
+          aria-label={`Ver lista de desejos de ${participantName}`}
+          className="hover:bg-accent focus-visible:ring-ring flex min-w-0 flex-1 items-center gap-3 rounded-xl p-2 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        >
+          {content}
+        </Link>
+      ) : (
+        <div className="flex min-w-0 flex-1 items-center gap-3 p-2">
+          {content}
+        </div>
+      )}
 
       {allowRemoveParticipant && (
         <ParticipantListItemRemoveButton participantId={participantId}>
           <Button
             variant="secondary"
             size="icon"
-            className="hidden md:group-hover:flex"
+            className="flex shrink-0"
+            aria-label={`Remover ${participantName}`}
           >
             <UserXIcon />
           </Button>

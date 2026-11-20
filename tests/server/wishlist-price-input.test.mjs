@@ -20,7 +20,14 @@ function priceInput(initialPrice = null) {
     },
     'react-number-format': { NumericFormat },
     'next/image': { default: () => null },
-    '@/../public/assets/wishlist-item-placeholder.svg': { default: '' },
+    '@/components/ui/wishlist-item-placeholder': {
+      WishlistItemPlaceholder: () => null,
+    },
+    '@/components/ui/dialog': {
+      DialogHeader: () => null,
+      DialogTitle: () => null,
+      DialogDescription: () => null,
+    },
   }
   for (const [module, name] of [
     ['label', 'Label'],
@@ -45,7 +52,7 @@ function priceInput(initialPrice = null) {
       if (found) return found
     }
   }
-  const controller = findPrice(WishlistNewItemSheetForm())
+  const controller = findPrice(WishlistNewItemSheetForm({ importMessage: '' }))
   return {
     render: () =>
       controller.props.render({

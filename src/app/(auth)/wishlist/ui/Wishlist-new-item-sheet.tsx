@@ -1,12 +1,6 @@
 import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from '@/components/ui/sheet'
+import { Dialog, DialogFooter } from '@/components/ui/dialog'
+import { ProductDialogSurface } from '@/components/ui/product-dialog-surface'
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { LoaderCircle } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
@@ -59,7 +53,16 @@ export const WishlistNewItemSheet = ({
   const [importMessage, setImportMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const requestRef = useRef<AbortController | null>(null)
-  useEffect(() => () => requestRef.current?.abort(), [])
+  const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      requestRef.current?.abort()
+      if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current)
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
+    },
+    []
+  )
 
   const changeImportOpen = (open: boolean) => {
     requestRef.current?.abort()
@@ -145,9 +148,22 @@ export const WishlistNewItemSheet = ({
         toast.error('Erro ao criar novo item')
         return
       }
-      setWishlist((prev) => [...prev, newItem])
       setIsSheetOpen(false)
       reset()
+      const mobile = window.matchMedia('(max-width: 767px)').matches
+      if (mobile) {
+        scrollTimeoutRef.current = setTimeout(() => {
+          document
+            .getElementById('wishlist-items')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 230)
+      }
+      revealTimeoutRef.current = setTimeout(
+        () => {
+          setWishlist((prev) => [...prev, newItem])
+        },
+        mobile ? 660 : 230
+      )
       toast.success('Item criado com sucesso!')
     } catch (error) {
       const failure = getWishlistSaveError(error)
@@ -253,18 +269,23 @@ export const WishlistNewItemSheet = ({
           </CredenzaBody>
         </CredenzaContent>
       </Credenza>
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent side="right" className="p-0">
-          <SheetHeader className="border-border flex-none border-b p-6 text-left">
-            <SheetTitle>Novo item</SheetTitle>
-            <SheetDescription>
-              {importMessage || 'Adicione informações ao seu novo item'}
-            </SheetDescription>
-          </SheetHeader>
-          <WishlistNewItemSheetForm />
-          <SheetFooter className="flex-none border-t p-6">
+      <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <ProductDialogSurface>
+          <WishlistNewItemSheetForm importMessage={importMessage} />
+          <DialogFooter className="border-border flex-none !flex-row gap-3 border-t p-5 md:px-8">
             <Button
-              onClick={handleSubmit(onSubmit)}
+              variant="outline"
+              type="button"
+              className="flex-1"
+              onClick={() => setIsSheetOpen(false)}
+              disabled={isSubmitting}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={(event) => {
+                void handleSubmit(onSubmit)(event)
+              }}
               className="flex-1"
               type="submit"
               disabled={isSubmitting}
@@ -275,9 +296,9 @@ export const WishlistNewItemSheet = ({
                 'Salvar'
               )}
             </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+          </DialogFooter>
+        </ProductDialogSurface>
+      </Dialog>
     </>
   )
 }

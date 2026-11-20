@@ -1,13 +1,6 @@
 import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-} from '@/components/ui/sheet'
+import { Dialog, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
+import { ProductDialogSurface } from '@/components/ui/product-dialog-surface'
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { useFormContext } from 'react-hook-form'
 import { updateWishlistItemWithFeedback } from '@/server/wishlistItem'
@@ -15,7 +8,6 @@ import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { getWishlistSaveError } from '@/lib/wishlist-save-error'
-import { getDisplayPrice } from '@/lib/utils'
 import { WishlistItem } from '@/generated/prisma'
 import { WishlistItemSheetForm } from './Wishlist-item-sheet-form'
 import { useSession } from '@/lib/context/session/context'
@@ -71,25 +63,24 @@ export const WishlistItemSheet = ({
   }
 
   return (
-    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-      <SheetTrigger>{children}</SheetTrigger>
-      <SheetContent side="right" className="p-0">
-        <SheetHeader className="border-border flex-none border-b p-6 text-left">
-          <SheetTitle>{wishlistItem.name}</SheetTitle>
-          <SheetDescription>
-            <span className="text-sm break-words text-[var(--muted-foreground)]">
-              {wishlistItem.price && wishlistItem.price > 0
-                ? getDisplayPrice(wishlistItem.price)
-                : 'Produto sem preço'}
-            </span>
-          </SheetDescription>
-        </SheetHeader>
+    <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <ProductDialogSurface>
         <WishlistItemSheetForm
           wishlistItem={wishlistItem}
           setWishlist={setWishlist}
           setIsSheetOpen={setIsSheetOpen}
         />
-        <SheetFooter className="flex-none border-t p-6">
+        <DialogFooter className="border-border flex-none !flex-row gap-3 border-t p-5 md:px-8">
+          <Button
+            variant="outline"
+            type="button"
+            className="flex-1"
+            onClick={() => setIsSheetOpen(false)}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </Button>
           <Button
             onClick={handleSubmit(onSubmit)}
             className="flex-1"
@@ -102,8 +93,8 @@ export const WishlistItemSheet = ({
               'Salvar'
             )}
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </DialogFooter>
+      </ProductDialogSurface>
+    </Dialog>
   )
 }

@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useSecretSantaGroup } from '../context/context'
 import clsx from 'clsx'
 import type { SecretSantaGroup } from '@/generated/prisma'
+import { UsersRound } from 'lucide-react'
 
 interface SecretSantaGroupNameProps {
   truncate?: boolean
@@ -28,24 +29,26 @@ export const SecretSantaGroupHeading = ({
 
   return (
     <div className="flex w-full items-center gap-4">
-      <div className="bg-muted-background relative aspect-square h-16 w-16 rounded-md">
-        <Image
-          src={
-            secretSantaGroup.image || '/assets/secretSanta/imageFallback.svg'
-          }
-          alt=""
-          fill
-          className="rounded-md object-cover object-center"
-        />
+      <div className="bg-secondary text-secondary-foreground border-border relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl border shadow-sm">
+        {secretSantaGroup.image ? (
+          <Image
+            src={secretSantaGroup.image}
+            alt=""
+            fill
+            className="object-cover object-center"
+          />
+        ) : (
+          <UsersRound className="size-8" aria-hidden="true" />
+        )}
       </div>
       <div className="min-w-0 flex-1">
         <h1
           className={clsx(
-            'min-w-0 text-2xl font-bold',
+            'min-w-0 text-2xl font-black tracking-tight md:text-3xl',
             shouldTruncate && 'truncate'
           )}
         >
-          <span className="block text-base font-normal text-muted-foreground">
+          <span className="text-muted-foreground block text-base font-normal">
             Amigo secreto
           </span>
           <span>{secretSantaGroup.name}</span>

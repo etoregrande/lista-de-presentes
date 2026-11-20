@@ -6,7 +6,7 @@ import {
 import { getSessionOnServer } from '@/server/session'
 import { redirect } from 'next/navigation'
 import { JoinGroupButton } from './ui/join-group-button'
-import Image from 'next/image'
+import { Gift } from 'lucide-react'
 import { SecretSantaGroupHeading } from '../ui/secret-santa-group-name'
 
 interface PageProps {
@@ -33,18 +33,17 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <>
-      <main className="layout-container min-h-[calc(100vh-200px)]">
+      <main className="layout-container min-h-[calc(100dvh-200px)] py-8">
         {!group.isDrawn ? (
           <>
-            <section className="flex h-full w-full flex-col items-center md:justify-center">
-              <Image
-                src="/assets/secretSanta/joinSecretSanta.svg"
-                alt="Join Secret Santa"
-                width={400}
-                height={400}
-                className="max-h-full max-w-full object-contain"
-                priority
-              />
+            <section className="surface-panel mx-auto flex h-full w-full max-w-3xl flex-col items-center p-6 md:justify-center md:p-10">
+              <div className="mb-10 grid size-44 rotate-[-7deg] place-items-center rounded-[3rem] bg-[image:var(--gradient)] shadow-lg md:size-56">
+                <Gift
+                  className="text-primary size-24 md:size-32"
+                  strokeWidth={1.3}
+                  aria-hidden="true"
+                />
+              </div>
 
               <div className="flex w-full max-w-100 min-w-0 flex-col gap-4">
                 <SecretSantaGroupHeading group={group} />
