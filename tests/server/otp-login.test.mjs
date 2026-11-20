@@ -9,7 +9,7 @@ function nodes(node) {
   return [node, ...nodes(node.props?.children)]
 }
 
-function fixture(callback, userName = 'Etore Grande') {
+function fixture(callback, userName = 'Etore Grande', plainOtpProbe = false) {
   const state = []
   let cursor = 0
   const push = mock.fn()
@@ -29,7 +29,10 @@ function fixture(callback, userName = 'Etore Grande') {
     'next/image': { default: 'image' },
     'next/navigation': {
       useRouter: () => ({ push, refresh }),
-      useSearchParams: () => new URLSearchParams(callback ? { callbackUrl: callback } : {}),
+      useSearchParams: () => new URLSearchParams({
+        ...(callback ? { callbackUrl: callback } : {}),
+        ...(plainOtpProbe ? { otpProbe: 'plain' } : {}),
+      }),
     },
     'lucide-react': { LoaderCircle: 'spinner' },
     sonner: { toast: { success() {}, error() {} } },
@@ -117,4 +120,19 @@ test('OTP shows six boxes around one visible autofill input that accepts paste',
   assert.equal(tree.find((n) => n.type === 'input' && n.props.id === 'otp').props.value, '123456')
   await tree.find((n) => n.type === 'form').props.onSubmit({ preventDefault() {} })
   assert.equal(f.emailOtp.mock.calls[0].arguments[0].otp, '123456')
+})
+
+test('plain OTP probe renders a native-size input without visual boxes', async () => {
+  const f = fixture(null, 'Etore Grande', true)
+  let tree = f.render()
+  tree.find((n) => n.type === 'input' && n.props.id === 'email').props.onChange({ target: { value: 'demo@test.com' } })
+  tree = f.render()
+  await tree.find((n) => n.type === 'form').props.onSubmit({ preventDefault() {} })
+
+  tree = f.render()
+  const input = tree.find((n) => n.type === 'input' && n.props.id === 'otp')
+  assert.equal(input.props.autoComplete, 'one-time-code')
+  assert.equal(input.props.maxLength, 6)
+  assert.equal(input.props.className, undefined)
+  assert.equal(tree.filter((n) => n.type === 'span' && n.props['aria-hidden'] === 'true').length, 0)
 })
