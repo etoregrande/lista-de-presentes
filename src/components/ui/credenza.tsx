@@ -149,7 +149,7 @@ const CredenzaTitle = ({ className, children, ...props }: CredenzaProps) => {
 const CredenzaBody = ({ className, children, ...props }: CredenzaProps) => {
   return (
     <div
-      className={cn('flex-1 overflow-auto px-4 md:px-0', className)}
+      className={cn('flex-1 overflow-auto px-4 md:px-2', className)}
       {...props}
     >
       {children}

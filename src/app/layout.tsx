@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import '@/app/globals.css'
 import type { Metadata } from 'next'
-import { Nunito_Sans } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 import {
@@ -12,15 +12,23 @@ import {
   TriangleAlert,
 } from 'lucide-react'
 
-const nunitoSans = Nunito_Sans({
-  variable: '--font-nunito-sans',
-  subsets: ['latin'],
-})
-
 export const metadata: Metadata = {
   title: 'Presenteio',
   description: 'Crie sua lista de presentes para seu aniversário ou evento',
 }
+
+const dmSans = localFont({
+  src: '../../public/fonts/dm-sans-latin.woff2',
+  variable: '--font-dm-sans',
+  display: 'swap',
+  weight: '400 800',
+})
+const fraunces = localFont({
+  src: '../../public/fonts/fraunces-latin.woff2',
+  variable: '--font-fraunces',
+  display: 'swap',
+  weight: '600 900',
+})
 
 export default function RootLayout({
   children,
@@ -28,8 +36,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${nunitoSans.variable} min-h-dvh antialiased`}>
+    <html lang="pt-BR" data-palette="cherry" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var p=localStorage.getItem('presenteio-palette');if(['coral','violet','blue','terracotta','cherry','sage','plum'].includes(p))document.documentElement.dataset.palette=p}catch(e){}",
+          }}
+        />
+      </head>
+      <body
+        className={`${dmSans.variable} ${fraunces.variable} min-h-dvh antialiased`}
+      >
         <ThemeProvider>
           {children}
           <Toaster

@@ -25,6 +25,8 @@ model User {
   email         String    @unique
   emailVerified Boolean
   image         String?
+  appearancePalette String?
+  appearanceTheme   String?
   
   sessions                     Session[]
   accounts                     Account[]

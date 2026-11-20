@@ -14,13 +14,13 @@ export default async function Page() {
   if (!session) redirect('/login')
 
   return (
-    <div className="layout-container w-full py-0 pb-[60dvh] md:py-10 md:pb-[10dvh]">
+    <main className="layout-container relative w-full py-6 pb-20 md:py-10 md:pb-24">
       <WishlistBackground />
       <Wishlist
         initialWishlist={wishlistItems}
         session={session}
         integrationAdmin={isIntegrationAdmin(session.user.email)}
       />
-    </div>
+    </main>
   )
 }

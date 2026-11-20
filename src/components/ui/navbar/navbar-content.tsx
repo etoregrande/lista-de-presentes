@@ -1,20 +1,20 @@
 'use client'
 
-import { ThemeToggle } from '../button/theme-toggle-button'
 import { Gift } from 'lucide-react'
 import { SidebarTrigger } from '../sidebar'
 
 export default function NavbarContent() {
   return (
-    <nav className="bg-navbar h-[var(--navbar-height)] w-full pt-[env(safe-area-inset-top)]">
+    <nav className="bg-navbar border-navbar-border sticky top-0 z-30 h-[var(--navbar-height)] w-full border-b pt-[env(safe-area-inset-top)] backdrop-blur-xl">
       <div className="flex h-full items-center justify-between pr-4 pl-2 md:pr-8 md:pl-4">
         <div className="flex items-center gap-2">
           <SidebarTrigger />
-          <ThemeToggle />
         </div>
         <div className="text-primary flex items-center gap-2">
-          <Gift className="-translate-y-0.5" />
-          <p className="text-foreground font-extrabold tracking-tighter">
+          <span className="bg-accent rounded-xl p-2">
+            <Gift className="size-5" />
+          </span>
+          <p className="text-foreground text-lg font-black tracking-tight">
             Presenteio
           </p>
         </div>

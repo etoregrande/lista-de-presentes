@@ -15,16 +15,16 @@ export const AppSidebarNewSecretSantaGroupForm = () => {
   return (
     <>
       <form className="flex w-full flex-col gap-4 pb-1">
-        <InputWrapper className="max-w-xs">
+        <InputWrapper className="w-full">
           <Label htmlFor="name" className="flex justify-between">
             Nome do grupo{' '}
             <span className="text-muted-foreground text-xs">obrigatório</span>
           </Label>
-          <Input {...register('name')} />
+          <Input id="name" {...register('name')} />
           <FormError message={errors.name?.message} />
         </InputWrapper>
 
-        <InputWrapper className="w-38">
+        <InputWrapper className="w-full">
           <Label htmlFor="priceLimit">Valor do presente</Label>
           <Controller
             name="priceLimit"
@@ -44,6 +44,7 @@ export const AppSidebarNewSecretSantaGroupForm = () => {
                   )
                 }}
                 customInput={Input}
+                id="priceLimit"
               />
             )}
           />

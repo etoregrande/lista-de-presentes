@@ -26,12 +26,12 @@ export default async function SharedWishlistPage({
   if (!wishlistOwner) throw new Error('Error fetching wishlist owner')
 
   return (
-    <main className="layout-container pb-[60dvh] md:pb-[10dvh]">
+    <main className="layout-container pb-20 md:pb-24">
       <Suspense fallback="loading">
         <WishlistSharedOwnerWarning isOwner={isOwner}>
-          <div className="pb-16 lg:pb-0">
-            <div className="ml-2 flex items-center gap-6 pt-10 pb-16">
-              <Avatar className="outline-foreground size-16 outline-4 outline-offset-4 md:size-24">
+          <div>
+            <div className="surface-panel mt-6 mb-8 flex items-center gap-6 bg-[image:var(--gradient)] p-6 md:mt-10 md:p-10">
+              <Avatar className="border-card size-16 border-4 shadow-lg md:size-24">
                 <AvatarImage src={wishlistOwnerImage} />
                 <AvatarFallback className="bg-card font-bold">
                   <p className="min-w-0 truncate text-2xl">
@@ -39,7 +39,7 @@ export default async function SharedWishlistPage({
                   </p>
                 </AvatarFallback>
               </Avatar>
-              <h1 className="block text-4xl leading-8 font-black tracking-tight break-words">
+              <h1 className="page-heading min-w-0 break-words">
                 <span className="font-lg text-muted-foreground block text-lg font-normal">
                   Lista de presentes de
                 </span>

@@ -46,7 +46,7 @@ export const ShareSecretSantaGroupButton = ({
     <>
       <Credenza>
         <CredenzaTrigger asChild>
-          <Button size="icontext" className={className}>
+          <Button size="icontext" className={className} aria-label="Convidar">
             <UserPlusIcon />
             <span className="hidden md:inline">Convidar</span>
           </Button>
@@ -69,7 +69,8 @@ export const ShareSecretSantaGroupButton = ({
                 readOnly
                 className={clsx(
                   'h-11 max-w-60 md:h-9',
-                  copied && 'border-green-700 text-green-700 dark:border-green-400 dark:text-green-400'
+                  copied &&
+                    'border-green-700 text-green-700 dark:border-green-400 dark:text-green-400'
                 )}
               />
               <Button
@@ -77,6 +78,7 @@ export const ShareSecretSantaGroupButton = ({
                 onClick={handleCopySecretSantaGroupJoinUrl}
                 disabled={copied}
                 size="icon"
+                aria-label="Copiar link"
               >
                 <CopyIcon />
               </Button>

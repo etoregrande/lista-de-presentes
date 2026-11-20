@@ -89,13 +89,10 @@ export const AppSidebarAvatarEditModal = ({
         </CredenzaHeader>
         <CredenzaBody className="md:overflow-visible">
           <form>
-            <AspectRatio
-              ratio={4 / 4}
-              className="bg-secondary-foreground rounded-full"
-            >
+            <AspectRatio ratio={4 / 4} className="bg-accent rounded-full">
               <Label
                 htmlFor="image"
-                className="relative block h-full w-full cursor-pointer rounded-full"
+                className="group relative block h-full w-full cursor-pointer rounded-full"
               >
                 {selectedImage || userImage ? (
                   <Image
@@ -111,12 +108,12 @@ export const AppSidebarAvatarEditModal = ({
                     priority
                   />
                 ) : (
-                  <p className="bg-navbar-muted-foreground h-full w-full content-center rounded-full text-center text-7xl">
+                  <p className="bg-accent text-accent-foreground h-full w-full content-center rounded-full text-center text-7xl font-bold">
                     {setAvatarFallbackString(userName)}
                   </p>
                 )}
 
-                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 p-12 text-center text-sm font-medium text-white transition-[background-color,color] md:text-base lg:bg-transparent lg:text-transparent lg:hover:bg-black/60 lg:hover:text-white">
+                <div className="absolute inset-x-5 bottom-5 rounded-full bg-black/65 px-4 py-2 text-center text-sm font-medium text-white transition-opacity lg:opacity-0 lg:group-hover:opacity-100">
                   Alterar a imagem
                 </div>
                 <Input

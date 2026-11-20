@@ -1,14 +1,5 @@
 import { Button } from '@/components/ui/button'
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-} from '@/components/ui/sheet'
-import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -18,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { ProductDialogSurface } from '@/components/ui/product-dialog-surface'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { getDisplayPrice } from '@/lib/utils'
 import { WishlistItem } from '@/generated/prisma'
@@ -65,25 +57,27 @@ export const WishlistSharedItemSheet = ({
 
   return (
     <>
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetTrigger>{children}</SheetTrigger>
-        <SheetContent side="right" className="p-0">
-          <SheetHeader className="border-border flex-none border-b p-6 text-left">
-            <SheetTitle>{wishlistItem.name}</SheetTitle>
-            <SheetDescription>
+      <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <ProductDialogSurface>
+          <DialogHeader className="border-border flex-none border-b px-6 py-5 text-left md:px-8">
+            <DialogTitle className="max-w-[calc(100%-2rem)] truncate text-xl font-black">
+              {wishlistItem.name}
+            </DialogTitle>
+            <DialogDescription>
               <span className="text-sm break-words text-[var(--muted-foreground)]">
                 {wishlistItem.price && wishlistItem.price > 0
                   ? getDisplayPrice(wishlistItem.price)
                   : 'Produto sem preço'}
               </span>
-            </SheetDescription>
-          </SheetHeader>
+            </DialogDescription>
+          </DialogHeader>
           <WishlistSharedItemSheetContent
             wishlistItem={wishlistItem}
             setWishlist={setWishlist}
             setIsSheetOpen={setIsSheetOpen}
           />
-          <SheetFooter className="flex-none border-t p-6">
+          <DialogFooter className="border-border flex-none border-t p-5 md:px-8">
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -121,9 +115,9 @@ export const WishlistSharedItemSheet = ({
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+          </DialogFooter>
+        </ProductDialogSurface>
+      </Dialog>
     </>
   )
 }

@@ -47,7 +47,12 @@ export const WishlistShareButton = ({
     <>
       <Credenza>
         <CredenzaTrigger asChild>
-          <Button variant="secondary" size="icontext" className={className}>
+          <Button
+            variant="secondary"
+            size="icontext"
+            className={className}
+            aria-label="Compartilhar"
+          >
             <Share />
             <span className="hidden md:inline">Compartilhar</span>
           </Button>
@@ -72,7 +77,8 @@ export const WishlistShareButton = ({
                 readOnly
                 className={clsx(
                   'h-11 max-w-60 md:h-9',
-                  copied && 'border-green-700 text-green-700 dark:border-green-400 dark:text-green-400'
+                  copied &&
+                    'border-green-700 text-green-700 dark:border-green-400 dark:text-green-400'
                 )}
               />
               <Button
@@ -80,6 +86,7 @@ export const WishlistShareButton = ({
                 onClick={handleCopyWishlist}
                 disabled={copied}
                 size="icon"
+                aria-label="Copiar link"
               >
                 <Copy />
               </Button>
