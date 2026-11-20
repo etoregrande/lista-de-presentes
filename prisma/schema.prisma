@@ -117,6 +117,7 @@ model WishlistItem {
   priority     Priority  @default(normal)
   isActive     Boolean   @default(true)     
   isPurchased  Boolean   @default(false)    
+  purchaseClaimHash String?
 
   userId       String                     
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)

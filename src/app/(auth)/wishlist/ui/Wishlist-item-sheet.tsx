@@ -8,7 +8,7 @@ import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { getWishlistSaveError } from '@/lib/wishlist-save-error'
-import { WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/types/wishlistItem'
 import { WishlistItemSheetForm } from './Wishlist-item-sheet-form'
 import { useSession } from '@/lib/context/session/context'
 

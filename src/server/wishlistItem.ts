@@ -7,7 +7,13 @@ import { identifierSchema, priceInCentsSchema } from '@/schemas/common'
 import { z } from 'zod'
 import { deleteImageFromS3, uploadImageToS3 } from './s3'
 import { WishlistItem } from '@/generated/prisma'
-import { requireAuthenticatedUserId } from './session'
+import { getSessionOnServer, requireAuthenticatedUserId } from './session'
+import { cookies } from 'next/headers'
+import { createHash, randomBytes } from 'node:crypto'
+
+const PURCHASE_CLAIM_COOKIE = 'presenteio-purchase-claim'
+const claimHash = (claim: string) =>
+  createHash('sha256').update(claim).digest('hex')
 
 async function removeFailedUpload(imageUrl: string | null) {
   if (!imageUrl) return
@@ -35,6 +41,7 @@ export const createWishlistItem = async (formData: WishlistItemFormData) => {
 
   try {
     const newWishlistItem = await prisma.wishlistItem.create({
+      omit: { purchaseClaimHash: true },
       data: {
         name,
         price: price ?? null,
@@ -102,8 +109,9 @@ export const updateWishlistItem = async (
     }
 
     const editedWishlistItem = await prisma.wishlistItem.update({
-      where: { id: wishlistItemId, userId },
+      where: { id: wishlistItemId, userId, image: existingItem.image },
       data: dataToUpdate,
+      omit: { purchaseClaimHash: true },
     })
 
     if (!editedWishlistItem) {
@@ -175,6 +183,7 @@ async function findWishlistItems(
     .parse(filters ?? {})
   try {
     return await prisma.wishlistItem.findMany({
+      omit: { purchaseClaimHash: true },
       where: {
         userId,
         ...(publicOnly && { isActive: true }),
@@ -199,14 +208,48 @@ export const purchaseWishlistItem = async (
     })
     .parse(wishlistItem)
 
+  const cookieStore = await cookies()
+  const existingClaim = cookieStore.get(PURCHASE_CLAIM_COOKIE)?.value
+  const claim = existingClaim || randomBytes(32).toString('base64url')
+  let ownerOverride = false
+  if (isPurchased) {
+    const session = await getSessionOnServer()
+    if (session) {
+      const ownedItem = await prisma.wishlistItem.findUnique({
+        where: { id, userId: session.user.id, isActive: true },
+        select: { id: true },
+      })
+      ownerOverride = Boolean(ownedItem)
+    }
+    if (!existingClaim && !ownerOverride) return undefined
+  }
+
   try {
     const updatedWishlistItem = await prisma.wishlistItem.update({
-      where: { id, isActive: true },
+      where: {
+        id,
+        isActive: true,
+        isPurchased,
+        ...(isPurchased &&
+          !ownerOverride && { purchaseClaimHash: claimHash(claim) }),
+      },
       data: {
         isPurchased: !isPurchased,
         purchasedAt: !isPurchased ? new Date() : null,
+        purchaseClaimHash: !isPurchased ? claimHash(claim) : null,
       },
+      omit: { purchaseClaimHash: true },
     })
+
+    if (!isPurchased && !existingClaim) {
+      cookieStore.set(PURCHASE_CLAIM_COOKIE, claim, {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365,
+      })
+    }
 
     return updatedWishlistItem
   } catch (error) {

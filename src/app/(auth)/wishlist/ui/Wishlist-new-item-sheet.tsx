@@ -15,7 +15,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/types/wishlistItem'
 import { WishlistNewItemSheetForm } from './Wishlist-new-item-sheet-form'
 import { useSession } from '@/lib/context/session/context'
 import {

@@ -1,7 +1,7 @@
 'use client'
 
 import { EmptyWishlist } from './Wishlist-shared-empty'
-import { WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/types/wishlistItem'
 import { useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { WishlistSharedItemSheet } from './Wishlist-shared-item-sheet'

@@ -9,39 +9,27 @@ function priceInput(initialPrice = null) {
   const Controller = () => null
   const dependencies = {
     'react/jsx-runtime': jsxRuntime,
-    react: { useState: () => [null, () => {}], useEffect: () => {} },
     'react-hook-form': {
       Controller,
       useFormContext: () => ({
         register: () => ({}),
-        watch: () => null,
+        control: {},
         formState: { errors: {} },
       }),
     },
     'react-number-format': { NumericFormat },
-    'next/image': { default: () => null },
-    '@/components/ui/wishlist-item-placeholder': {
-      WishlistItemPlaceholder: () => null,
-    },
-    '@/components/ui/dialog': {
-      DialogHeader: () => null,
-      DialogTitle: () => null,
-      DialogDescription: () => null,
-    },
   }
   for (const [module, name] of [
     ['label', 'Label'],
     ['input', 'Input'],
-    ['aspect-ratio', 'AspectRatio'],
     ['textarea', 'Textarea'],
-    ['switch', 'Switch'],
     ['form/form-error', 'FormError'],
     ['form/form-input-wrapper', 'InputWrapper'],
   ]) {
     dependencies[`@/components/ui/${module}`] = { [name]: () => null }
   }
-  const { WishlistNewItemSheetForm } = loadModule(
-    'src/app/(auth)/wishlist/ui/Wishlist-new-item-sheet-form.tsx',
+  const { WishlistProductFields } = loadModule(
+    'src/app/(auth)/wishlist/ui/wishlist-product-fields.tsx',
     dependencies
   )
   function findPrice(node) {
@@ -52,7 +40,7 @@ function priceInput(initialPrice = null) {
       if (found) return found
     }
   }
-  const controller = findPrice(WishlistNewItemSheetForm({ importMessage: '' }))
+  const controller = findPrice(WishlistProductFields({}))
   return {
     render: () =>
       controller.props.render({

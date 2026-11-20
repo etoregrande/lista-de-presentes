@@ -2,14 +2,26 @@ import assert from 'node:assert/strict'
 import { test, mock } from 'node:test'
 import { loadModule } from '../helpers/load-module.mjs'
 import { validationModules } from '../helpers/validation-modules.mjs'
+import * as crypto from 'node:crypto'
 
 function fixture(userId = 'owner') {
+  const browserCookies = new Map()
   const getSession = mock.fn(async () =>
     userId ? { user: { id: userId } } : null
   )
   const session = loadModule('src/server/session.ts', {
     '@/lib/auth': { auth: { api: { getSession } } },
-    'next/headers': { headers: async () => new Headers() },
+    'next/headers': {
+      headers: async () => new Headers(),
+      cookies: async () => ({
+        get: (name) =>
+          browserCookies.has(name)
+            ? { value: browserCookies.get(name) }
+            : undefined,
+        set: (name, value) => browserCookies.set(name, value),
+      }),
+    },
+    'node:crypto': crypto,
   })
   const records = new Map([
     [
@@ -42,10 +54,12 @@ function fixture(userId = 'owner') {
       if (
         !item ||
         (where.userId !== undefined && item.userId !== where.userId) ||
-        (where.isActive !== undefined && item.isActive !== where.isActive)
+        (where.isActive !== undefined && item.isActive !== where.isActive) ||
+        (where.image !== undefined && item.image !== where.image)
       )
         throw new Error('Not found')
-      return { ...item, ...data }
+      Object.assign(item, data)
+      return { ...item }
     }),
     delete: mock.fn(async ({ where }) => {
       const item = records.get(where.id)
@@ -64,7 +78,17 @@ function fixture(userId = 'owner') {
     ...validationModules,
     '@/lib/prisma': { prisma: { wishlistItem, user } },
     '@/lib/auth': { auth: { api: { getSession } } },
-    'next/headers': { headers: async () => new Headers() },
+    'next/headers': {
+      headers: async () => new Headers(),
+      cookies: async () => ({
+        get: (name) =>
+          browserCookies.has(name)
+            ? { value: browserCookies.get(name) }
+            : undefined,
+        set: (name, value) => browserCookies.set(name, value),
+      }),
+    },
+    'node:crypto': crypto,
     '@/lib/utils': { sanitizeLinkUrl: (value) => value },
     '@/lib/s3': { getS3Client: () => ({ send }) },
     '@aws-sdk/client-s3': {
@@ -257,7 +281,36 @@ test('editing an image deletes the old image only after the database update', as
   )
 
   assert.equal(result.id, 'own-item')
-  assert.equal(f.deleteImageFromS3.mock.calls[0].arguments[0], 'https://bucket.test/old-image')
+  assert.equal(
+    f.deleteImageFromS3.mock.calls[0].arguments[0],
+    'https://bucket.test/old-image'
+  )
+})
+
+test('stale image edit cannot overwrite a newer image or leave its upload behind', async () => {
+  const f = fixture()
+  const original = 'https://bucket.test/old-image'
+  f.wishlistItem.findUnique.mock.mockImplementation(async () => ({
+    image: original,
+  }))
+  let next = 0
+  f.uploadImageToS3.mock.mockImplementation(
+    async () => `https://bucket.test/upload-${++next}`
+  )
+  const imageForm = {
+    ...form,
+    image: new File(['test image'], 'image.png', { type: 'image/png' }),
+  }
+
+  const first = await f.actions.updateWishlistItem(imageForm, 'own-item')
+  const second = await f.actions.updateWishlistItem(imageForm, 'own-item')
+  assert.equal(first.image, 'https://bucket.test/upload-1')
+  assert.equal(second, null)
+  assert.equal(f.records.get('own-item').image, 'https://bucket.test/upload-1')
+  assert.deepEqual(
+    f.deleteImageFromS3.mock.calls.map(({ arguments: [url] }) => url),
+    [original, 'https://bucket.test/upload-2']
+  )
 })
 
 test('failed image edit preserves the old image and removes the new upload', async () => {

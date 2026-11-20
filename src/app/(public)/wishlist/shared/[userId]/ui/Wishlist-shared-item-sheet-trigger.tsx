@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import clsx from 'clsx'
 import { getDisplayPrice } from '@/lib/utils'
-import { WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/types/wishlistItem'
 import { motion, useReducedMotion } from 'framer-motion'
 import { WishlistItemPlaceholder } from '@/components/ui/wishlist-item-placeholder'
 import { forwardRef } from 'react'

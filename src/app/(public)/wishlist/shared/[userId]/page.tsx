@@ -1,7 +1,7 @@
 import { listPublicWishlistItems } from '@/server/wishlistItem'
 import { WishlistShared } from './ui/Wishlist-shared'
 import { getPublicUserProfile } from '@/lib/repositories/UserRepository'
-import { WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/types/wishlistItem'
 import { getDisplayName, setAvatarFallbackString } from '@/lib/utils'
 import { Session } from '@/lib/auth'
 import { getSessionOnServer } from '@/server/session'

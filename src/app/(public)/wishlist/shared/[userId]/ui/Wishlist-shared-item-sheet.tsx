@@ -12,7 +12,7 @@ import {
 import { ProductDialogSurface } from '@/components/ui/product-dialog-surface'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { getDisplayPrice } from '@/lib/utils'
-import { WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/types/wishlistItem'
 import { WishlistSharedItemSheetContent } from './Wishlist-shared-item-sheet-content'
 import { purchaseWishlistItem } from '@/server/wishlistItem'
 
@@ -36,7 +36,7 @@ export const WishlistSharedItemSheet = ({
     try {
       if (!updatedWishlistItem) {
         alert(
-          'Parece que esse item já foi atualizado por outra pessoa. Atualize a página para ver a lista atualizada!'
+          'Não foi possível alterar este item. Ele pode ter sido atualizado por outra pessoa, ou a compra pertence a outro navegador. Atualize a página para conferir.'
         )
         window.location.reload()
         return

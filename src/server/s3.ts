@@ -1,6 +1,7 @@
 import { getS3Client } from '@/lib/s3'
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { validateImageContent } from '@/lib/validated-image'
+import { randomUUID } from 'node:crypto'
 
 export const uploadImageToS3 = async (
   file: File,
@@ -17,7 +18,7 @@ export const uploadImageToS3 = async (
 
   const s3KeyTemplates = {
     'wishlist image': (ownerId: string) =>
-      `wishlist-images/${ownerId}/${Date.now()}`,
+      `wishlist-images/${ownerId}/${randomUUID()}`,
     'user avatar': (ownerId: string) => `user-avatars/${ownerId}/avatar.jpg`,
     'group avatar': (ownerId: string) => `group-avatars/${ownerId}/avatar.jpg`,
   } as const
