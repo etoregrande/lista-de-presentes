@@ -3,13 +3,13 @@
 import { useRef, useState } from 'react'
 import { useTheme } from 'next-themes'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+  Credenza,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+} from '@/components/ui/credenza'
 import { Button } from '@/components/ui/button'
 import {
   palettes,
@@ -65,15 +65,15 @@ export function AppearanceDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={close}>
-      <DialogContent className="max-h-[min(90dvh,760px)] overflow-y-auto p-5 sm:max-w-xl sm:p-7">
-        <DialogHeader className="pr-10 text-left">
-          <DialogTitle className="text-2xl">Aparência</DialogTitle>
-          <DialogDescription>
+    <Credenza open={open} onOpenChange={close}>
+      <CredenzaContent className="bg-card max-h-[min(90dvh,760px)] gap-0 overflow-hidden p-0 data-[vaul-drawer-direction=bottom]:max-h-[90dvh] sm:max-w-xl">
+        <CredenzaHeader className="shrink-0 px-5 pt-6 pb-4 text-left sm:px-7 sm:pt-7">
+          <CredenzaTitle className="text-2xl">Aparência</CredenzaTitle>
+          <CredenzaDescription>
             Escolha o tema e as cores. Veja a mudança antes de salvar.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-6">
+          </CredenzaDescription>
+        </CredenzaHeader>
+        <div className="min-h-0 space-y-6 overflow-y-auto px-5 pb-4 sm:px-7">
           <fieldset className="space-y-3">
             <legend className="font-bold">Tema</legend>
             <div className="grid grid-cols-3 gap-2">
@@ -120,7 +120,7 @@ export function AppearanceDialog({
             </div>
           </fieldset>
         </div>
-        <DialogFooter className="pt-2">
+        <CredenzaFooter className="shrink-0 px-5 pt-2 pb-5 sm:px-7 sm:pb-7">
           <Button
             type="button"
             variant="outline"
@@ -132,8 +132,8 @@ export function AppearanceDialog({
           <Button type="button" onClick={confirm} disabled={busy}>
             {busy ? 'Salvando…' : 'Salvar'}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </CredenzaFooter>
+      </CredenzaContent>
+    </Credenza>
   )
 }

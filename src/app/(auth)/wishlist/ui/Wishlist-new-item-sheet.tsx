@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogFooter } from '@/components/ui/dialog'
+import { DialogFooter } from '@/components/ui/dialog'
 import { ProductDialogSurface } from '@/components/ui/product-dialog-surface'
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { LoaderCircle } from 'lucide-react'
@@ -269,7 +269,7 @@ export const WishlistNewItemSheet = ({
           </CredenzaBody>
         </CredenzaContent>
       </Credenza>
-      <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+      <Credenza open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <ProductDialogSurface>
           <WishlistNewItemSheetForm importMessage={importMessage} />
           <DialogFooter className="border-border flex-none !flex-row gap-3 border-t p-5 md:px-8">
@@ -298,7 +298,7 @@ export const WishlistNewItemSheet = ({
             </Button>
           </DialogFooter>
         </ProductDialogSurface>
-      </Dialog>
+      </Credenza>
     </>
   )
 }

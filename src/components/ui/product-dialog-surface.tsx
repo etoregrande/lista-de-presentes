@@ -1,6 +1,6 @@
 'use client'
 
-import { DialogContent } from '@/components/ui/dialog'
+import { CredenzaContent } from '@/components/ui/credenza'
 
 export function ProductDialogSurface({
   children,
@@ -8,10 +8,10 @@ export function ProductDialogSurface({
   children: React.ReactNode
 }) {
   return (
-    <DialogContent className="top-0 left-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0 overflow-hidden rounded-none border-0 bg-transparent p-0 shadow-none sm:top-1/2 sm:left-1/2 sm:h-auto sm:max-h-[min(86dvh,760px)] sm:w-[min(94vw,980px)] sm:max-w-[980px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-3xl">
-      <div className="bg-card border-border flex h-full min-h-0 w-full flex-col overflow-hidden border shadow-2xl sm:h-auto sm:max-h-[min(86dvh,760px)] sm:rounded-3xl">
+    <CredenzaContent className="bg-card gap-0 overflow-hidden p-0 shadow-2xl data-[vaul-drawer-direction=bottom]:max-h-[90dvh] data-[vaul-drawer-direction=bottom]:rounded-t-3xl md:flex md:max-h-[min(86dvh,760px)] md:w-[min(94vw,980px)] md:max-w-[980px] md:rounded-3xl md:border-0 md:bg-transparent md:shadow-none">
+      <div className="bg-card border-border flex min-h-0 w-full flex-col overflow-hidden md:max-h-[min(86dvh,760px)] md:rounded-3xl md:border md:shadow-2xl">
         {children}
       </div>
-    </DialogContent>
+    </CredenzaContent>
   )
 }

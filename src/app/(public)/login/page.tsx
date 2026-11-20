@@ -48,7 +48,7 @@ export default function Page() {
               </h1>
             </div>
           </div>
-          <div className="flex min-h-[400px] items-center p-7 sm:p-12 md:min-h-[520px] md:px-16">
+          <div className="flex items-center p-7 md:min-h-[520px] md:px-16 md:py-12">
             <Suspense fallback={<LoaderCircle className="animate-spin pr-1" />}>
               <AuthWrapper />
             </Suspense>

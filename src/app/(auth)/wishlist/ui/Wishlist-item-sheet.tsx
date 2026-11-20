@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
+import { DialogFooter } from '@/components/ui/dialog'
+import { Credenza, CredenzaTrigger } from '@/components/ui/credenza'
 import { ProductDialogSurface } from '@/components/ui/product-dialog-surface'
 import { WishlistItemFormData } from '@/types/wishlistItem'
 import { useFormContext } from 'react-hook-form'
@@ -63,8 +64,8 @@ export const WishlistItemSheet = ({
   }
 
   return (
-    <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Credenza open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+      <CredenzaTrigger asChild>{children}</CredenzaTrigger>
       <ProductDialogSurface>
         <WishlistItemSheetForm
           wishlistItem={wishlistItem}
@@ -95,6 +96,6 @@ export const WishlistItemSheet = ({
           </Button>
         </DialogFooter>
       </ProductDialogSurface>
-    </Dialog>
+    </Credenza>
   )
 }

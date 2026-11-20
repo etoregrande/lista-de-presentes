@@ -587,7 +587,7 @@ body {
   @apply bg-background text-foreground w-full font-sans;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .product-dialog-body {
     flex: 0 1 auto;
     max-height: calc(min(86dvh, 760px) - 82px);

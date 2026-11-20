@@ -9,6 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  Credenza,
+  CredenzaDescription,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
+} from '@/components/ui/credenza'
 import { ProductDialogSurface } from '@/components/ui/product-dialog-surface'
 import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
 import { getDisplayPrice } from '@/lib/utils'
@@ -57,21 +64,21 @@ export const WishlistSharedItemSheet = ({
 
   return (
     <>
-      <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <DialogTrigger asChild>{children}</DialogTrigger>
+      <Credenza open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <CredenzaTrigger asChild>{children}</CredenzaTrigger>
         <ProductDialogSurface>
-          <DialogHeader className="border-border flex-none border-b px-6 py-5 text-left md:px-8">
-            <DialogTitle className="max-w-[calc(100%-2rem)] truncate text-xl font-black">
+          <CredenzaHeader className="border-border flex-none border-b px-6 py-5 text-left md:px-8">
+            <CredenzaTitle className="max-w-[calc(100%-2rem)] truncate text-xl font-black">
               {wishlistItem.name}
-            </DialogTitle>
-            <DialogDescription>
+            </CredenzaTitle>
+            <CredenzaDescription>
               <span className="text-sm break-words text-[var(--muted-foreground)]">
                 {wishlistItem.price && wishlistItem.price > 0
                   ? getDisplayPrice(wishlistItem.price)
                   : 'Produto sem preço'}
               </span>
-            </DialogDescription>
-          </DialogHeader>
+            </CredenzaDescription>
+          </CredenzaHeader>
           <WishlistSharedItemSheetContent
             wishlistItem={wishlistItem}
             setWishlist={setWishlist}
@@ -117,7 +124,7 @@ export const WishlistSharedItemSheet = ({
             </Dialog>
           </DialogFooter>
         </ProductDialogSurface>
-      </Dialog>
+      </Credenza>
     </>
   )
 }
