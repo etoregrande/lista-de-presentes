@@ -86,7 +86,7 @@ test('new OTP account is sent to profile completion before the callback', async 
   assert.equal(f.push.mock.calls[0].arguments[0], '/complete-profile?callbackUrl=%2Fgroups%2Fholiday%2Fjoin')
 })
 
-test('OTP keeps six visual boxes with a focusable autofill input that accepts paste', async () => {
+test('OTP shows six boxes around one visible autofill input that accepts paste', async () => {
   const f = fixture(null)
   let tree = f.render()
   tree.find((n) => n.type === 'input' && n.props.id === 'email').props.onChange({ target: { value: 'demo@test.com' } })
@@ -104,7 +104,7 @@ test('OTP keeps six visual boxes with a focusable autofill input that accepts pa
   tree = f.render()
   const digits = tree.filter((n) => n.type === 'span' && n.props['aria-hidden'] === 'true')
   assert.equal(digits.length, 6)
-  assert.equal(digits.map((digit) => digit.props.children).join(''), '123456')
+  assert.equal(digits.map((digit) => digit.props.children).join(''), '')
   assert.equal(tree.find((n) => n.type === 'input' && n.props.id === 'otp').props.value, '123456')
   await tree.find((n) => n.type === 'form').props.onSubmit({ preventDefault() {} })
   assert.equal(f.emailOtp.mock.calls[0].arguments[0].otp, '123456')
