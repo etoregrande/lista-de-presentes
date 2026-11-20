@@ -1,5 +1,7 @@
 import { Resend } from 'resend'
 import { createElement } from 'react'
+import { render } from '@react-email/render'
+import { spawn } from 'node:child_process'
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -18,9 +20,42 @@ export async function sendEmail<T extends Record<string, unknown>>({
   template,
   templateProps,
 }: SendEmailParams<T>) {
-  if (!resend) {
-    console.warn('[Resend] API key não configurada. E-mail não enviado.')
+  if (process.env.MAIL_TRANSPORT === 'mailpit') {
+    if (!['local', 'staging'].includes(process.env.APP_ENV || '')) {
+      throw new Error('Mailpit transport is restricted to local and staging')
+    }
+    const apiUrl = process.env.MAILPIT_API_URL
+    if (!apiUrl) throw new Error('MAILPIT_API_URL is required')
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+    if (process.env.APP_ENV === 'staging') {
+      const user = process.env.MAILPIT_SEND_USER
+      const password = process.env.MAILPIT_SEND_PASSWORD
+      if (!user || !password) throw new Error('Mailpit send credentials are required in staging')
+      headers.Authorization = `Basic ${Buffer.from(`${user}:${password}`).toString('base64')}`
+    }
+    const response = await fetch(new URL('/api/v1/send', apiUrl), {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        From: { Email: 'noreply@presenteio.app', Name: 'Presenteio' },
+        To: [{ Email: to }],
+        Subject: subject,
+        HTML: await render(createElement(template, templateProps)),
+      }),
+    })
+    if (!response.ok) throw new Error(`Mailpit send failed: ${response.status}`)
+    if (process.env.APP_ENV === 'local' && process.env.MAIL_PREVIEW_OPEN === 'true') {
+      const uiUrl = process.env.MAILPIT_UI_URL || 'http://127.0.0.1:8025'
+      const command = process.platform === 'darwin' ? 'open' : 'xdg-open'
+      const child = spawn(command, [uiUrl], { detached: true, stdio: 'ignore' })
+      child.on('error', (error) => console.warn('Could not open Mailpit:', error))
+      child.unref()
+    }
     return
+  }
+
+  if (!resend) {
+    throw new Error('RESEND_API_KEY is required to send email')
   }
 
   const { error } = await resend.emails.send({

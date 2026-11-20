@@ -21,6 +21,10 @@ export default async function WishlistLayout({
     redirect(`/login`)
   }
 
+  if (!session.user.name?.trim()) {
+    redirect('/complete-profile')
+  }
+
   const initialSecretSantaGroups = await listSecretSantaGroups()
 
   return (

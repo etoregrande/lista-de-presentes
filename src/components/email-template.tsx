@@ -1,37 +1,10 @@
 import * as React from 'react'
 
-interface ForgotPasswordEmailTemplateProps {
-  url: string
-}
-
-export const ForgotPasswordEmailTemplate: React.FC<
-  Readonly<ForgotPasswordEmailTemplateProps>
-> = ({ url }) => (
+export const OtpEmailTemplate: React.FC<Readonly<{ otp: string }>> = ({ otp }) => (
   <div>
-    <h1>Olá,</h1>
-    <p>Você pediu para redefinir sua senha.</p>
-    <p>Clique no link abaixo para continuar:</p>
-    <a href={url} style={{ color: '#0070f3' }}>
-      {url}
-    </a>
-    <p>Se você não pediu isso, pode ignorar este e-mail.</p>
-  </div>
-)
-
-interface VerificationEmailTemplateProps {
-  url: string
-}
-
-export const VerificationEmailTemplate: React.FC<
-  Readonly<VerificationEmailTemplateProps>
-> = ({ url }) => (
-  <div>
-    <h1>Olá,</h1>
-    <p>Obrigado por se cadastrar na plataforma Presenteio!</p>
-    <p>Clique no link abaixo para verificar seu email:</p>
-    <a href={url} style={{ color: '#0070f3' }}>
-      {url}
-    </a>
-    <p>Se você não realizou o cadastro, pode ignorar este e-mail.</p>
+    <h1>Seu código de acesso ao Presenteio</h1>
+    <p>Digite este código para entrar ou criar sua conta:</p>
+    <p style={{ fontSize: 32, letterSpacing: 4, fontWeight: 'bold' }}>{otp}</p>
+    <p>O código expira em 10 minutos. Se você não pediu o acesso, ignore este email.</p>
   </div>
 )

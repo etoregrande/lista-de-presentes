@@ -17,8 +17,7 @@ const lowercaseWords = [
   'nos',
 ]
 
-export const signUpFormSchema = z.object({
-  name: z
+export const nameSchema = z
     .string()
     .min(2, { message: 'Informe nome e sobrenome' })
     .max(100, { message: 'Nome muito grande' })
@@ -37,17 +36,14 @@ export const signUpFormSchema = z.object({
             : word.charAt(0).toUpperCase() + word.slice(1)
         )
         .join(' ')
-    ),
-  email: z.string().email({ message: 'Email inválido' }).toLowerCase().trim(),
-  password: z.string().min(8, { message: 'Mínimo de 8 caracteres' }),
+    )
+
+export const signInFormSchema = z.object({
+  email: z.email({ message: 'Email inválido' }).toLowerCase().trim(),
 })
 
-export const signInFormSchema = signUpFormSchema.omit({ name: true })
-export const forgotPasswordFormSchema = signUpFormSchema.omit({
-  name: true,
-  password: true,
+export const otpFormSchema = z.object({
+  otp: z.string().regex(/^\d{6}$/, 'Informe o código de seis dígitos'),
 })
-export const resetPasswordFormSchema = signUpFormSchema.omit({
-  name: true,
-  email: true,
-})
+
+export const completeProfileSchema = z.object({ name: nameSchema })

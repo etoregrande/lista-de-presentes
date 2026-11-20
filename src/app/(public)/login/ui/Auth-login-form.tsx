@@ -1,161 +1,147 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { FormError } from '@/components/ui/form/form-error'
-import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
-import { Input, PasswordInput } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { authClient } from '@/lib/auth-client'
-import { getSafeAuthCallbackPath } from '@/lib/auth-callback'
-import { signInFormSchema } from '@/schemas/auth'
-import { SignInFormData } from '@/types/auth'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Dispatch, SetStateAction, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { LoaderCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import { authClient } from '@/lib/auth-client'
+import { getSafeAuthCallbackPath } from '@/lib/auth-callback'
+import { signInFormSchema, otpFormSchema } from '@/schemas/auth'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { FormError } from '@/components/ui/form/form-error'
+import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 
-interface AuthLoginFormProps {
-  setFormType: Dispatch<
-    SetStateAction<'login' | 'register' | 'forgot-password'>
-  >
-  className?: string
-}
-
-export const AuthLoginForm = ({
-  setFormType,
-  className,
-}: AuthLoginFormProps) => {
+export function AuthLoginForm() {
   const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors, isSubmitting },
-  } = useForm<SignInFormData>({
-    resolver: zodResolver(signInFormSchema),
-  })
   const searchParams = useSearchParams()
   const callbackUrl = getSafeAuthCallbackPath(searchParams.get('callbackUrl'))
+  const [email, setEmail] = useState('')
+  const [otp, setOtp] = useState('')
+  const [otpFocused, setOtpFocused] = useState(false)
+  const [requestedEmail, setRequestedEmail] = useState<string | null>(null)
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [socialBusy, setSocialBusy] = useState(false)
+  const socialEnabled = process.env.NEXT_PUBLIC_SOCIAL_LOGIN_ENABLED === 'true'
 
-  const isPasswordRecoveryEnabled =
-    process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true'
-  const isSocialLoginEnabled =
-    process.env.NEXT_PUBLIC_SOCIAL_LOGIN_ENABLED === 'true'
-  const [isLoggingInWithGoogle, setIsLoggingInWithGoogle] = useState(false)
-
-  const handleSignInUser: SubmitHandler<SignInFormData> = async (
-    formData: SignInFormData
-  ) => {
-    await authClient.signIn.email(
-      {
-        email: formData.email,
-        password: formData.password,
-      },
-      {
-        onSuccess: async () => {
-          router.push(callbackUrl)
-        },
-        onError: (ctx) => {
-          const errorCode = ctx.error?.code
-
-          if (ctx.error.status === 403) {
-            toast.warning('Verifique seu email', {
-              description:
-                'Clique no link de verificação enviado para o seu email',
-            })
-            setError('email', {
-              message: 'Verifique seu email',
-            })
-          }
-          if (errorCode === 'INVALID_EMAIL_OR_PASSWORD') {
-            setError('password', {
-              message: 'Email ou senha inválidos',
-            })
-          }
-        },
-      }
-    )
+  async function requestCode(event?: React.FormEvent<HTMLFormElement>) {
+    event?.preventDefault()
+    const parsed = signInFormSchema.safeParse({ email })
+    if (!parsed.success) return setError(parsed.error.issues[0].message)
+    setError('')
+    setBusy(true)
+    try {
+      const result = await authClient.emailOtp.sendVerificationOtp({ email: parsed.data.email, type: 'sign-in' })
+      if (result.error) throw result.error
+      setRequestedEmail(parsed.data.email)
+      setOtp('')
+      toast.success('Enviamos um código de acesso para seu email')
+    } catch {
+      setError('Não foi possível enviar o código. Tente novamente.')
+    } finally {
+      setBusy(false)
+    }
   }
 
-  const handleSignInWithGmail = async () => {
-    if (isLoggingInWithGoogle) return
-    setIsLoggingInWithGoogle(true)
+  async function confirmCode(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!requestedEmail) return
+    const parsed = otpFormSchema.safeParse({ otp })
+    if (!parsed.success) return setError(parsed.error.issues[0].message)
+    setError('')
+    setBusy(true)
     try {
-      const { data, error } = await authClient.signIn.social(
+      const result = await authClient.signIn.emailOtp({ email: requestedEmail, otp: parsed.data.otp })
+      if (result.error) throw result.error
+      if (!result.data?.user.name?.trim()) {
+        router.push(`/complete-profile?callbackUrl=${encodeURIComponent(callbackUrl)}`)
+      } else {
+        router.push(callbackUrl)
+      }
+      router.refresh()
+    } catch {
+      setError('Código inválido ou expirado. Confira o email ou solicite outro.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function signInGoogle() {
+    if (socialBusy) return
+    setSocialBusy(true)
+    try {
+      const result = await authClient.signIn.social(
         { provider: 'google', callbackURL: callbackUrl },
         { timeout: 15000, retry: 0 }
       )
-      if (error || !data?.url) throw new Error('GOOGLE_SIGN_IN_FAILED')
+      if (result.error || !result.data?.url) throw new Error('Google sign in failed')
     } catch {
-      toast.error('Não foi possível abrir o login com Google', {
-        description:
-          'Tente novamente. Se continuar, recarregue a página ou tente uma janela anônima.',
-      })
+      toast.error('Não foi possível abrir o login com Google')
     } finally {
-      setIsLoggingInWithGoogle(false)
+      setSocialBusy(false)
     }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(handleSignInUser)}
-      className={`flex w-full max-w-sm flex-col gap-4 ${className}`}
-    >
-      <InputWrapper>
-        <Label htmlFor="email">Email</Label>
-        <Input {...register('email')} id="email" type="email" />
-        <FormError message={errors.email?.message} />
-      </InputWrapper>
-
-      <InputWrapper>
-        <div className="flex w-full items-center justify-between">
-          <Label htmlFor="password">Senha</Label>
-          {isPasswordRecoveryEnabled && (
-            <Label
-              className="text-primary cursor-pointer text-end hover:underline"
-              onClick={() => setFormType('forgot-password')}
-            >
-              Esqueci minha senha
-            </Label>
+    <div className="flex w-full max-w-sm flex-col gap-4">
+      <form onSubmit={requestedEmail ? confirmCode : requestCode} className="flex flex-col gap-4">
+        {requestedEmail ? (
+          <>
+            <p>Enviamos um código para <strong>{requestedEmail}</strong>.</p>
+            <InputWrapper>
+              <Label htmlFor="otp">Código de acesso</Label>
+              <div className="relative grid grid-cols-6 gap-2">
+                {Array.from({ length: 6 }, (_, index) => (
+                  <span
+                    key={index}
+                    aria-hidden="true"
+                    className={`border-input bg-background/50 flex h-12 items-center justify-center rounded-md border text-xl font-semibold tabular-nums transition-colors ${otpFocused && index === Math.min(otp.length, 5) ? 'border-primary ring-primary/20 ring-2' : ''}`}
+                  >
+                    {otp[index] || ''}
+                  </span>
+                ))}
+                <Input
+                  id="otp"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  value={otp}
+                  onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onFocus={() => setOtpFocused(true)}
+                  onBlur={() => setOtpFocused(false)}
+                  onClick={(event) => event.currentTarget.setSelectionRange(otp.length, otp.length)}
+                  className="absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
+                />
+              </div>
+            </InputWrapper>
+          </>
+        ) : (
+          <InputWrapper>
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} />
+          </InputWrapper>
+        )}
+        <FormError message={error} />
+        <div className="flex flex-col gap-2">
+          <Button type="submit" disabled={busy}>
+            {busy ? <LoaderCircle className="animate-spin" /> : requestedEmail ? 'Entrar' : 'Enviar código'}
+          </Button>
+          {requestedEmail && (
+            <>
+              <Button type="button" variant="outline" disabled={busy} onClick={() => { setRequestedEmail(null); setOtp(''); setError('') }}>Voltar</Button>
+              <Button type="button" variant="ghost" className="text-muted-foreground" disabled={busy} onClick={() => { void requestCode() }}>Enviar outro código</Button>
+            </>
           )}
         </div>
-        <PasswordInput {...register('password')} id="password" />
-        <FormError message={errors.password?.message} />
-      </InputWrapper>
-
-      <div className="flex flex-col gap-2">
-        <Button disabled={isSubmitting}>
-          {isSubmitting ? <LoaderCircle className="animate-spin" /> : 'Entrar'}
+      </form>
+      {socialEnabled && !requestedEmail && (
+        <Button type="button" variant="outline" onClick={signInGoogle} disabled={socialBusy} aria-label="Entrar com o Google" aria-busy={socialBusy}>
+          {socialBusy ? <LoaderCircle className="animate-spin" /> : <><Image src="/assets/icons/google.svg" alt="Ícone do Google" width={20} height={20} /> Entrar com o Google</>}
         </Button>
-        {isSocialLoginEnabled && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleSignInWithGmail}
-            disabled={isLoggingInWithGoogle}
-            aria-label="Entrar com o Google"
-            aria-busy={isLoggingInWithGoogle}
-            className="border-border"
-          >
-            {isLoggingInWithGoogle ? (
-              <LoaderCircle className="animate-spin" />
-            ) : (
-              <>
-                <Image
-                  src="/assets/icons/google.svg"
-                  alt="Ícone do Google"
-                  width={20}
-                  height={20}
-                />
-                Entrar com o Google
-              </>
-            )}
-          </Button>
-        )}
-      </div>
-    </form>
+      )}
+    </div>
   )
 }

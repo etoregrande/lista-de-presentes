@@ -1,146 +1,103 @@
+import 'dotenv/config'
 import { prisma } from '../src/lib/prisma'
 
-console.log('🚀 Seed iniciado')
+if (process.env.SEED_DEMO_DATA !== 'true' || !['local', 'staging'].includes(process.env.APP_ENV || '')) {
+  throw new Error('Demo seed requires SEED_DEMO_DATA=true and APP_ENV=local|staging')
+}
+
+const users = [
+  { id: 'demo-etore', name: 'Etore Grande', email: 'etore@test.com' },
+  { id: 'demo-enzo', name: 'Enzo Pequeno', email: 'etore2@test.com' },
+  { id: 'demo-fernanda', name: 'Fernanda Azedo', email: 'etore3@test.com' },
+  { id: 'demo-gustavo', name: 'Gustavo Lima', email: 'etore4@test.com' },
+  { id: 'demo-maria', name: 'Maria Torniquete', email: 'etore5@test.com' },
+] as const
+
+const items = [
+  { id: 'demo-item-1', userId: 'demo-etore', name: 'Livro de receitas', price: 8990, priority: 'normal' as const },
+  { id: 'demo-item-2', userId: 'demo-etore', name: 'Fone de ouvido', price: 24990, priority: 'alta' as const },
+  { id: 'demo-item-3', userId: 'demo-enzo', name: 'Jogo de tabuleiro', price: 14990, priority: 'normal' as const },
+  { id: 'demo-item-4', userId: 'demo-fernanda', name: 'Caneca', price: 4990, priority: 'baixa' as const },
+  { id: 'demo-item-5', userId: 'demo-gustavo', name: 'Caderno', price: 3990, priority: 'normal' as const },
+  { id: 'demo-item-6', userId: 'demo-maria', name: 'Planta', price: 7990, priority: 'normal' as const },
+] as const
+
+const groups = [
+  { id: 'demo-group-open', name: 'Amigo secreto de teste', slug: 'amigo-secreto-de-teste', isDrawn: false, priceLimit: 20000 },
+  { id: 'demo-group-drawn', name: 'Amigo secreto sorteado', slug: 'amigo-secreto-sorteado', isDrawn: true, priceLimit: 15000 },
+] as const
 
 async function main() {
-  const env = process.env.NODE_ENV
-
-  if (env !== 'development' && env !== 'test') {
-    console.log(`⏭️ Seed ignorado no ambiente ${env}`)
-    return
-  }
-
-  // Erase previous data (dev only)
-  await prisma.account.deleteMany()
-  await prisma.user.deleteMany()
-
-  console.log('🔄 Limpou as tabelas user e account')
-
-  const now = new Date()
-
-  // Users
-  const users = [
-    {
-      id: '3QwdkfB8Kk3l2LoQUg5kI5eKu9PwbomJ',
-      name: 'Etore Grande',
-      email: 'etore@test.com',
-      emailVerified: true,
-      image: null,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'DkjQiZVsVC1UXo5kgwSKRXUswcR8ce7U',
-      name: 'Enzo Pequeno',
-      email: 'etore2@test.com',
-      emailVerified: true,
-      image: null,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'GjTbMHQHMMuQCAG6ESH1qIXDHxyCI1yC',
-      name: 'Fernanda Azedo Azedo',
-      email: 'etore3@test.com',
-      emailVerified: true,
-      image: null,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'SDeuZwhft0qH4XSbeVOWW0o2H0aF1Pi6',
-      name: 'Gustavo Lima',
-      email: 'etore4@test.com',
-      emailVerified: true,
-      image: null,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'SEORaJS61rTUId2SEL39cGaRhPWeQALn',
-      name: 'Torniquete Maria',
-      email: 'etore5@test.com',
-      emailVerified: true,
-      image: null,
-      createdAt: now,
-      updatedAt: now,
-    },
-  ]
-
+  const userIds = new Map<string, string>()
   for (const user of users) {
-    const createdUser = await prisma.user.create({ data: user })
-    console.log(`✅ Usuário criado: ${createdUser.name} (${createdUser.id})`)
+    const record = await prisma.user.upsert({
+      where: { email: user.email },
+      update: {},
+      create: { ...user, emailVerified: true },
+    })
+    userIds.set(user.id, record.id)
   }
 
-  // Accounts
-  const accounts = [
-    {
-      id: 'J5zr2wOKiuRHAK7uJfOLgeuJm0ccFkQO',
-      accountId: 'SDeuZwhft0qH4XSbeVOWW0o2H0aF1Pi6',
-      providerId: 'credential',
-      password:
-        'bd7754a49e44f9d6c737ed7ec8909274:17789ff7ad3687dbba07f5102eaff1af3e3e723fbea5cc75f6d20174f5ca0a0c0f1acb4da55db40aef5cf21958234a917100e270e2600ee0dd60a1e676dadfe2',
-      userId: 'SDeuZwhft0qH4XSbeVOWW0o2H0aF1Pi6',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'PerABHPMZsiAv4BoOCx7e8xKE5URTsLc',
-      accountId: '3QwdkfB8Kk3l2LoQUg5kI5eKu9PwbomJ',
-      providerId: 'credential',
-      password:
-        '482d156ec4407755a70917a5d19e5db9:da460a7040d1f1f5c47c806cc70951970b597e1fac1bd21332455833f41d61add98ed0bf35b31c93d0d0953975bc6e26944e13530817d9c30b25663c96b83a96',
-      userId: '3QwdkfB8Kk3l2LoQUg5kI5eKu9PwbomJ',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'XzcDOpsMjBUWX8UTWVe8suTxDrkELYtn',
-      accountId: 'DkjQiZVsVC1UXo5kgwSKRXUswcR8ce7U',
-      providerId: 'credential',
-      password:
-        'f3c6aee8a6af79607ba98ca274f10de2:16a31230ca8680e0dc11c7644f776793ae33212710a3f88bbd3b91de71db9d2719dd56ee3f6b8d2f3c71dfcdb5fdd9a2133ed562ebde6132c8b74c7669cf2aa2',
-      userId: 'DkjQiZVsVC1UXo5kgwSKRXUswcR8ce7U',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'YfyPNJLuAACjCS2K2Sqh2Bcg03KANeu3',
-      accountId: 'GjTbMHQHMMuQCAG6ESH1qIXDHxyCI1yC',
-      providerId: 'credential',
-      password:
-        '20a6a4e0ea121521a66a1598c7b92ec8:a5f0b36f211442632d9beb309f38ab2a3c162954c87bfe3ff4766c032b85db3d01dedf2d56905dab930dd967924dd93595d46d685463de9296de9efa6f5c33b3',
-      userId: 'GjTbMHQHMMuQCAG6ESH1qIXDHxyCI1yC',
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: 'ygqeRDs5LtrDKrKSchNeXLXK1CTXXDwh',
-      accountId: 'SEORaJS61rTUId2SEL39cGaRhPWeQALn',
-      providerId: 'credential',
-      password:
-        '0f51ea2fcc99d1a2122e158eabb1567c:2e9f057f65b93520ae10bede4073504b532b003a2d1e9fa5813005bbdef4544b62fef5122b025d6fa96910b433fe4372d13a92f8b268f16b6b430657fb11d7f1',
-      userId: 'SEORaJS61rTUId2SEL39cGaRhPWeQALn',
-      createdAt: now,
-      updatedAt: now,
-    },
-  ]
-
-  for (const account of accounts) {
-    const createdAccount = await prisma.account.create({ data: account })
-    console.log(
-      `✅ Conta criada: ${createdAccount.id} para usuário ${createdAccount.userId}`
-    )
+  for (const item of items) {
+    await prisma.wishlistItem.upsert({
+      where: { id: item.id },
+      update: {},
+      create: { ...item, userId: userIds.get(item.userId)! },
+    })
   }
 
-  console.log('🎉 Seed concluída com usuários e contas!')
+  const groupIds = new Map<string, string>()
+  for (const group of groups) {
+    const record = await prisma.secretSantaGroup.upsert({
+      where: { slug: group.slug },
+      update: {},
+      create: {
+        ...group,
+        ownerId: userIds.get('demo-etore')!,
+        drawDate: group.isDrawn ? new Date('2026-11-01T12:00:00Z') : null,
+      },
+    })
+    groupIds.set(group.id, record.id)
+    for (const user of users) {
+      const userId = userIds.get(user.id)!
+      await prisma.userSecretSantaGroup.upsert({
+        where: { userId_secretSantaGroupId: { userId, secretSantaGroupId: record.id } },
+        update: {},
+        create: { userId, secretSantaGroupId: record.id },
+      })
+    }
+    for (const item of items) {
+      await prisma.wishlistItemSecretSantaGroup.upsert({
+        where: { wishlistItemId_secretSantaGroupId: { wishlistItemId: item.id, secretSantaGroupId: record.id } },
+        update: {},
+        create: { wishlistItemId: item.id, secretSantaGroupId: record.id },
+      })
+    }
+  }
+
+  const drawnGroup = await prisma.secretSantaGroup.findUniqueOrThrow({
+    where: { id: groupIds.get('demo-group-drawn')! },
+  })
+  if (drawnGroup.isDrawn) {
+    for (const [index, user] of users.entries()) {
+      const draw = {
+        groupId: drawnGroup.id,
+        giverId: userIds.get(user.id)!,
+        receiverId: userIds.get(users[(index + 1) % users.length].id)!,
+      }
+      await prisma.secretSantaDraw.upsert({
+        where: { groupId_giverId: { groupId: draw.groupId, giverId: draw.giverId } },
+        update: {},
+        create: draw,
+      })
+    }
+  }
+  console.log('Demo seed ready: 5 users, 6 gifts, 2 groups')
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Erro no seed:', e)
-    process.exit(1)
+  .catch((error) => {
+    console.error(error)
+    process.exitCode = 1
   })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  .finally(() => prisma.$disconnect())

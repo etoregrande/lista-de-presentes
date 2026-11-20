@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: presenteio
+      POSTGRES_PASSWORD: presenteio_dev
+      POSTGRES_DB: presenteio_dev
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - presenteio_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U presenteio -d presenteio_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:v1.28
+    ports:
+      - "127.0.0.1:8025:8025"
+    volumes:
+      - presenteio_mail:/data
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_MAX_MESSAGES: 500
+
+volumes:
+  presenteio_postgres:
+  presenteio_mail:
