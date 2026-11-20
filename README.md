@@ -49,7 +49,7 @@ Requer Docker e Node.js. Depois de instalar as dependências com `npm ci`, execu
 npm run dev
 ```
 
-Esse comando inicia PostgreSQL e Mailpit no Docker, aplica as migrations, cria os dados de exemplo ausentes e inicia o Next.js na máquina. Use `http://localhost:3000` para o app. A caixa de emails fica em `http://127.0.0.1:8025` e abre automaticamente ao solicitar um código OTP. O Mailpit captura a mensagem; nenhum email local é enviado para fora. O banco usa a porta `5434`, para não conflitar com o `rpg-monorepo` (`5433`).
+Esse comando inicia PostgreSQL e Mailpit no Docker, aplica as migrations, cria os dados de exemplo ausentes e inicia o Next.js na máquina. O app usa a primeira porta livre de `3000` a `3010`; abra a URL exibida no terminal. O comando configura a URL do Better Auth para essa mesma porta. A caixa de emails fica em `http://127.0.0.1:8025` e abre automaticamente ao solicitar um código OTP. O Mailpit captura a mensagem; nenhum email local é enviado para fora. O banco usa a porta `5434`, para não conflitar com o `rpg-monorepo` (`5433`).
 
 Entre com `etore@test.com` ou `etore2@test.com` até `etore5@test.com`; o código chega à caixa local. A seed inclui presentes e dois grupos, um antes e outro depois do sorteio. Ela só cria registros ausentes, preservando os dados adicionados durante os testes. `npm run resetdev` apaga **somente o banco Docker local** e recria as migrations e a seed. `docker compose down` para os serviços preservando os volumes.
 
