@@ -25,7 +25,7 @@ export const SecretSantaDrawResult = ({
 
   if (!receiver) {
     return (
-      <div className="bg-muted relative flex min-h-40 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-slate-200">
+      <div className="bg-muted relative flex min-h-40 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-border">
         <Sprinkles2 className="text-primary absolute -top-6 left-0 size-20" />
         <p className="text-center break-words text-[var(--muted-foreground)]">
           O sorteio ainda não foi realizado
@@ -78,7 +78,7 @@ export const SecretSantaDrawResult = ({
             <div className="flex min-w-0 items-center gap-4">
               <Avatar className="size-16 md:size-24">
                 <AvatarImage src={receiverImage} />
-                <AvatarFallback className="bg-white font-bold">
+                <AvatarFallback className="bg-card font-bold">
                   <p className="min-w-0 truncate text-2xl">
                     {setAvatarFallbackString(receiverName!)}
                   </p>

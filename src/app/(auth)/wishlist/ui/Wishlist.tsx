@@ -59,7 +59,7 @@ export function Wishlist({
       <div className="flex flex-col gap-8">
         <h2 className="block truncate text-2xl font-extrabold md:pt-0">
           Sua lista de desejos
-          <span className="block truncate text-base font-normal text-slate-500">
+          <span className="block truncate text-base font-normal text-muted-foreground">
             Todos os seus items cadastrados
           </span>
         </h2>

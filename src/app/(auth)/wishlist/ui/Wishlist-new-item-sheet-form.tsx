@@ -52,7 +52,7 @@ export const WishlistNewItemSheetForm = () => {
     <div className="flex-1 overflow-y-auto">
       <form className="space-y-8 p-6">
         <div>
-          <AspectRatio ratio={16 / 9} className="rounded-md bg-purple-50">
+          <AspectRatio ratio={16 / 9} className="rounded-md bg-muted">
             <Label
               htmlFor="image"
               className="relative block h-full w-full cursor-pointer"

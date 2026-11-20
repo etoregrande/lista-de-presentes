@@ -16,7 +16,7 @@ export const SecretSantaWishlistItem = ({
   return (
     <div
       className={clsx(
-        'group flex min-w-0 flex-row gap-4 rounded-xl bg-white transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0'
+        'group flex min-w-0 flex-row gap-4 rounded-xl bg-card transition-[padding] duration-200 ease-in-out md:flex-col md:gap-0'
       )}
     >
       <div className="bg-secondary-foreground relative aspect-square h-full min-h-22 min-w-22 overflow-hidden rounded-lg">
@@ -39,7 +39,7 @@ export const SecretSantaWishlistItem = ({
             {wishlistItem.name}
           </p>
           {typeof wishlistItem.price === 'number' && wishlistItem.price > 0 && (
-            <p className="flex-shrink-0 text-sm whitespace-nowrap text-slate-500">
+            <p className="flex-shrink-0 text-sm whitespace-nowrap text-muted-foreground">
               {getDisplayPrice(wishlistItem.price)}
             </p>
           )}

@@ -45,7 +45,7 @@ export const SecretSantaGroupHeading = ({
             shouldTruncate && 'truncate'
           )}
         >
-          <span className="block text-base font-normal text-slate-500">
+          <span className="block text-base font-normal text-muted-foreground">
             Amigo secreto
           </span>
           <span>{secretSantaGroup.name}</span>

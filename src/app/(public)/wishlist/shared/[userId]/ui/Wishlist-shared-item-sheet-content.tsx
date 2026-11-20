@@ -49,7 +49,7 @@ export const WishlistSharedItemSheetContent = ({
           <a
             href={wishlistItem.link}
             target="_blank"
-            className="border-border hover:bg-primary-foreground hover:border-primary-foreground transition-[background-color, border] flex gap-4 rounded-md border p-4 duration-200"
+            className="border-border hover:bg-accent hover:border-primary-foreground transition-[background-color, border] flex gap-4 rounded-md border p-4 duration-200"
           >
             <ExternalLink className="text-primary" />
             <p>Link para comprar</p>

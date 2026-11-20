@@ -7,7 +7,7 @@ export default async function Page() {
         <div className="grid w-full grid-cols-[auto_1fr] gap-4">
           <div className="aspect-square w-full rounded-md bg-amber-300"></div>
           <h1 className="truncate text-2xl font-bold">
-            <span className="block text-base font-normal text-slate-500">
+            <span className="block text-base font-normal text-muted-foreground">
               Amigo secreto
             </span>
             Nome do grupo

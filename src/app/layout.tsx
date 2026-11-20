@@ -2,7 +2,8 @@ import 'dotenv/config'
 import '@/app/globals.css'
 import type { Metadata } from 'next'
 import { Nunito_Sans } from 'next/font/google'
-import { Toaster } from 'sonner'
+import { Toaster } from '@/components/ui/sonner'
+import { ThemeProvider } from '@/components/theme-provider'
 import {
   CircleCheck,
   CircleX,
@@ -27,29 +28,31 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${nunitoSans.variable} min-h-dvh antialiased`}>
-        {children}
-        <Toaster
-          icons={{
-            success: <CircleCheck className="pr-1" />,
-            info: <Info className="pr-1" />,
-            warning: <TriangleAlert className="pr-1" />,
-            error: <CircleX className="pr-1" />,
-            loading: <LoaderCircle className="animate-spin pr-1" />,
-          }}
-          toastOptions={{
-            classNames: {
-              error:
-                '!bg-[var(--error-background)] !text-[var(--error-foreground)] !border-[var(--error-border)]',
-              success:
-                '!bg-[var(--success-background)] !text-[var(--success-foreground)] !border-[var(--success-border)]',
-              warning:
-                '!bg-[var(--warning-background)] !text-[var(--warning-foreground)] !border-[var(--warning-border)]',
-              info: '!bg-[var(--info-background)] !text-[var(--info-foreground)] !border-[var(--info-border)]',
-            },
-          }}
-        />
+        <ThemeProvider>
+          {children}
+          <Toaster
+            icons={{
+              success: <CircleCheck className="pr-1" />,
+              info: <Info className="pr-1" />,
+              warning: <TriangleAlert className="pr-1" />,
+              error: <CircleX className="pr-1" />,
+              loading: <LoaderCircle className="animate-spin pr-1" />,
+            }}
+            toastOptions={{
+              classNames: {
+                error:
+                  '!bg-[var(--error-background)] !text-[var(--error-foreground)] !border-[var(--error-border)]',
+                success:
+                  '!bg-[var(--success-background)] !text-[var(--success-foreground)] !border-[var(--success-border)]',
+                warning:
+                  '!bg-[var(--warning-background)] !text-[var(--warning-foreground)] !border-[var(--warning-border)]',
+                info: '!bg-[var(--info-background)] !text-[var(--info-foreground)] !border-[var(--info-border)]',
+              },
+            }}
+          />
+        </ThemeProvider>
       </body>
     </html>
   )

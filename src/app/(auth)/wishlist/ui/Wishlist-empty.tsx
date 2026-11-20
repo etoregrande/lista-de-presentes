@@ -17,7 +17,7 @@ export const EmptyWishlist = ({ isEmpty, newItem }: EmptyWishlistProps) => {
           animate={{ scale: 1, opacity: 1, height: 'auto' }}
           exit={{ scale: 0.5, opacity: 0, height: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex min-h-60 flex-col items-center justify-center gap-2 rounded-xl border-1 border-slate-200"
+          className="flex min-h-60 flex-col items-center justify-center gap-2 rounded-xl border-1 border-border"
         >
           <PackageOpen className="text-primary" />
           <p className="text-center break-words text-[var(--muted-foreground)]">

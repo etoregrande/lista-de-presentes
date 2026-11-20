@@ -69,7 +69,7 @@ export const ShareSecretSantaGroupButton = ({
                 readOnly
                 className={clsx(
                   'h-11 max-w-60 md:h-9',
-                  copied && 'border-green-700 text-green-700'
+                  copied && 'border-green-700 text-green-700 dark:border-green-400 dark:text-green-400'
                 )}
               />
               <Button

@@ -33,7 +33,7 @@ export default async function SharedWishlistPage({
             <div className="ml-2 flex items-center gap-6 pt-10 pb-16">
               <Avatar className="outline-foreground size-16 outline-4 outline-offset-4 md:size-24">
                 <AvatarImage src={wishlistOwnerImage} />
-                <AvatarFallback className="bg-white font-bold">
+                <AvatarFallback className="bg-card font-bold">
                   <p className="min-w-0 truncate text-2xl">
                     {setAvatarFallbackString(wishlistOwner.name)}
                   </p>

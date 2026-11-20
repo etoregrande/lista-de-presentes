@@ -76,7 +76,7 @@ export default function Modal({
     >
       <motion.div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full h-[80%] no-scrollbar md:h-auto md:max-w-xl rounded-t-4xl md:rounded-2xl md:p-6 shadow-lg overflow-y-auto"
+        className="bg-card w-full h-[80%] no-scrollbar md:h-auto md:max-w-xl rounded-t-4xl md:rounded-2xl md:p-6 shadow-lg overflow-y-auto"
         variants={modalVariants}
         transition={{ duration: 0.2 }}
       >
