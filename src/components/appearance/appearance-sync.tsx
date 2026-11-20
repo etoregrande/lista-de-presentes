@@ -17,8 +17,8 @@ export function AppearanceSync({
     const preference = `${palette ?? ''}:${theme ?? ''}`
     if (appliedPreference.current === preference) return
     appliedPreference.current = preference
-    if (palette && isPalette(palette)) setPalette(palette)
-    if (theme && ['light', 'dark', 'system'].includes(theme)) setTheme(theme)
+    setPalette(palette && isPalette(palette) ? palette : 'cherry')
+    setTheme(theme && ['light', 'dark', 'system'].includes(theme) ? theme : 'system')
   }, [palette, theme, setTheme])
   return null
 }
