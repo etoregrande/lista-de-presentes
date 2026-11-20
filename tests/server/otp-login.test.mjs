@@ -98,13 +98,22 @@ test('OTP shows six boxes around one visible autofill input that accepts paste',
   assert.equal(inputs.length, 1)
   assert.equal(inputs[0].props.autoComplete, 'one-time-code')
   assert.equal(inputs[0].props.name, 'otp')
+  assert.equal(inputs[0].props.maxLength, 6)
+  assert.equal(inputs[0].props.required, true)
   assert.doesNotMatch(inputs[0].props.className ?? '', /opacity-0/)
-  inputs[0].props.onChange({ target: { value: '12 34-56' } })
+  assert.doesNotMatch(inputs[0].props.className ?? '', /caret-transparent|text-transparent/)
+  assert.equal(inputs[0].props.style?.width, undefined)
+  let prevented = false
+  inputs[0].props.onPaste({
+    preventDefault() { prevented = true },
+    clipboardData: { getData: () => '12 34-56' },
+  })
+  assert.equal(prevented, true)
 
   tree = f.render()
   const digits = tree.filter((n) => n.type === 'span' && n.props['aria-hidden'] === 'true')
   assert.equal(digits.length, 6)
-  assert.equal(digits.map((digit) => digit.props.children).join(''), '')
+  assert.equal(digits.map((digit) => digit.props.children).join(''), '123456')
   assert.equal(tree.find((n) => n.type === 'input' && n.props.id === 'otp').props.value, '123456')
   await tree.find((n) => n.type === 'form').props.onSubmit({ preventDefault() {} })
   assert.equal(f.emailOtp.mock.calls[0].arguments[0].otp, '123456')

@@ -114,13 +114,15 @@ export function AuthLoginForm({
           <>
             <InputWrapper>
               <Label htmlFor="otp">Código de acesso</Label>
-              <div className="relative grid grid-cols-6 overflow-clip [container-type:inline-size]">
+              <div className="relative grid grid-cols-6 gap-2">
                 {Array.from({ length: 6 }, (_, index) => (
                   <span
                     key={index}
                     aria-hidden="true"
-                    className={`border-input bg-background/50 pointer-events-none mx-1 h-12 rounded-md border transition-colors ${otpFocused && index === Math.min(otp.length, 5) ? 'border-primary ring-primary/20 ring-2' : ''}`}
-                  />
+                    className={`border-input bg-background/50 pointer-events-none flex h-12 items-center justify-center rounded-md border text-xl font-semibold tabular-nums transition-colors ${otpFocused && index === Math.min(otp.length, 5) ? 'border-primary ring-primary/20 ring-2' : ''}`}
+                  >
+                    {otp[index] || ''}
+                  </span>
                 ))}
                 <Input
                   id="otp"
@@ -128,18 +130,21 @@ export function AuthLoginForm({
                   type="text"
                   inputMode="numeric"
                   autoComplete="one-time-code"
+                  maxLength={6}
+                  required
                   value={otp}
                   onChange={(event) =>
                     setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))
                   }
+                  onPaste={(event) => {
+                    event.preventDefault()
+                    setOtp(
+                      event.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+                    )
+                  }}
                   onFocus={() => setOtpFocused(true)}
                   onBlur={() => setOtpFocused(false)}
-                  className="absolute inset-0 z-10 h-full w-full cursor-text border-0 bg-transparent p-0 font-mono text-xl font-semibold tracking-normal tabular-nums caret-transparent shadow-none focus-visible:border-0 focus-visible:ring-0"
-                  style={{
-                    width: 'calc(100cqw + 3rem)',
-                    paddingLeft: 'calc(8.333333cqw - 0.5ch)',
-                    letterSpacing: 'calc(16.666667cqw - 1ch)',
-                  }}
+                  className={`absolute inset-0 z-10 h-full w-full cursor-text border-0 bg-transparent shadow-none focus-visible:border-0 focus-visible:ring-0 ${otp ? 'text-transparent caret-transparent' : ''}`}
                 />
               </div>
             </InputWrapper>
