@@ -6,6 +6,7 @@ import { emailOTP } from 'better-auth/plugins'
 import { sendEmail } from './email'
 import {
   OtpEmailTemplate,
+  otpEmailText,
 } from '@/components/email-template'
 
 export const auth = betterAuth({
@@ -23,6 +24,7 @@ export const auth = betterAuth({
         await sendEmail({
           to: email,
           subject: 'Seu código de acesso ao Presenteio',
+          text: otpEmailText(otp),
           template: OtpEmailTemplate,
           templateProps: { otp },
         })

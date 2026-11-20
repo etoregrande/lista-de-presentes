@@ -9,6 +9,7 @@ const resend = process.env.RESEND_API_KEY
 interface SendEmailParams<T extends Record<string, unknown>> {
   to: string
   subject: string
+  text?: string
   template: React.FC<T>
   templateProps: T
 }
@@ -16,6 +17,7 @@ interface SendEmailParams<T extends Record<string, unknown>> {
 export async function sendEmail<T extends Record<string, unknown>>({
   to,
   subject,
+  text,
   template,
   templateProps,
 }: SendEmailParams<T>) {
@@ -39,6 +41,7 @@ export async function sendEmail<T extends Record<string, unknown>>({
         From: { Email: 'noreply@presenteio.app', Name: 'Presenteio' },
         To: [{ Email: to }],
         Subject: subject,
+        ...(text ? { Text: text } : {}),
         HTML: await render(createElement(template, templateProps)),
       }),
     })
@@ -54,6 +57,7 @@ export async function sendEmail<T extends Record<string, unknown>>({
     from: 'Presenteio <noreply@presenteio.app>',
     to,
     subject,
+    text,
     react: createElement(template, templateProps),
   })
 
