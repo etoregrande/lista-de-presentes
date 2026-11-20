@@ -4,13 +4,11 @@ import Image from 'next/image'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { Textarea } from '@/components/ui/textarea'
-import { NumericFormat } from 'react-number-format'
 import { Switch } from '@/components/ui/switch'
-import { useEffect, useState } from 'react'
+import { useWishlistImagePreview } from './use-wishlist-image-preview'
+import { WishlistProductFields } from './wishlist-product-fields'
 import { WishlistItemPlaceholder } from '@/components/ui/wishlist-item-placeholder'
 import { FormError } from '@/components/ui/form/form-error'
-import { InputWrapper } from '@/components/ui/form/form-input-wrapper'
 import {
   DialogDescription,
   DialogHeader,
@@ -26,37 +24,11 @@ export const WishlistNewItemSheetForm = ({
     register,
     watch,
     setValue,
-    trigger,
     control,
     formState: { errors },
   } = useFormContext<WishlistItemFormData>()
-  const [preview, setPreview] = useState<{ file: File; url: string } | null>(
-    null
-  )
-  const image = watch('image')
+  const selectedImage = useWishlistImagePreview()
   const currentName = watch('name')
-  const selectedImage = preview && preview.file === image ? preview.url : null
-
-  useEffect(() => {
-    if (!(image instanceof File)) return
-
-    let cancelled = false
-    let url: string | null = null
-    trigger('image').then((isValid) => {
-      if (cancelled) return
-      if (isValid) {
-        url = URL.createObjectURL(image)
-        setPreview({ file: image, url })
-      } else {
-        setPreview(null)
-      }
-    })
-
-    return () => {
-      cancelled = true
-      if (url) URL.revokeObjectURL(url)
-    }
-  }, [image, trigger])
 
   return (
     <div className="product-dialog-body min-h-0 flex-1 overflow-y-auto">
@@ -80,7 +52,13 @@ export const WishlistNewItemSheetForm = ({
                 className="group relative block h-full w-full cursor-pointer"
               >
                 {selectedImage ? (
-                  <Image src={selectedImage} alt="Imagem do produto" fill sizes="(max-width: 768px) 100vw, 350px" className="rounded-2xl object-cover" />
+                  <Image
+                    src={selectedImage}
+                    alt="Imagem do produto"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 350px"
+                    className="rounded-2xl object-cover"
+                  />
                 ) : (
                   <WishlistItemPlaceholder className="absolute inset-0 m-auto size-[58%]" />
                 )}
@@ -129,70 +107,7 @@ export const WishlistNewItemSheetForm = ({
             )}
           </div>
         </div>
-        <div className="space-y-5 md:pt-11">
-          <InputWrapper>
-            <Label
-              htmlFor="name"
-              className="flex items-center justify-between gap-1"
-            >
-              Nome
-              <span className="text-muted-foreground text-xs">obrigatório</span>
-            </Label>
-            <Input id="name" {...register('name')} placeholder="" />
-            <FormError message={errors.name?.message} />
-          </InputWrapper>
-
-          <InputWrapper>
-            <Label htmlFor="description">Descrição</Label>
-            <Textarea
-              id="description"
-              {...register('description')}
-              placeholder=""
-            />
-            <FormError message={errors.description?.message} />
-          </InputWrapper>
-
-          <InputWrapper>
-            <Label htmlFor="price">Preço</Label>
-            <Controller
-              name="price"
-              control={control}
-              render={({ field }) => (
-                <NumericFormat
-                  inputMode="decimal"
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  decimalScale={2}
-                  prefix="R$ "
-                  allowNegative={false}
-                  value={field.value != null ? field.value / 100 : ''}
-                  onValueChange={(values) => {
-                    const { floatValue } = values
-                    field.onChange(
-                      floatValue !== undefined
-                        ? Math.round(floatValue * 100)
-                        : null
-                    )
-                  }}
-                  customInput={Input}
-                  id="price"
-                />
-              )}
-            />
-            <FormError message={errors.price?.message} />
-          </InputWrapper>
-
-          <InputWrapper>
-            <Label htmlFor="link">Link do produto</Label>
-            <Input
-              id="link"
-              {...register('link')}
-              inputMode="url"
-              placeholder=""
-            />
-            <FormError message={errors.link?.message} />
-          </InputWrapper>
-        </div>
+        <WishlistProductFields />
       </form>
     </div>
   )

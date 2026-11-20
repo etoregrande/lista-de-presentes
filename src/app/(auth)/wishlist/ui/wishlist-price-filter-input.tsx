@@ -1,7 +1,7 @@
 'use client'
 
 import { Input } from '@/components/ui/input'
-import { WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/types/wishlistItem'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 interface WishlistPriceFilterInputProps {

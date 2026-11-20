@@ -1,4 +1,4 @@
-import { WishlistItem } from '@/generated/prisma'
+import { WishlistItem } from '@/types/wishlistItem'
 import placeholder from '@/../public/assets/wishlist-item-placeholder.svg'
 
 export const setWishlistItemImageSrc = (wishlistItem: WishlistItem) => {

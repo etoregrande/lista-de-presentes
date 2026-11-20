@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test, mock } from 'node:test'
 import sharp from 'sharp'
+import * as crypto from 'node:crypto'
 import { loadModule } from '../helpers/load-module.mjs'
 import {
   validationModules,
@@ -32,6 +33,7 @@ function fixture() {
     }
   }
   const s3Actions = loadModule('src/server/s3.ts', {
+    'node:crypto': crypto,
     '@/lib/s3': { getS3Client: () => ({ send }) },
     '@aws-sdk/client-s3': {
       PutObjectCommand: StorageCommand,
@@ -41,6 +43,10 @@ function fixture() {
   })
   const dependencies = {
     ...validationModules,
+    'next/headers': {
+      cookies: async () => ({ get: () => undefined, set: () => {} }),
+    },
+    'node:crypto': crypto,
     './session': { requireAuthenticatedUserId: async () => 'owner' },
     '@/lib/prisma': {
       prisma: {
@@ -405,7 +411,11 @@ test('JPEG orientation is applied and EXIF metadata is removed', async () => {
 test('wishlist image rejection returns field feedback for create and edit without writes', async () => {
   const f = fixture()
   const image = await encodedImage('png', { width: 4001, height: 4000 })
-  assert.equal(wishlistSchemas.wishlistItemFormSchema.safeParse({ ...form, image }).success, true)
+  assert.equal(
+    wishlistSchemas.wishlistItemFormSchema.safeParse({ ...form, image })
+      .success,
+    true
+  )
   for (const result of [
     await f.wishlist.createWishlistItemWithFeedback({ ...form, image }),
     await f.wishlist.updateWishlistItemWithFeedback({ ...form, image }, 'item'),
@@ -420,9 +430,14 @@ test('wishlist image rejection returns field feedback for create and edit withou
 
 test('wishlist upload failure returns feedback and does not save the item', async () => {
   const f = fixture()
-  f.send.mock.mockImplementation(async () => { throw new Error('storage unavailable') })
+  f.send.mock.mockImplementation(async () => {
+    throw new Error('storage unavailable')
+  })
   const image = await encodedImage('png')
-  const result = await f.wishlist.createWishlistItemWithFeedback({ ...form, image })
+  const result = await f.wishlist.createWishlistItemWithFeedback({
+    ...form,
+    image,
+  })
   assert.equal(result.imageErrorCode, 'IMAGE_UPLOAD_FAILED')
   assert.doesNotMatch(result.imageError, /megapixels|inválid/)
   assert.match(result.imageError, /tente novamente/)
@@ -431,7 +446,10 @@ test('wishlist upload failure returns feedback and does not save the item', asyn
 
 test('wishlist feedback action still saves valid images', async () => {
   const f = fixture()
-  const result = await f.wishlist.createWishlistItemWithFeedback({ ...form, image: await encodedImage('png') })
+  const result = await f.wishlist.createWishlistItemWithFeedback({
+    ...form,
+    image: await encodedImage('png'),
+  })
   assert.equal(result.id, 'item')
   assert.equal(f.create.mock.callCount(), 1)
 })
@@ -440,7 +458,10 @@ test('1080x2340 images within the byte limit can be saved', async () => {
   const f = fixture()
   const image = await encodedImage('png', { width: 1080, height: 2340 })
   assert.ok(image.size < imageSchemas.MAX_IMAGE_BYTES)
-  const result = await f.wishlist.createWishlistItemWithFeedback({ ...form, image })
+  const result = await f.wishlist.createWishlistItemWithFeedback({
+    ...form,
+    image,
+  })
   assert.equal(result.id, 'item')
   assert.equal(f.send.mock.callCount(), 1)
 })

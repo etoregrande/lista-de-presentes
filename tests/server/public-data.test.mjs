@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { test, mock } from 'node:test'
 import { loadModule } from '../helpers/load-module.mjs'
 import { validationModules } from '../helpers/validation-modules.mjs'
+import * as crypto from 'node:crypto'
 
 const jsxRuntime = {
   jsx: (type, props) => ({ type, props }),
@@ -23,6 +24,14 @@ function findElement(node, type) {
 }
 
 function fixture(actor = null) {
+  const browserCookies = new Map()
+  const cookieStore = {
+    get: (name) =>
+      browserCookies.has(name)
+        ? { value: browserCookies.get(name) }
+        : undefined,
+    set: (name, value) => browserCookies.set(name, value),
+  }
   const items = [
     {
       id: 'visible',
@@ -64,23 +73,51 @@ function fixture(actor = null) {
     return actor
   })
   const wishlistItem = {
-    findMany: mock.fn(async ({ where }) =>
-      items.filter(
-        (item) =>
-          item.userId === where.userId &&
-          (where.isActive === undefined || item.isActive === where.isActive) &&
-          (where.price === undefined || item.price <= where.price.lte)
-      )
-    ),
-    update: mock.fn(async ({ where, data }) => {
+    findUnique: mock.fn(async ({ where }) => {
       const item = items.find(
         (item) =>
           item.id === where.id &&
-          (where.isActive === undefined || item.isActive === where.isActive)
+          item.userId === where.userId &&
+          item.isActive === where.isActive
+      )
+      return item ? { id: item.id } : null
+    }),
+    findMany: mock.fn(async ({ where, omit }) =>
+      items
+        .filter(
+          (item) =>
+            item.userId === where.userId &&
+            (where.isActive === undefined ||
+              item.isActive === where.isActive) &&
+            (where.price === undefined || item.price <= where.price.lte)
+        )
+        .map((item) =>
+          omit?.purchaseClaimHash
+            ? Object.fromEntries(
+                Object.entries(item).filter(
+                  ([key]) => key !== 'purchaseClaimHash'
+                )
+              )
+            : item
+        )
+    ),
+    update: mock.fn(async ({ where, data, omit }) => {
+      const item = items.find(
+        (item) =>
+          item.id === where.id &&
+          (where.isActive === undefined || item.isActive === where.isActive) &&
+          (where.isPurchased === undefined ||
+            item.isPurchased === where.isPurchased) &&
+          (where.purchaseClaimHash === undefined ||
+            item.purchaseClaimHash === where.purchaseClaimHash)
       )
       if (!item) throw new Error('Not found')
       Object.assign(item, data)
-      return item
+      return omit?.purchaseClaimHash
+        ? Object.fromEntries(
+            Object.entries(item).filter(([key]) => key !== 'purchaseClaimHash')
+          )
+        : item
     }),
   }
   const user = {
@@ -97,7 +134,12 @@ function fixture(actor = null) {
   const actions = loadModule('src/server/wishlistItem.ts', {
     ...validationModules,
     '@/lib/prisma': { prisma },
-    './session': { requireAuthenticatedUserId },
+    'next/headers': { cookies: async () => cookieStore },
+    'node:crypto': crypto,
+    './session': {
+      requireAuthenticatedUserId,
+      getSessionOnServer: async () => (actor ? { user: { id: actor } } : null),
+    },
     '@/lib/utils': { sanitizeLinkUrl: (value) => value },
     './s3': {},
     '@/lib/s3': {},
@@ -112,6 +154,7 @@ function fixture(actor = null) {
     wishlistItem,
     user,
     items,
+    browserCookies,
     requireAuthenticatedUserId,
   }
 }
@@ -218,11 +261,71 @@ test('purchase action cannot mutate or return a hidden item by its known ID', as
 })
 
 test('anonymous purchase marking still works for active items', async () => {
-  const result = await fixture().actions.purchaseWishlistItem({
+  const f = fixture()
+  const result = await f.actions.purchaseWishlistItem({
     id: 'visible',
     isPurchased: false,
   })
   assert.equal(result.isPurchased, true)
+  assert.equal(result.purchaseClaimHash, undefined)
+  assert.ok(f.browserCookies.has('presenteio-purchase-claim'))
+})
+
+test('stale purchase confirmation cannot report success after another buyer wins', async () => {
+  const f = fixture()
+  const first = await f.actions.purchaseWishlistItem({
+    id: 'visible',
+    isPurchased: false,
+  })
+  const second = await f.actions.purchaseWishlistItem({
+    id: 'visible',
+    isPurchased: false,
+  })
+  assert.equal(first.isPurchased, true)
+  assert.equal(second, undefined)
+})
+
+test('another visitor cannot undo a purchased item without a claim', async () => {
+  const f = fixture()
+  f.items[0].isPurchased = true
+  f.items[0].purchaseClaimHash = 'first-buyer'
+  const result = await f.actions.purchaseWishlistItem({
+    id: 'visible',
+    isPurchased: true,
+  })
+  assert.equal(result, undefined)
+  assert.equal(f.items[0].isPurchased, true)
+})
+
+test('the browser that marked a purchase can undo it', async () => {
+  const f = fixture()
+  await f.actions.purchaseWishlistItem({ id: 'visible', isPurchased: false })
+  const result = await f.actions.purchaseWishlistItem({
+    id: 'visible',
+    isPurchased: true,
+  })
+  assert.equal(result.isPurchased, false)
+  assert.equal(f.items[0].purchaseClaimHash, null)
+})
+
+test('only the owner can clear a legacy purchase without a claim', async () => {
+  const f = fixture('owner')
+  f.items[0].isPurchased = true
+  const result = await f.actions.purchaseWishlistItem({
+    id: 'visible',
+    isPurchased: true,
+  })
+  assert.equal(result.isPurchased, false)
+
+  const outsider = fixture('other')
+  outsider.items[0].isPurchased = true
+  assert.equal(
+    await outsider.actions.purchaseWishlistItem({
+      id: 'visible',
+      isPurchased: true,
+    }),
+    undefined
+  )
 })
 
 test('shared page passes only public items into client component props', async () => {
