@@ -11,8 +11,11 @@ const env = {
   MAILPIT_API_URL: process.env.MAILPIT_API_URL || 'http://127.0.0.1:8025',
   NEXT_PUBLIC_MAILPIT_UI_URL:
     process.env.MAILPIT_UI_URL || 'http://127.0.0.1:8025',
+  NEXT_PUBLIC_AUTO_OPEN_MAILPIT:
+    process.env.NEXT_PUBLIC_AUTO_OPEN_MAILPIT ?? 'true',
   BETTER_AUTH_URL: `http://localhost:${port}`,
-  DATABASE_URL: 'postgresql://presenteio:presenteio_dev@127.0.0.1:5434/presenteio_dev',
+  DATABASE_URL:
+    'postgresql://presenteio:presenteio_dev@127.0.0.1:5434/presenteio_dev',
 }
 
 function run(command, args) {

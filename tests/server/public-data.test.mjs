@@ -336,6 +336,9 @@ test('shared page passes only public items into client component props', async (
       '@/server/wishlistItem': f.actions,
       '@/lib/repositories/UserRepository': f.profiles,
       '@/server/session': { getSessionOnServer: async () => null },
+      '@/lib/repositories/FollowRepository': {
+        isFollowingUser: async () => false,
+      },
       '@/lib/utils': {
         getDisplayName: (name) => name,
         setAvatarFallbackString: () => 'ON',
@@ -343,6 +346,12 @@ test('shared page passes only public items into client component props', async (
       './ui/Wishlist-shared': { WishlistShared: 'wishlist-shared' },
       './ui/Wishlist-shared-owner-warning': {
         WishlistSharedOwnerWarning: 'owner-warning',
+      },
+      './ui/follow-button': { FollowButton: 'follow-button' },
+      'next/navigation': {
+        notFound() {
+          throw new Error('Not found')
+        },
       },
       '@/components/ui/avatar': {
         Avatar: 'avatar',

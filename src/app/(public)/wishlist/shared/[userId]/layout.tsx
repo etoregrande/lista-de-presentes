@@ -9,6 +9,7 @@ import { SecretSantaGroupsProvider } from '@/lib/context/secretSantaGroups/provi
 import { SessionProvider } from '@/lib/context/session/provider'
 import { prisma } from '@/lib/prisma'
 import { AppearanceSync } from '@/components/appearance/appearance-sync'
+import { listFollowedUsers } from '@/lib/repositories/FollowRepository'
 
 export default async function WishlistLayout({
   children,
@@ -18,6 +19,7 @@ export default async function WishlistLayout({
   const session = await getSessionOnServer()
 
   const initialSecretSantaGroups = session ? await listSecretSantaGroups() : []
+  const following = session ? await listFollowedUsers(session.user.id) : []
   const appearance = session
     ? await prisma.user.findUnique({
         where: { id: session.user.id },
@@ -33,7 +35,7 @@ export default async function WishlistLayout({
           theme={appearance?.appearanceTheme ?? null}
         />
         <SecretSantaGroupsProvider initialGroups={initialSecretSantaGroups}>
-          <AppSidebar />
+          <AppSidebar following={following} />
           <div className="flex w-full flex-col">
             <Navbar />
             {children}

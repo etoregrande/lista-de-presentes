@@ -22,15 +22,21 @@ import { Dispatch, SetStateAction, Suspense, useState } from 'react'
 import { NavbarNewSecretSantaGroupModal } from './app-sidebar-new-secret-santa-group-modal'
 import { AppSidebarSecretSantaGroups } from './app-sidebar-secret-santa-groups'
 import { AppSidebarAvatar } from './app-sidebar-avatar'
+import { AppSidebarFollowing } from './app-sidebar-following'
+import type { FollowedUser } from '@/lib/repositories/FollowRepository'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession } from '@/lib/context/session/context'
 import { Button } from '../button'
 
 interface LoggedInContentProps {
   setIsCreatingNewGroup: Dispatch<SetStateAction<boolean>>
+  following: FollowedUser[]
 }
 
-const LoggedInContent = ({ setIsCreatingNewGroup }: LoggedInContentProps) => {
+const LoggedInContent = ({
+  setIsCreatingNewGroup,
+  following,
+}: LoggedInContentProps) => {
   const pathname = usePathname()
   const href = '/wishlist'
   const isOnWishlist = pathname === href
@@ -91,6 +97,16 @@ const LoggedInContent = ({ setIsCreatingNewGroup }: LoggedInContentProps) => {
           </Suspense>
         </SidebarMenu>
       </SidebarGroup>
+      {following.length > 0 && (
+        <SidebarGroup className="border-sidebar-border mt-4 border-t px-1 pt-4 pb-1">
+          <SidebarGroupLabel className="text-sidebar-foreground/65 h-8 px-3 text-xs font-bold tracking-[0.12em] uppercase">
+            Seguindo
+          </SidebarGroupLabel>
+          <SidebarMenu className="gap-0.5">
+            <AppSidebarFollowing people={following} />
+          </SidebarMenu>
+        </SidebarGroup>
+      )}
     </SidebarContent>
   )
 }
@@ -142,7 +158,11 @@ const LoggedOffContent = () => {
   )
 }
 
-export const AppSidebar = () => {
+export const AppSidebar = ({
+  following = [],
+}: {
+  following?: FollowedUser[]
+}) => {
   const session = useSession()
   const [isCreatingNewGroup, setIsCreatingNewGroup] = useState(false)
 
@@ -158,7 +178,10 @@ export const AppSidebar = () => {
           <AppSidebarAvatar />
         </SidebarHeader>
         {session ? (
-          <LoggedInContent setIsCreatingNewGroup={setIsCreatingNewGroup} />
+          <LoggedInContent
+            setIsCreatingNewGroup={setIsCreatingNewGroup}
+            following={following}
+          />
         ) : (
           <LoggedOffContent />
         )}

@@ -14,6 +14,7 @@
     "test": "node --test tests/server/*.test.mjs",
     "test:integration": "node scripts/test-postgres.mjs",
     "test:browser": "node scripts/test-product-import-browser.mjs",
+    "test:follow:browser": "node scripts/test-follow-browser.mjs",
     "migrate": "prisma migrate deploy"
   },
   "dependencies": {
