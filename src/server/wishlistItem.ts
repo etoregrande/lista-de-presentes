@@ -2,7 +2,7 @@
 
 import { type WishlistItemFormData } from '@/types/wishlistItem'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { s3 } from '@/lib/s3'
+import { getS3Client } from '@/lib/s3'
 import { prisma } from '@/lib/prisma'
 import { wishlistItemFormSchema } from '@/schemas/wishlistItem'
 import { identifierSchema, priceInCentsSchema } from '@/schemas/common'
@@ -131,7 +131,7 @@ export const deleteWishlistItem = async (wishlistItemId: string) => {
         Bucket: process.env.BUCKET_NAME,
         Key: imageKey,
       }
-      await s3.send(new DeleteObjectCommand(deleteParams))
+      await getS3Client().send(new DeleteObjectCommand(deleteParams))
     }
     return
   } catch (error) {

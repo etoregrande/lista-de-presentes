@@ -66,7 +66,7 @@ function fixture(userId = 'owner') {
     '@/lib/auth': { auth: { api: { getSession } } },
     'next/headers': { headers: async () => new Headers() },
     '@/lib/utils': { sanitizeLinkUrl: (value) => value },
-    '@/lib/s3': { s3: { send } },
+    '@/lib/s3': { getS3Client: () => ({ send }) },
     '@aws-sdk/client-s3': {
       DeleteObjectCommand: class {
         constructor(input) {

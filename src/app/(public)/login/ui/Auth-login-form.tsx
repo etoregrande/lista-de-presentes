@@ -102,15 +102,17 @@ export function AuthLoginForm() {
           </InputWrapper>
         )}
         <FormError message={error} />
-        <Button type="submit" disabled={busy}>
-          {busy ? <LoaderCircle className="animate-spin" /> : requestedEmail ? 'Entrar' : 'Enviar código'}
-        </Button>
-        {requestedEmail && (
-          <>
-            <Button type="button" variant="secondary" disabled={busy} onClick={() => { setRequestedEmail(null); setOtp(''); setError('') }}>Voltar</Button>
-            <Button type="button" variant="outline" disabled={busy} onClick={() => { void requestCode() }}>Enviar outro código</Button>
-          </>
-        )}
+        <div className="flex flex-col gap-2">
+          <Button type="submit" disabled={busy}>
+            {busy ? <LoaderCircle className="animate-spin" /> : requestedEmail ? 'Entrar' : 'Enviar código'}
+          </Button>
+          {requestedEmail && (
+            <>
+              <Button type="button" variant="outline" disabled={busy} onClick={() => { setRequestedEmail(null); setOtp(''); setError('') }}>Voltar</Button>
+              <Button type="button" variant="ghost" className="text-muted-foreground" disabled={busy} onClick={() => { void requestCode() }}>Enviar outro código</Button>
+            </>
+          )}
+        </div>
       </form>
       {socialEnabled && !requestedEmail && (
         <Button type="button" variant="outline" onClick={signInGoogle} disabled={socialBusy} aria-label="Entrar com o Google" aria-busy={socialBusy}>

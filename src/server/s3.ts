@@ -1,4 +1,4 @@
-import { s3 } from '@/lib/s3'
+import { getS3Client } from '@/lib/s3'
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { validateImageContent } from '@/lib/validated-image'
 
@@ -32,7 +32,7 @@ export const uploadImageToS3 = async (
   })
 
   try {
-    await s3.send(command)
+    await getS3Client().send(command)
   } catch (cause) {
     throw Object.assign(new Error('Image upload failed', { cause }), {
       name: 'ImageUploadError',
@@ -50,5 +50,5 @@ export const deleteImageFromS3 = async (imageUrl: string) => {
     Key: imageKey,
   })
 
-  await s3.send(command)
+  await getS3Client().send(command)
 }

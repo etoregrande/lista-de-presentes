@@ -53,7 +53,7 @@ Esse comando inicia PostgreSQL e Mailpit no Docker, aplica as migrations, cria o
 
 Entre com `etore@test.com` ou `etore2@test.com` até `etore5@test.com`; o código chega à caixa local. A seed inclui presentes e dois grupos, um antes e outro depois do sorteio. Ela só cria registros ausentes, preservando os dados adicionados durante os testes. `npm run resetdev` apaga **somente o banco Docker local** e recria as migrations e a seed. `docker compose down` para os serviços preservando os volumes.
 
-Uploads de imagem continuam exigindo as variáveis S3 de `.env.example`. Para usá-los localmente, configure suas credenciais de desenvolvimento. O comando `npm run dev` fixa a URL do banco Docker local e não usa uma `DATABASE_URL` antiga do shell ou do `.env`.
+O app abre sem credenciais AWS; somente uploads de imagem exigem as variáveis S3 de `.env.example`. Para testá-los localmente, configure suas credenciais de desenvolvimento. O comando `npm run dev` fixa a URL do banco Docker local e não usa uma `DATABASE_URL` antiga do shell ou do `.env`.
 
 ## Staging
 

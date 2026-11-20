@@ -32,7 +32,7 @@ function fixture() {
     }
   }
   const s3Actions = loadModule('src/server/s3.ts', {
-    '@/lib/s3': { s3: { send } },
+    '@/lib/s3': { getS3Client: () => ({ send }) },
     '@aws-sdk/client-s3': {
       PutObjectCommand: StorageCommand,
       DeleteObjectCommand: StorageCommand,
@@ -61,7 +61,7 @@ function fixture() {
       },
     },
     './s3': s3Actions,
-    '@/lib/s3': { s3: { send } },
+    '@/lib/s3': { getS3Client: () => ({ send }) },
     '@aws-sdk/client-s3': { DeleteObjectCommand: StorageCommand },
     '@/lib/utils': { generateSecretSantaGroupSlug: () => 'group-invite' },
     '@/lib/error': { isPrismaP2002: () => false },
