@@ -22,7 +22,7 @@ Você pode testar todas as funcionalidades agora mesmo, em produção:
   - Criar, editar, visualizar e excluir grupos para amigo secreto, com link para compartilhar e adicionar pessoas no grupo;
   - 💡 Regras de sorteio do amigo secreto que impedem um sorteio inválido (Quantidade de pessoas, sorteio pareado, etc)
 
-- 🔐 Sistema de autenticação completo com **BetterAuth**, com cadastro, recuperação de senha, confirmação de cadastro por email via **Resend**, login social e controle de sessões;
+- 🔐 Autenticação com **Better Auth** por código enviado por email ou Google, com controle de sessões;
 - ✅ Validações robustas de formulários com Zod e React Hook Form;
 - 📄 Banco de dados relacional **PostgreSQL** tipado e manipulado com **PrismaORM**;
 - 📷 Armazenamento de imagens em bucket **AWS S3**
@@ -40,6 +40,26 @@ Você pode testar todas as funcionalidades agora mesmo, em produção:
 - [PostgreSQL](https://www.postgresql.org/)
 
 
+
+## Desenvolvimento local
+
+Requer Docker e Node.js. Depois de instalar as dependências com `npm ci`, execute:
+
+```sh
+npm run dev
+```
+
+Esse comando inicia PostgreSQL e Mailpit no Docker, aplica as migrations, cria os dados de exemplo ausentes e inicia o Next.js na máquina. Use `http://localhost:3000` para o app. A caixa de emails fica em `http://127.0.0.1:8025` e abre automaticamente ao solicitar um código OTP. O Mailpit captura a mensagem; nenhum email local é enviado para fora. O banco usa a porta `5434`, para não conflitar com o `rpg-monorepo` (`5433`).
+
+Entre com `etore@test.com` ou `etore2@test.com` até `etore5@test.com`; o código chega à caixa local. A seed inclui presentes e dois grupos, um antes e outro depois do sorteio. Ela só cria registros ausentes, preservando os dados adicionados durante os testes. `npm run resetdev` apaga **somente o banco Docker local** e recria as migrations e a seed. `docker compose down` para os serviços preservando os volumes.
+
+Uploads de imagem continuam exigindo as variáveis S3 de `.env.example`. Para usá-los localmente, configure suas credenciais de desenvolvimento. O comando `npm run dev` fixa a URL do banco Docker local e não usa uma `DATABASE_URL` antiga do shell ou do `.env`.
+
+## Staging
+
+Defina `APP_ENV=staging`, `SEED_DEMO_DATA=true`, `MAIL_TRANSPORT=mailpit` e `MAILPIT_API_URL=http://mailpit.railway.internal:8025` no serviço Next.js do Railway. `npm start` executa migrations e a seed idempotente antes de iniciar o app. Se o serviço usar um comando customizado, execute `node scripts/prepare-runtime.mjs` no pré-deploy. No serviço Mailpit, use a imagem `axllent/mailpit:v1.28`, porta HTTP `8025`, `MP_UI_AUTH` com credenciais fortes para a interface, `MP_SEND_API_AUTH` com credenciais distintas para o envio e um volume para `MP_DATABASE=/data/mailpit.db`. Configure `MAILPIT_SEND_USER` e `MAILPIT_SEND_PASSWORD` no serviço Next.js com as credenciais de envio. Publique somente a interface web por HTTPS; o Next.js acessa a API de envio pela rede privada do Railway. A caixa de staging recebe OTP para os emails fictícios da seed. Guarde a URL e as credenciais fora do repositório.
+
+Em produção, não defina `SEED_DEMO_DATA=true` nem `MAIL_TRANSPORT=mailpit`; o envio usa `RESEND_API_KEY`. O código OTP expira em dez minutos, aceita até cinco tentativas e é armazenado com hash. O login por senha fica desativado, mas os hashes das contas existentes permanecem no banco.
 
 ## Validação de dados e imagens
 

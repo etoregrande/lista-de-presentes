@@ -2,20 +2,35 @@ import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { prisma } from '@/lib/prisma'
 import { nextCookies } from 'better-auth/next-js'
+import { emailOTP } from 'better-auth/plugins'
 import { sendEmail } from './email'
 import {
-  ForgotPasswordEmailTemplate,
-  VerificationEmailTemplate,
+  OtpEmailTemplate,
 } from '@/components/email-template'
-
-const isPasswordRecoveryEnabled =
-  process.env.NEXT_PUBLIC_PASSWORD_RECOVERY_ENABLED === 'true' ? true : false
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
-  plugins: [nextCookies()],
+  plugins: [
+    emailOTP({
+      expiresIn: 600,
+      allowedAttempts: 5,
+      storeOTP: 'hashed',
+      rateLimit: { window: 60, max: 3 },
+      sendVerificationOTP: async ({ email, otp, type }) => {
+        if (type !== 'sign-in') return
+        await sendEmail({
+          to: email,
+          subject: 'Seu código de acesso ao Presenteio',
+          template: OtpEmailTemplate,
+          templateProps: { otp },
+        })
+      },
+    }),
+    nextCookies(),
+  ],
+  rateLimit: { enabled: true, storage: 'database' },
   session: {
     cookieCache: {
       enabled: false,
@@ -28,30 +43,8 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-  emailVerification: {
-    autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      await sendEmail({
-        to: user.email,
-        subject: 'Verifique seu email',
-        template: VerificationEmailTemplate,
-        templateProps: { url },
-      })
-    },
-  },
   emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: isPasswordRecoveryEnabled,
-    sendResetPassword: async ({ user, url }) => {
-      await sendEmail({
-        to: user.email,
-        subject: 'Esqueci minha senha',
-        template: ForgotPasswordEmailTemplate,
-        templateProps: { url },
-      })
-    },
-
-    autoSignIn: false, //defaults to true
+    enabled: false,
   },
 })
 
