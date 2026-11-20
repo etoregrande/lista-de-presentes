@@ -74,24 +74,27 @@ export function FollowButton({
 
   if (isFollowing) {
     return (
-      <div className="flex shrink-0 flex-col items-center gap-1">
-        <span className="border-border bg-card text-foreground inline-flex h-10 items-center gap-2 rounded-xl border px-4 text-sm font-bold shadow-sm">
+      <Button
+        type="button"
+        variant="outline"
+        size="lg"
+        className="shrink-0"
+        disabled={busy}
+        onClick={handleUnfollow}
+        aria-pressed="true"
+        aria-busy={busy}
+        title="Deixar de seguir"
+      >
+        {busy ? (
+          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
+        ) : (
           <Heart
             className="fill-primary text-primary size-5"
             aria-hidden="true"
           />
-          Seguindo
-        </span>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          disabled={busy}
-          onClick={handleUnfollow}
-        >
-          Deixar de seguir
-        </Button>
-      </div>
+        )}
+        Seguindo
+      </Button>
     )
   }
 
@@ -102,6 +105,7 @@ export function FollowButton({
       className="shrink-0"
       disabled={busy}
       onClick={handleFollow}
+      aria-pressed="false"
       aria-busy={busy}
     >
       {busy ? (

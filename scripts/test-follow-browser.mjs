@@ -155,7 +155,10 @@ try {
     },
   ])
   await page.goto(`${baseURL}${callbackUrl}`)
-  await expect(page.getByText('Seguindo', { exact: true }).last()).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Seguindo' })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'Deixar de seguir' })
+  ).toHaveCount(0)
   await expect(page.getByRole('link', { name: /Beto Teste/ })).toBeVisible()
   await page.screenshot({ path: join(artifacts, 'following.png') })
   assert.equal(
@@ -168,7 +171,7 @@ try {
     '1'
   )
 
-  await page.getByRole('button', { name: 'Deixar de seguir' }).click()
+  await page.getByRole('button', { name: 'Seguindo' }).click()
   await expect(
     page.getByRole('button', { name: 'Seguir', exact: true })
   ).toBeVisible()
