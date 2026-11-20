@@ -35,6 +35,8 @@ model User {
   drawGiver                    SecretSantaDraw[] @relation("drawGiver")
   drawReceiver                 SecretSantaDraw[] @relation("drawReceiver")
   secretSantaGroupParticipants UserSecretSantaGroup[]
+  following                   UserFollow[] @relation("following")
+  followers                   UserFollow[] @relation("followers")
 
   @@map("users")
 }
@@ -189,4 +191,17 @@ model UserSecretSantaGroup {
 
   @@id([userId, secretSantaGroupId])
   @@map("users_secret_santa_groups")
+}
+
+model UserFollow {
+  followerId String
+  followedId String
+  createdAt  DateTime @default(now())
+
+  follower User @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
+  followed User @relation("followers", fields: [followedId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followedId])
+  @@index([followedId])
+  @@map("user_follows")
 }
