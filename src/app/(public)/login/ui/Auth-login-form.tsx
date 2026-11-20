@@ -28,11 +28,16 @@ export function AuthLoginForm({
   const [busy, setBusy] = useState(false)
   const [socialBusy, setSocialBusy] = useState(false)
   const socialEnabled = process.env.NEXT_PUBLIC_SOCIAL_LOGIN_ENABLED === 'true'
+  const mailpitUrl = process.env.NEXT_PUBLIC_MAILPIT_UI_URL
+  const autoOpenMailpit = process.env.NEXT_PUBLIC_AUTO_OPEN_MAILPIT === 'true'
 
   async function requestCode(event?: React.FormEvent<HTMLFormElement>) {
     event?.preventDefault()
     const parsed = signInFormSchema.safeParse({ email })
     if (!parsed.success) return setError(parsed.error.issues[0].message)
+    if (event && autoOpenMailpit && mailpitUrl && !navigator.webdriver) {
+      window.open(mailpitUrl, 'presenteio-mailpit')
+    }
     setError('')
     setBusy(true)
     try {
@@ -166,16 +171,6 @@ export function AuthLoginForm({
           </Button>
           {requestedEmail && (
             <>
-              {process.env.NEXT_PUBLIC_MAILPIT_UI_URL && (
-                <a
-                  href={process.env.NEXT_PUBLIC_MAILPIT_UI_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary text-center text-sm underline underline-offset-4"
-                >
-                  Abrir caixa de emails local
-                </a>
-              )}
               <Button
                 type="button"
                 variant="outline"
